@@ -5,7 +5,7 @@
 #SVelter.py [option] --Parametres
 #option:
 #For debug use only
-#command='SVelter.py --WorkDir /mnt/EXT/Mills-scratch2/Xuefang/NA12878.NGS --Sample /mnt/EXT/Mills-scratch2/Xuefang/NA12878.NGS/alignment/NA12878_S1.bam'
+#command='SVelter.py --workdir /mnt/EXT/Mills-scratch2/Xuefang/NA12878.NGS --sample /mnt/EXT/Mills-scratch2/Xuefang/NA12878.NGS/alignment/NA12878_S1.bam'
 #sys.argv=command.split()
 import os
 import re
@@ -193,8 +193,8 @@ if function_name=='Index':
             path+='/'
         return path
     def ex_file_read_in():
-        if '--EX' in dict_opts.keys():
-            ex_file=dict_opts['--EX']
+        if '--exclude' in dict_opts.keys():
+            ex_file=dict_opts['--exclude']
         else:
             ex_file=workdir+'Support/Exclude.bed'
         return ex_file
@@ -278,7 +278,7 @@ if function_name=='Index':
         Gap_Hash={}
         for chr_ex in chromos:
             Gap_Hash[chr_ex]=[]
-    opts,args=getopt.getopt(sys.argv[2:],'h:c:s:',['Sample=','help=','SVelterPath=','WorkDir=','Reference=','CN=','EX=','NullSplitLength=','NullILCff=','NullSPCff=','NullDRCff=','NullBed=','NullBedLength=','NullSampleLength=','NullSampleNumber=','EX=','IncludeBed=','ToolMappingQ=','FileMappingQ=','NullSamplePercentage=','SplitLength=','BPSPCff=','BPLNCff=','BPAlignQC=','BPAlignQCFlank=','ReadLen=','SPCluLen=','QCSplit=','QCAlign=','KeepFigure=','KeepFile='])
+    opts,args=getopt.getopt(sys.argv[2:],'h:c:s:',['Sample=','help=','SVelterPath=','workdir=','Reference=','CN=','EX=','NullSplitLength=','NullILCff=','NullSPCff=','NullDRCff=','NullBed=','NullBedLength=','NullSampleLength=','NullSampleNumber=','EX=','IncludeBed=','ToolMappingQ=','FileMappingQ=','NullSamplePercentage=','SplitLength=','BPSPCff=','BPLNCff=','BPAlignQC=','BPAlignQCFlank=','ReadLen=','SPCluLen=','QCSplit=','QCAlign=','KeepFigure=','KeepFile='])
     dict_opts=dict(opts)
     Code_path='/'.join(sys.argv[0].split('/')[:-1])+'/'
     time1=time.time()
@@ -286,16 +286,16 @@ if function_name=='Index':
         print 'SVelter-0.1          Last Update:2014-08-20'
         print ''
         print 'Required Parameters:'
-        print '--WorkDir, workind directory of SVelter, eg: .../SVelter/' 
+        print '--workdir, workind directory of SVelter, eg: .../SVelter/' 
         print '--Reference, absolute path of reference genome. eg: .../SVelter/reference/genome.fa'
-        print '--EX,absolute, path of bed file indicating regions to be excluded from analysis. If not provided, no mappable regions will be excluded'
-        print '--CN,absolute, path of bed file indicating copy neutural regions based on which null statistical models would be built. If not provided, genome would be randomly sampled for null model'
+        print '--exclude,absolute, path of bed file indicating regions to be excluded from analysis. If not provided, no mappable regions will be excluded'
+        print '--copyneutral,absolute, path of bed file indicating copy neutural regions based on which null statistical models would be built. If not provided, genome would be randomly sampled for null model'
         print '--SVelterPath, folder which contains all SVelter scripts'
     else:
-        if not '--WorkDir' in dict_opts.keys():
-            print 'Error: please specify working directory using --WorkDir'
+        if not '--workdir' in dict_opts.keys():
+            print 'Error: please specify working directory using --workdir'
         else:
-            workdir = path_modify(dict_opts['--WorkDir'])
+            workdir = path_modify(dict_opts['--workdir'])
             ref_file=0
             if not '--Reference' in dict_opts.keys():
                 print 'Error: please specify refrence genome using --Reference'
@@ -318,10 +318,10 @@ if function_name=='Index':
                             os.system(r'''ln -s %s %s'''%(dict_opts['--SVelterPath']+'/SVelter*.r',ref_path))  
                             os.system(r'''ln -s %s %s'''%(ref_file,ref_path+'genome.fa'))
                             os.system(r'''ln -s %s %s'''%(ref_index,ref_path+'genome.fa.fai'))
-                            if '--CN' in dict_opts.keys():
-                                os.system(r'''ln -s %s %s'''%(dict_opts['--CN'],ref_path+'CN2.bed'))
-                            if '--EX' in dict_opts.keys():
-                                os.system(r'''ln -s %s %s'''%(dict_opts['--EX'],ref_path+'Exclude.bed'))
+                            if '--copyneutral' in dict_opts.keys():
+                                os.system(r'''ln -s %s %s'''%(dict_opts['--copyneutral'],ref_path+'CN2.bed'))
+                            if '--exclude' in dict_opts.keys():
+                                os.system(r'''ln -s %s %s'''%(dict_opts['--exclude'],ref_path+'Exclude.bed'))
                                 print 'symbolic link of reference genome built under '+ref_path
                                 print 'symbolic link of CN file built under '+ref_path
                                 print 'symbolic link of Exclude file built under '+ref_path                    
@@ -572,10 +572,10 @@ if function_name=='NullModel':
         return splitlen
     def dict_opts_modify(dict_opts):
         global model_comp
-        if not '--NullModel' in dict_opts.keys():
+        if not '--null-model' in dict_opts.keys():
             model_comp='S'
         else:
-            if dict_opts['--NullModel'] in ['S','Simple']:
+            if dict_opts['--null-model'] in ['S','Simple']:
                 model_comp='S'
             else:
                 model_comp='C'
@@ -588,18 +588,18 @@ if function_name=='NullModel':
             ReadLength=0
             ReadLength_Flag=0
         global QCAlign
-        if '--QCAlign' in dict_opts.keys():
-            QCAlign=int(dict_opts['--QCAlign'])
+        if '--qc-align' in dict_opts.keys():
+            QCAlign=int(dict_opts['--qc-align'])
         else:
             QCAlign=20
         global QCSplit
-        if '--QCSplit' in dict_opts.keys():
-            QCSplit=int(dict_opts['--QCSplit'])
+        if '--qc-split' in dict_opts.keys():
+            QCSplit=int(dict_opts['--qc-split'])
         else:
             QCSplit=20
         global NullSplitLen_perc
-        if '--NullSplitLength' in dict_opts.keys():
-            NullSplitLen_perc=int(dict_opts['--NullSplitLength'])
+        if '--split-min-len' in dict_opts.keys():
+            NullSplitLen_perc=int(dict_opts['--split-min-len'])
         else:
             NullSplitLen_perc=0.9
         global NullILCIs
@@ -633,13 +633,13 @@ if function_name=='NullModel':
         else:
             NullDRCff=0.999
         global KeepFile
-        if '--KeepFile' in dict_opts.keys():
-            KeepFile=dict_opts['--KeepFile']
+        if '--keep-temp-files' in dict_opts.keys():
+            KeepFile=dict_opts['--keep-temp-files']
         else:
             KeepFile='Yes'
         global KeepFigure
-        if '--KeepFigure' in dict_opts.keys():
-            KeepFigure=dict_opts['--KeepFigure']
+        if '--keep-temp-figs' in dict_opts.keys():
+            KeepFigure=dict_opts['--keep-temp-figs']
         else:
             KeepFigure='No'
     def path_modify(path):
@@ -812,8 +812,8 @@ if function_name=='NullModel':
             path+='/'
         return path
     def SamplingPercentage_readin():
-        if '--NullSamplePercentage' in dict_opts.keys():
-            SamplingPercentage=float(dict_opts['--NullSamplePercentage'])
+        if '--null-copyneutral-perc' in dict_opts.keys():
+            SamplingPercentage=float(dict_opts['--null-copyneutral-perc'])
         else:
             SamplingPercentage=0.1
         return SamplingPercentage
@@ -826,21 +826,21 @@ if function_name=='NullModel':
         fin.close()
         return chromos
     def cn2_length_readin():
-        if '--NullBedLength' in dict_opts.keys():
-            cn2_length=int(dict_opts['--NullBedLength'])
+        if '--null-copyneutral-length' in dict_opts.keys():
+            cn2_length=int(dict_opts['--null-copyneutral-length'])
         else:
             cn2_length=2000
         return cn2_length
     def cn2_region_write(cn2_file):
-        if not '--NullSampleLength' in dict_opts.keys():
-            dict_opts['--NullSampleLength']=5000
+        if not '--null-random-length' in dict_opts.keys():
+            dict_opts['--null-random-length']=5000
         else:
-            dict_opts['--NullSampleLength']=int(dict_opts['--NullSampleLength'])
-        if not '--NullSampleNumber' in dict_opts.keys():
-            dict_opts['--NullSampleNumber']=10000
+            dict_opts['--null-random-length']=int(dict_opts['--null-random-length'])
+        if not '--null-random-num' in dict_opts.keys():
+            dict_opts['--null-random-num']=10000
         else:
-            dict_opts['--NullSampleNumber']=int(dict_opts['--NullSampleNumber'])
-        cn2_length=dict_opts['--NullSampleLength']-100
+            dict_opts['--null-random-num']=int(dict_opts['--null-random-num'])
+        cn2_length=dict_opts['--null-random-length']-100
         whole_genome={}
         fref=open(ref_index)
         for line in fref:
@@ -852,10 +852,10 @@ if function_name=='NullModel':
             len_genome+=whole_genome[i][0]
         fo=open(cn2_file,'w')
         for i in whole_genome.keys():
-            num_i=int(float(whole_genome[i][0])/float(len_genome)*dict_opts['--NullSampleNumber'])
-            reg_i=[random.randint(1,whole_genome[i][0]-dict_opts['--NullSampleLength']) for j in range(num_i)]
+            num_i=int(float(whole_genome[i][0])/float(len_genome)*dict_opts['--null-random-num'])
+            reg_i=[random.randint(1,whole_genome[i][0]-dict_opts['--null-random-length']) for j in range(num_i)]
             for j in sorted(reg_i):
-                print >>fo, ' '.join([i,str(j),str(j+dict_opts['--NullSampleLength']-1)])
+                print >>fo, ' '.join([i,str(j),str(j+dict_opts['--null-random-length']-1)])
         fo.close()
         SamplingPercentage=1
         return [cn2_length,SamplingPercentage]
@@ -866,41 +866,41 @@ if function_name=='NullModel':
             genome_name=chromos[0]
         return genome_name
     def NullPath_SetUp(out_path):
-        NullPath=out_path+'NullModel.'+dict_opts['--Sample'].split('/')[-1]+'/'
+        NullPath=out_path+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/'
         if not os.path.isdir(NullPath):
             os.system(r'''mkdir %s'''%(NullPath))
         return NullPath
     def PathBP_SetUp(out_path):
-        path_BP=out_path+'BreakPoints.'+dict_opts['--Sample'].split('/')[-1]+'/'
+        path_BP=out_path+'BreakPoints.'+dict_opts['--sample'].split('/')[-1]+'/'
         if not os.path.isdir(path_BP):
             os.system(r'''mkdir %s'''%(path_BP))
         return path_BP
-    opts,args=getopt.getopt(sys.argv[2:],'o:h:s:',['help=','WorkDir=','NullModel=','Sample=','Chromosome=','SamplePbs=', 'ref=','NullSplitLength=','NullILCff=','NullSPCff=','NullDRCff=','NullBedLength=','NullSampleLength=','NullSampleNumber=','ExcludeBed=','IncludeBed=','ToolMappingQ=','FileMappingQ=','NullSamplePercentage=','SplitLength=','BPSPCff=','BPLNCff=','BPAlignQC=','BPAlignQCFlank=','ReadLen=','SPCluLen=','QCSplit=','QCAlign=','KeepFigure=','KeepFile='])
+    opts,args=getopt.getopt(sys.argv[2:],'o:h:s:',['help=','workdir=','NullModel=','Sample=','Chromosome=','SamplePbs=', 'ref=','NullSplitLength=','NullILCff=','NullSPCff=','NullDRCff=','NullBedLength=','NullSampleLength=','NullSampleNumber=','ExcludeBed=','IncludeBed=','ToolMappingQ=','FileMappingQ=','NullSamplePercentage=','SplitLength=','BPSPCff=','BPLNCff=','BPAlignQC=','BPAlignQCFlank=','ReadLen=','SPCluLen=','QCSplit=','QCAlign=','KeepFigure=','KeepFile='])
     dict_opts=dict(opts)
     dict_opts_modify(dict_opts)
     if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
         print 'SVelter-0.1          Last Update:2014-08-20'
         print ''
         print 'Required Parameters:'
-        print '--WorkDir, workind directory of SVelter, eg: .../SVelter/' 
-        print '--Sample, absolute path of input bam file. eg: .../SVelter/BamFiles/sample.bam'
+        print '--workdir, workind directory of SVelter, eg: .../SVelter/' 
+        print '--sample, absolute path of input bam file. eg: .../SVelter/BamFiles/sample.bam'
         print ''
         print 'Optional Parameters:'
-        print '--NullModel, specify which stat model to be fitted on each parameter. if --NullModel==C / Complex, negative bimodal distribution will be fitted to insertlenth; else, normal will be used'
-        print '--NullBedLength, minimum requirement for length of regions used to build null model; default: 2kb'
-        print '--NullSamplePercentage, sampling percentage of regions from Nullbed'
-        print '--NullSampleLength, if not --NullBed provided, SVelter will randomly sample regions on genome to build null model; --NullSampleLength specify the length of region picked; default: 5kb'
-        print '--NullSampleNumber, if not --NullBed provided, SVelter will randomly sample regions on genome to build null model; --NullSampleNumber specify the number of region picked; default: 10k'
+        print '--null-model, specify which stat model to be fitted on each parameter. if --null-model==C / Complex, negative bimodal distribution will be fitted to insertlenth; else, normal will be used'
+        print '--null-copyneutral-length, minimum requirement for length of regions used to build null model; default: 2kb'
+        print '--null-copyneutral-perc, sampling percentage of regions from Nullbed'
+        print '--null-random-length, if not --NullBed provided, SVelter will randomly sample regions on genome to build null model; --null-random-length specify the length of region picked; default: 5kb'
+        print '--null-random-num, if not --NullBed provided, SVelter will randomly sample regions on genome to build null model; --null-random-num specify the number of region picked; default: 10k'
     else:
-        if not '--WorkDir' in dict_opts.keys():
-            print 'Error: please specify working directory using: --WorkDir'
+        if not '--workdir' in dict_opts.keys():
+            print 'Error: please specify working directory using: --workdir'
         else:
-            workdir=path_modify(dict_opts['--WorkDir'])
-            if not '--Sample' in dict_opts.keys():
-                print 'Error: please specify either input file using --Sample'
+            workdir=path_modify(dict_opts['--workdir'])
+            if not '--sample' in dict_opts.keys():
+                print 'Error: please specify either input file using --sample'
             else:
-                bam_path='/'.join(dict_opts['--Sample'].split('/')[:-1])+'/'
-                bam_files=[dict_opts['--Sample']]
+                bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
+                bam_files=[dict_opts['--sample']]
                 ref_path=workdir+'reference/'
                 ref_file=ref_path+'genome.fa'
                 ref_index=ref_file+'.fai'
@@ -2046,10 +2046,10 @@ if function_name=='BPSearch':
         #ToolMappingQ='/mnt/EXT/Mills-data/xuefzhao/software/bigWigSummary'
         #FileMappingQ='/mnt/EXT/Mills-data/xuefzhao/projects/wgEncodeCrgMapabilityAlign36mer.bigWig'
         global model_comp
-        if not '--NullModel' in dict_opts.keys():
+        if not '--null-model' in dict_opts.keys():
             model_comp='S'
         else:
-            if dict_opts['--NullModel'] in ['S','Simple']:
+            if dict_opts['--null-model'] in ['S','Simple']:
                 model_comp='S'
             else:
                 model_comp='C'
@@ -2068,18 +2068,18 @@ if function_name=='BPSearch':
         else:
             BPAlignQC=0.0
         global QCAlign   
-        if '--QCAlign' in dict_opts.keys():
-            QCAlign=int(dict_opts['--QCAlign'])
+        if '--qc-align' in dict_opts.keys():
+            QCAlign=int(dict_opts['--qc-align'])
         else:
             QCAlign=20
         global QCSplit   
-        if '--QCSplit' in dict_opts.keys():
-            QCSplit=int(dict_opts['--QCSplit'])
+        if '--qc-split' in dict_opts.keys():
+            QCSplit=int(dict_opts['--qc-split'])
         else:
             QCSplit=20
         global NullSplitLen_perc
-        if '--NullSplitLength' in dict_opts.keys():
-            NullSplitLen_perc=float(dict_opts['--NullSplitLength'])
+        if '--split-min-len' in dict_opts.keys():
+            NullSplitLen_perc=float(dict_opts['--split-min-len'])
         else:
             NullSplitLen_perc=0.9
         global BPAlignQCFlank
@@ -2199,35 +2199,35 @@ if function_name=='BPSearch':
         fTBS.close()
         return TBStats
     time1=time.time()
-    opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['NullModel=','help=','WorkDir=','Sample=','Chromosome=','NullGenomeName=','NullSplitLength=','NullILCI=','NullRDCI=','NullTBCI=','NullILCff=','NullSPCff=','NullDRCff=','NullBed=','NullBedLength=','NullSampleLength=','NullSampleNumber=','ExcludeBed=','IncludeBed=','ToolMappingQ=','FileMappingQ=','NullSamplePercentage=','SplitLength=','BPSPCff=','BPLNCff=','BPAlignQC=','BPAlignQCFlank=','ReadLen=','SPCluLen=','QCSplit=','QCAlign=','KeepFigure=','KeepFile='])
+    opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['NullModel=','help=','workdir=','Sample=','Chromosome=','NullGenomeName=','NullSplitLength=','NullILCI=','NullRDCI=','NullTBCI=','NullILCff=','NullSPCff=','NullDRCff=','NullBed=','NullBedLength=','NullSampleLength=','NullSampleNumber=','ExcludeBed=','IncludeBed=','ToolMappingQ=','FileMappingQ=','NullSamplePercentage=','SplitLength=','BPSPCff=','BPLNCff=','BPAlignQC=','BPAlignQCFlank=','ReadLen=','SPCluLen=','QCSplit=','QCAlign=','KeepFigure=','KeepFile='])
     dict_opts=dict(opts)
     Define_Default_BPSearching()
     CN2_Region={}
     if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
         print 'SVelter-0.1          Last Update:2014-08-20'
         print 'Required Parameters:'
-        print '--WorkDir, workind directory of SVelter, eg: .../SVelter/' 
-        print '--Sample, absolute path of input bam file. eg: .../SVelter/BamFiles/sample.bam'
+        print '--workdir, workind directory of SVelter, eg: .../SVelter/' 
+        print '--sample, absolute path of input bam file. eg: .../SVelter/BamFiles/sample.bam'
         #print '--PathBam, absolute path of folder containing all input bam files. eg: .../SVelter/BamFiles/'
         print 'Optional Parameters:'
         print '--Chromosome, name of chromosome to run. should match chromosome name in bam file'
-        print '--NullModel, C for complex stat model; S for simple stat model; default: S'
+        print '--null-model, C for complex stat model; S for simple stat model; default: S'
         print '--NullBed, a describing bed files containing genomic regions that are used to build Null model; usually regions known to have few structural variants'
-        print '--NullBedLength, minimum requirement for length of regions used to build Null model; default: 2kb'
-        print '--NullSamplePercentage, sampling percentage of regions from Nullbed'
-        print '--NullSampleLength, if not --NullBed provided, SVelter will randomly sample regions on genome to build Null model; --NullSampleLength specify the length of region picked; default: 5kb'
-        print '--NullSampleNumber, if not --NullBed provided, SVelter will randomly sample regions on genome to build Null model; --NullSampleNumber specify the number of region picked; default: 10k'
+        print '--null-copyneutral-length, minimum requirement for length of regions used to build Null model; default: 2kb'
+        print '--null-copyneutral-perc, sampling percentage of regions from Nullbed'
+        print '--null-random-length, if not --NullBed provided, SVelter will randomly sample regions on genome to build Null model; --null-random-length specify the length of region picked; default: 5kb'
+        print '--null-random-num, if not --NullBed provided, SVelter will randomly sample regions on genome to build Null model; --null-random-num specify the number of region picked; default: 10k'
     else:
-        if not '--WorkDir' in dict_opts.keys():
-            print 'Error: please specify working directory using: --WorkDir'
+        if not '--workdir' in dict_opts.keys():
+            print 'Error: please specify working directory using: --workdir'
         else:
-            workdir=path_modify(dict_opts['--WorkDir'])
-            if not '--Sample' in dict_opts.keys():
-                print 'Error: please specify either input file using --Sample'
+            workdir=path_modify(dict_opts['--workdir'])
+            if not '--sample' in dict_opts.keys():
+                print 'Error: please specify either input file using --sample'
             else:
-                if '--Sample' in dict_opts.keys():
-                    bam_path='/'.join(dict_opts['--Sample'].split('/')[:-1])+'/'
-                    bam_files=[dict_opts['--Sample']]
+                if '--sample' in dict_opts.keys():
+                    bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
+                    bam_files=[dict_opts['--sample']]
                 else:
                     bam_path=path_modify(dict_opts['--PathBam'])
                     bam_files=[]
@@ -2252,10 +2252,10 @@ if function_name=='BPSearch':
                         genome_name=genome_name_readin()
                         out_path=workdir
                         print 'temp files produced under: '+workdir
-                        BPPath=out_path+'BreakPoints.'+dict_opts['--Sample'].split('/')[-1]+'/'
+                        BPPath=out_path+'BreakPoints.'+dict_opts['--sample'].split('/')[-1]+'/'
                         if not os.path.isdir(BPPath):
                             os.system(r'''mkdir %s'''%(BPPath))
-                        NullPath=out_path+'NullModel.'+dict_opts['--Sample'].split('/')[-1]+'/'
+                        NullPath=out_path+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/'
                         for bamF in bam_files:
                             time1=time.time()
                             #fin=open(NullPath+'All_Stats/'+bamF.split('/')[-1].replace('.bam','.')+genome_name+'.Stats')
@@ -4274,18 +4274,18 @@ if function_name=='BPIntegrate':
         else:
             BPalignQC=0.2
         global QCAlign
-        if '--QCAlign' in dict_opts.keys():
-            QCAlign=int(dict_opts['--QCAlign'])
+        if '--qc-align' in dict_opts.keys():
+            QCAlign=int(dict_opts['--qc-align'])
         else:
             QCAlign=20
         global QCSplit
-        if '--QCSplit' in dict_opts.keys():
-            QCSplit=int(dict_opts['--QCSplit'])
+        if '--qc-split' in dict_opts.keys():
+            QCSplit=int(dict_opts['--qc-split'])
         else:
             QCSplit=20
         global Null_SplitLen_perc
-        if '--NullSplitLength' in dict_opts.keys():
-            Null_SplitLen_perc=float(dict_opts['--NullSplitLength'])
+        if '--split-min-len' in dict_opts.keys():
+            Null_SplitLen_perc=float(dict_opts['--split-min-len'])
         else:
             Null_SplitLen_perc=0.1
         global BPalignQCFlank
@@ -4310,34 +4310,34 @@ if function_name=='BPIntegrate':
         fin.close()
         return chromos
     time1=time.time()
-    opts,args=getopt.getopt(sys.argv[2:],'o:h:s:',['Batch=','help=','WorkDir=','Sample=','Chromosome=','SamplePbs=','ref=','NullSplitLength=','NullILCI=','NullRDCI=','NullTBCI=','NullILCff=','NullSPCff=','NullDRCff=','NullBed=','NullBedLength=','NullSampleLength=','NullSampleNumber=','NullSamplePercentage=','ExcludeBed=','IncludeBed=','ToolMappingQ=','FileMappingQ=','SplitLength=','BPSPCff=','BPLNCff=','BPalignQC=','BPalignQCFlank=','ReadLen=','SPCluLen=','QCSplit=','QCAlign=','KeepFigure=','KeepFile='])
+    opts,args=getopt.getopt(sys.argv[2:],'o:h:s:',['Batch=','help=','workdir=','Sample=','Chromosome=','SamplePbs=','ref=','NullSplitLength=','NullILCI=','NullRDCI=','NullTBCI=','NullILCff=','NullSPCff=','NullDRCff=','NullBed=','NullBedLength=','NullSampleLength=','NullSampleNumber=','NullSamplePercentage=','ExcludeBed=','IncludeBed=','ToolMappingQ=','FileMappingQ=','SplitLength=','BPSPCff=','BPLNCff=','BPalignQC=','BPalignQCFlank=','ReadLen=','SPCluLen=','QCSplit=','QCAlign=','KeepFigure=','KeepFile='])
     dict_opts=dict(opts)
     Define_Default_BPIntegrate()
     if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
         print 'SVelter-0.1          Last Update:2014-08-20'
         print ' '
         print 'Required Parameters:'
-        print '--WorkDir, workind directory of SVelter, eg: .../SVelter/' 
-        print '--Sample, absolute path of input bam file. eg: .../SVelter/BamFiles/sample.bam'
+        print '--workdir, workind directory of SVelter, eg: .../SVelter/' 
+        print '--sample, absolute path of input bam file. eg: .../SVelter/BamFiles/sample.bam'
         #print '--PathBam, absolute path of folder containing all input bam files. eg: .../SVelter/BamFiles/'
         print ' '
         print 'Optional Parameters:'
         print '--Batch, specify number of bp clusters in each file; if 0 prvided,output files will be classified by chromosomes; if not --Batch provided, all bp clusters will be writen into one txt file;'
     else:
-        if not '--WorkDir' in dict_opts.keys():
-            print 'Error: please specify working directory using: --WorkDir'
+        if not '--workdir' in dict_opts.keys():
+            print 'Error: please specify working directory using: --workdir'
         else:
-            workdir=path_modify(dict_opts['--WorkDir'])
+            workdir=path_modify(dict_opts['--workdir'])
             out_path=workdir
             print 'temp files produced under: '+workdir
-            bps_in_path=workdir+'BreakPoints.'+dict_opts['--Sample'].split('/')[-1]+'/'
-            if not '--Sample' in dict_opts.keys():
-                print 'Error: please specify either input file using --Sample'
+            bps_in_path=workdir+'BreakPoints.'+dict_opts['--sample'].split('/')[-1]+'/'
+            if not '--sample' in dict_opts.keys():
+                print 'Error: please specify either input file using --sample'
             else:
-                if '--Sample' in dict_opts.keys():
-                    bam_path='/'.join(dict_opts['--Sample'].split('/')[:-1])+'/'
-                    bam_files=[dict_opts['--Sample']]
-                    bam_names=[dict_opts['--Sample'].split('/')[-1].replace('.bam','')]
+                if '--sample' in dict_opts.keys():
+                    bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
+                    bam_files=[dict_opts['--sample']]
+                    bam_names=[dict_opts['--sample'].split('/')[-1].replace('.bam','')]
                 else:
                     bam_path=dict_opts['--PathBam']
                     if not bam_path[-1]=='/':
@@ -4367,7 +4367,7 @@ if function_name=='BPIntegrate':
                         bps_hash={}
                         for i in bam_names:
                             bps_hash[i]={}
-                        bps_folder=out_path+'bp_files.'+dict_opts['--Sample'].split('/')[-1]+'/'
+                        bps_folder=out_path+'bp_files.'+dict_opts['--sample'].split('/')[-1]+'/'
                         if not os.path.isdir(bps_folder):
                             os.system(r'''mkdir %s'''%(bps_folder))
                         for i in bam_names:
@@ -4664,7 +4664,7 @@ if function_name=='SVPredict':
     def RD_Index_ReadIn(ppre_Path,BamN, chromo, region):
         if not ppre_Path[-1]=='/':
             ppre_Path+='/'
-        path_in=ppre_Path+'NullModel.'+dict_opts['--Sample'].split('/')[-1]+'/RD_Stat/'
+        path_in=ppre_Path+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat/'
         file_in=BamN+'.'+chromo+'.RD.index'
         fin=open(path_in+file_in)
         pos1=int(region[0])
@@ -5109,7 +5109,7 @@ if function_name=='SVPredict':
     def letter_RD_ReadIn(chr_letter_bp):
         test_flag=0
         for k1 in chr_letter_bp.keys():
-            filein=dict_opts['--WorkDir']+'NullModel.'+dict_opts['--Sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+k1+'.RD.index'
+            filein=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+k1+'.RD.index'
             if not os.path.isfile(filein):
                 test_flag+=1
         if test_flag==0:
@@ -5124,7 +5124,7 @@ if function_name=='SVPredict':
                     block_range[i]+=chr_letter_bp[i][j]
                 block_range[i]=[min(block_range[i]),max(block_range[i])]
             for k1 in chr_letter_bp.keys():
-                filein=dict_opts['--WorkDir']+'NullModel.'+dict_opts['--Sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+k1+'.RD.index'
+                filein=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+k1+'.RD.index'
                 fin=open(filein)
                 while True:
                     pin=fin.readline().strip().split()
@@ -5576,7 +5576,7 @@ if function_name=='SVPredict':
         return Coverage_af_Adj
     def GC_RD_Correction(chrbam):
         ref_index=ref_prefix+'GC_Content'
-        cov_index=dict_opts['--WorkDir']+'NullModel.'+dict_opts['--Sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+chrbam+'.RD.index'
+        cov_index=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+chrbam+'.RD.index'
         fref=open(ref_index)
         fcov=open(cov_index)
         GC=[]
@@ -8239,21 +8239,21 @@ if function_name=='SVPredict':
         if not '/' in dict_opts['--File']:
             dict_opts['--File']='./'+dict_opts['--File']
         global model_comp
-        if not '--NullModel' in dict_opts.keys():
+        if not '--null-model' in dict_opts.keys():
             model_comp='S'
         else:
-            if dict_opts['--NullModel'] in ['S','Simple']:
+            if dict_opts['--null-model'] in ['S','Simple']:
                 model_comp='S'
             else:
                 model_comp='C'
         global Ploidy
-        if '--Ploidy' in dict_opts.keys():
-            Ploidy=int(dict_opts['--Ploidy'])
+        if '--ploidy' in dict_opts.keys():
+            Ploidy=int(dict_opts['--ploidy'])
         else:
             Ploidy=2
         global QCAlign
-        if '--QCAlign' in dict_opts.keys():
-            QCAlign=int(dict_opts['--QCAlign'])
+        if '--qc-align' in dict_opts.keys():
+            QCAlign=int(dict_opts['--qc-align'])
         else:
             QCAlign=20
         global genome_name
@@ -8322,24 +8322,24 @@ if function_name=='SVPredict':
             if not x in GC_Std_Coverage.keys():
                 GC_Std_Coverage[x]=GC_Std_Coverage[chrom_N]
     time1=time.time()
-    opts,args=getopt.getopt(sys.argv[2:],'o:f:S:',['NullModel=','NullGenomeName=','ReadLen=','NIteration=','Ploidy=','WorkDir=','Sample=','File=','QCSplit=','QCAlign='])
+    opts,args=getopt.getopt(sys.argv[2:],'o:f:S:',['NullModel=','NullGenomeName=','ReadLen=','NIteration=','Ploidy=','workdir=','Sample=','File=','QCSplit=','QCAlign='])
     dict_opts=dict(opts)
     Define_Default_SVPredict()
     if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
         print 'SVelter-0.1        Last Update:2014-10-27'
         print 'Required Parameters:'
-        print '--WorkDir, workind directory of SVelter, eg: .../SVelter/' 
-        print '--Sample, absolute path of input bam file. eg: .../SVelter/BamFiles/Sample.bam'
+        print '--workdir, workind directory of SVelter, eg: .../SVelter/' 
+        print '--sample, absolute path of input bam file. eg: .../SVelter/BamFiles/Sample.bam'
         print '--File, input txt file containing clustered bps.'
         print ' '
         print 'Optional Parameters:'
-        print '--QCAlign, minimum alignment quality required for mapped reads in bam file; default: 20'
-        print '--QCSplit, minimum alighment of clipped parts of reads considered as a soft clip; default: 20'
+        print '--qc-align, minimum alignment quality required for mapped reads in bam file; default: 20'
+        print '--qc-split, minimum alighment of clipped parts of reads considered as a soft clip; default: 20'
     else:
-        if not '--WorkDir' in dict_opts.keys():
-            print 'Error: please specify working directory using: --WorkDir'
+        if not '--workdir' in dict_opts.keys():
+            print 'Error: please specify working directory using: --workdir'
         else:
-            workdir=path_modify(dict_opts['--WorkDir'])
+            workdir=path_modify(dict_opts['--workdir'])
             if not '--File' in dict_opts.keys():
                 print 'Error: please specify input txt file using : --File'
             else:
@@ -8352,20 +8352,20 @@ if function_name=='SVPredict':
                 ref_index=ref_file+'.fai'
                 ref_ppre=ref_path
                 ref_prefix='.'.join(ref_file.split('.')[:-1])
-                if not '--Sample' in dict_opts.keys():
-                    print 'Error: please specify either input file using --Sample'
+                if not '--sample' in dict_opts.keys():
+                    print 'Error: please specify either input file using --sample'
                 else:
-                    BamN=dict_opts['--Sample'].split('/')[-1].replace('.bam','')
+                    BamN=dict_opts['--sample'].split('/')[-1].replace('.bam','')
                     Input_File=dict_opts['--File']
                     #correct_letters_Info=[dict_opts['--CLI']]
-                    #Insert_Len_Stat=dict_opts['--WorkDir']+'NullModel.'+dict_opts['--Sample'].split('/')[-1]+'/IL_Null/ILNull.'+BamN+'.'+genome_name+'.Bimodal'
-                    Insert_Len_Stat=dict_opts['--WorkDir']+'NullModel.'+dict_opts['--Sample'].split('/')[-1]+'/ILNull.'+BamN+'.'+genome_name+'.Bimodal'
+                    #Insert_Len_Stat=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/IL_Null/ILNull.'+BamN+'.'+genome_name+'.Bimodal'
+                    Insert_Len_Stat=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/ILNull.'+BamN+'.'+genome_name+'.Bimodal'
                     if not os.path.isfile(Insert_Len_Stat):
-                        print 'wrong para for --WorkDir: please copy the null model under -WorkDir'
-                    #ReadLenFin=dict_opts['--WorkDir']+'NullModel.'+dict_opts['--Sample'].split('/')[-1]+'/All_Stats/'+BamN+'.'+genome_name+'.Stats'
-                    ReadLenFin=dict_opts['--WorkDir']+'NullModel.'+dict_opts['--Sample'].split('/')[-1]+'/'+BamN+'.'+genome_name+'.Stats'
+                        print 'wrong para for --workdir: please copy the null model under -workdir'
+                    #ReadLenFin=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/All_Stats/'+BamN+'.'+genome_name+'.Stats'
+                    ReadLenFin=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/'+BamN+'.'+genome_name+'.Stats'
                     if not os.path.isfile(ReadLenFin):
-                        print 'wrong para for --WorkDir: please copy the null model under -WorkDir'
+                        print 'wrong para for --workdir: please copy the null model under -workdir'
                     else:
                         fin=open(ReadLenFin)
                         pin=fin.readline().strip().split()
@@ -8377,7 +8377,7 @@ if function_name=='SVPredict':
                         fin.close()
                         ReadLength=int(pin[-1].split(':')[-1])
                     Initial_Bam_Name=BamN+'.bam'
-                    Initial_Bam=dict_opts['--Sample']
+                    Initial_Bam=dict_opts['--sample']
                     #BamName_Unique=BamN+'.cn2.1000'
                     #BamFile_stat='_'.join(BamName_Unique.split('.'))
                     flank=cdf_solver_application(Insert_Len_Stat,0.95)
@@ -8445,7 +8445,7 @@ if function_name=='SVPredict':
                             for i in bps2:
                                 if len(i)<3:
                                     i.append(str(int(i[-1])+Window_Size))
-                    GC_Stat_Path=dict_opts['--WorkDir']+'NullModel.'+dict_opts['--Sample'].split('/')[-1]+'/RD_Stat'
+                    GC_Stat_Path=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat'
                     Affix_GC_Stat='_MP'+str(QCAlign)+'_GC_Coverage_ReadLength'
                     GC_Stat=GC_Stat_ReadIn(BamN,GC_Stat_Path,Affix_GC_Stat)
                     GC_Content_Coverage=GC_Stat[0]
@@ -8545,7 +8545,7 @@ if function_name=='SVPredict':
                                         left_keys.append(k2)
                                 if not left_keys==[]:
                                     bamFlag=0
-                                    bamtest=os.popen(r'''samtools view -H %s'''%(dict_opts['--Sample']))
+                                    bamtest=os.popen(r'''samtools view -H %s'''%(dict_opts['--sample']))
                                     for line in bamtest:
                                         pbamtest=line.strip().split()
                                         if pbamtest[0]=='@SQ' and pbamtest[1].split(':')[0]=='SN':
@@ -11128,21 +11128,21 @@ if function_name=='SVIntegrate':
             path+='/'
         return path
     time1=time.time()
-    opts,args=getopt.getopt(sys.argv[2:],'i:o:h:',['RSPath=','Output=','help=','WorkDir=','PathBam=','Sample=','Chromosome=','SamplePbs=', 'ref=','NullSplitLength=','NullILCI=','NullRDCI=','NullTBCI=','NullILCff=','NullSPCff=','NullDRCff=','NullBed=','NullBedLength=','NullSampleLength=','NullSampleNumber=','ExcludeBed=','IncludeBed=','ToolMappingQ=','FileMappingQ=','NullSamplePercentage=','SplitLength=','BPSPCff=','BPLNCff=','BPAlignQC=','BPAlignQCFlank=','ReadLen=','SPCluLen=','QCSplit=','QCAlign=','KeepFigure=','KeepFile='])
+    opts,args=getopt.getopt(sys.argv[2:],'i:o:h:',['RSPath=','Output=','help=','workdir=','PathBam=','Sample=','Chromosome=','SamplePbs=', 'ref=','NullSplitLength=','NullILCI=','NullRDCI=','NullTBCI=','NullILCff=','NullSPCff=','NullDRCff=','NullBed=','NullBedLength=','NullSampleLength=','NullSampleNumber=','ExcludeBed=','IncludeBed=','ToolMappingQ=','FileMappingQ=','NullSamplePercentage=','SplitLength=','BPSPCff=','BPLNCff=','BPAlignQC=','BPAlignQCFlank=','ReadLen=','SPCluLen=','QCSplit=','QCAlign=','KeepFigure=','KeepFile='])
     dict_opts=dict(opts)
     Define_Default_SVIntegrate()
     if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
         print 'SVelter-0.1          Last Update:2014-08-20'
         print 'Required Parameters:'
-        print '--WorkDir, workind directory of SVelter, eg: .../SVelter/' 
+        print '--workdir, workind directory of SVelter, eg: .../SVelter/' 
         print '--RSPath, path of .coverage files'
-        print '--Output, absolute path of output file'
+        print '--prefix, absolute path of output file'
         print 'Optional Parameters:'
     else:
-        if not '--WorkDir' in dict_opts.keys():
-            print 'Error: please specify working directory using: --WorkDir'
+        if not '--workdir' in dict_opts.keys():
+            print 'Error: please specify working directory using: --workdir'
         else:
-            workdir=path_modify(dict_opts['--WorkDir'])
+            workdir=path_modify(dict_opts['--workdir'])
             if not '--RSPath' in dict_opts.keys():
                 print 'Error: please specify path of input .coverge files using --RSPath'
             else:
@@ -11165,10 +11165,10 @@ if function_name=='SVIntegrate':
                 if not os.path.isfile(ref_index):
                     print 'Error: reference genome not indexed'
                 else:
-                    if not '--Output' in dict_opts.keys():
-                        print 'Error: please specify output file using --Output'
+                    if not '--prefix' in dict_opts.keys():
+                        print 'Error: please specify output file using --prefix'
                     else:
-                        output_file=dict_opts['--Output']
+                        output_file=dict_opts['--prefix']+'.vcf'
                         ref=ref_file
                         chromos=[]
                         fin=open(ref_index)
@@ -11207,36 +11207,36 @@ if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict
             global pool
             pool = Pool(processes=int(dict_opts['--core']))
         global model_comp
-        if not '--NullModel' in dict_opts.keys():
+        if not '--null-model' in dict_opts.keys():
             model_comp='S'
         else:
-            if dict_opts['--NullModel'] in ['S','Simple']:
+            if dict_opts['--null-model'] in ['S','Simple']:
                 model_comp='S'
             else:
                 model_comp='C'
         global QCAlign
-        if '--QCAlign' in dict_opts.keys():
-            QCAlign=int(dict_opts['--QCAlign'])
+        if '--qc-align' in dict_opts.keys():
+            QCAlign=int(dict_opts['--qc-align'])
         else:
             QCAlign=20
         global QCSplit
-        if '--QCSplit' in dict_opts.keys():
-            QCSplit=int(dict_opts['--QCSplit'])
+        if '--qc-split' in dict_opts.keys():
+            QCSplit=int(dict_opts['--qc-split'])
         else:
             QCSplit=20
         global NullSplitLen_perc
-        if '--NullSplitLength' in dict_opts.keys():
-            NullSplitLen_perc=int(dict_opts['--NullSplitLength'])
+        if '--split-min-len' in dict_opts.keys():
+            NullSplitLen_perc=int(dict_opts['--split-min-len'])
         else:
             NullSplitLen_perc=0.9
         global KeepFile
-        if '--KeepFile' in dict_opts.keys():
-            KeepFile=dict_opts['--KeepFile']
+        if '--keep-temp-files' in dict_opts.keys():
+            KeepFile=dict_opts['--keep-temp-files']
         else:
             KeepFile='No'
         global KeepFigure
-        if '--KeepFigure' in dict_opts.keys():
-            KeepFigure=dict_opts['--KeepFigure']
+        if '--keep-temp-figs' in dict_opts.keys():
+            KeepFigure=dict_opts['--keep-temp-figs']
         else:
             KeepFigure='No'
         global Trail_Number
@@ -11245,8 +11245,8 @@ if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict
         else:
             Trail_Number=10000
         global Ploidy
-        if '--Ploidy' in dict_opts.keys():
-            Ploidy=int(dict_opts['--Ploidy'])
+        if '--ploidy' in dict_opts.keys():
+            Ploidy=int(dict_opts['--ploidy'])
         else:
             Ploidy=2
     def Indicator_Readin(temp_inter):
@@ -11303,26 +11303,26 @@ if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict
             out.append(Code0_file)
         return out
     def SamplingPercentage_read_in():
-        if '--NullSamplePercentage' in dict_opts.keys():
-            SamplingPercentage=float(dict_opts['--NullSamplePercentage'])
+        if '--null-copyneutral-perc' in dict_opts.keys():
+            SamplingPercentage=float(dict_opts['--null-copyneutral-perc'])
         else:
             SamplingPercentage=0.001
         return SamplingPercentage
     def cn2_file_read_in():
-        if '--CN' in dict_opts.keys():
-            cn2_file=dict_opts['--CN']
+        if '--copyneutral' in dict_opts.keys():
+            cn2_file=dict_opts['--copyneutral']
         else:
             cn2_file=workdir+'reference/CN2.bed'
         return cn2_file
     def ex_file_read_in():
-        if '--EX' in dict_opts.keys():
-            ex_file=dict_opts['--EX']
+        if '--exclude' in dict_opts.keys():
+            ex_file=dict_opts['--exclude']
         else:
             ex_file=workdir+'reference/Exclude.bed'
         return ex_file
     def cn2_length_read_in():
-        if '--NullBedLength' in dict_opts.keys():
-            cn2_length=int(dict_opts['--NullBedLength'])
+        if '--null-copyneutral-length' in dict_opts.keys():
+            cn2_length=int(dict_opts['--null-copyneutral-length'])
         else:
             cn2_length=2000
         return cn2_length
@@ -11335,19 +11335,19 @@ if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict
         fref.close()
         return whole_genome
     def run_SVelter0_chrom(chrom_name):
-        os.system(r'''%s --WorkDir %s --ref %s --ex %s --Sample %s --chr %s'''%(Code0_file,workdir,ref_file,ex_file,sin_bam_file,chrom_name))
+        os.system(r'''%s --workdir %s --ref %s --ex %s --sample %s --chr %s'''%(Code0_file,workdir,ref_file,ex_file,sin_bam_file,chrom_name))
     def run_SVelter1_chrom(sin_bam_file):
-        os.system(r'''%s %s --KeepFile %s --KeepFigure %s --NullModel %s --WorkDir %s --Sample %s'''%(Code_File,Code1_Function,KeepFile,KeepFigure,model_comp,workdir,sin_bam_file)) 
+        os.system(r'''%s %s --keep-temp-files %s --keep-temp-figs %s --null-model %s --workdir %s --sample %s'''%(Code_File,Code1_Function,KeepFile,KeepFigure,model_comp,workdir,sin_bam_file)) 
     def run_SVelter2_chrom(chrom_name,sin_bam_file):
-        os.system(r'''%s %s --Chromosome %s --WorkDir %s --Sample %s --NullModel %s'''%(Code_File,Code2_Function,chrom_name,workdir,sin_bam_file,model_comp))
+        os.system(r'''%s %s --Chromosome %s --workdir %s --sample %s --null-model %s'''%(Code_File,Code2_Function,chrom_name,workdir,sin_bam_file,model_comp))
         print chrom_name+' done!'
     def run_SVelter3_chrom(sin_bam_file):
-        os.system(r'''%s %s --Batch %s --WorkDir %s --Sample %s'''%(Code_File,Code3_Function,dict_opts['--Batch'],workdir,sin_bam_file)) 
+        os.system(r'''%s %s --Batch %s --workdir %s --sample %s'''%(Code_File,Code3_Function,dict_opts['--Batch'],workdir,sin_bam_file)) 
     def run_SVelter4_chrom(txt_name,sin_bam_file):
-        os.system(r'''%s %s --WorkDir %s --File %s --Sample %s --NIteration %s --Ploidy %s --NullModel %s'''%(Code_File,Code4_Function,workdir,txt_name,sin_bam_file,str(Trail_Number),str(Ploidy),model_comp))
+        os.system(r'''%s %s --workdir %s --File %s --sample %s --NIteration %s --ploidy %s --null-model %s'''%(Code_File,Code4_Function,workdir,txt_name,sin_bam_file,str(Trail_Number),str(Ploidy),model_comp))
         print txt_name+' done!'
     def run_SVelter5_chrom(path2,out_vcf):
-        os.system(r'''%s %s --WorkDir %s --RSPath %s --Output %s'''%(Code_File,Code5_Function,workdir,path2,out_vcf))
+        os.system(r'''%s %s --workdir %s --RSPath %s --prefix %s'''%(Code_File,Code5_Function,workdir,path2,out_vcf))
     def Code_Files_Define():
         global Code_File
         global Code0_Function
@@ -11376,7 +11376,7 @@ if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict
         #Code3_file=Code_path+'SVelter3.BPIntegrate.py'
         #Code4_file=Code_path+'SVelter4.StructureResolvation.py'
         #Code5_file=Code_path+'SVelter5.result.integrate.py'
-    opts,args=getopt.getopt(sys.argv[1:],'o:h:',['Chromosome=','Sample=','Ploidy=','NullModel=','CN=','EX=','help=','WorkDir=','PathSVelter=','NullSplitLength=','NullSampleLength=','NullSampleNumber=','ToolMappingQ=','FileMappingQ=','NullSamplePercentage=','SplitLength=','BPSPCff=','BPLNCff=','BPAlignQC=','BPAlignQCFlank=','ReadLen=','SPCluLen=','QCSplit=','QCAlign=','KeepFigure=','KeepFile='])
+    opts,args=getopt.getopt(sys.argv[1:],'o:h:',['Chromosome=','Sample=','Ploidy=','NullModel=','CN=','EX=','help=','workdir=','PathSVelter=','NullSplitLength=','NullSampleLength=','NullSampleNumber=','ToolMappingQ=','FileMappingQ=','NullSamplePercentage=','SplitLength=','BPSPCff=','BPLNCff=','BPAlignQC=','BPAlignQCFlank=','ReadLen=','SPCluLen=','QCSplit=','QCAlign=','KeepFigure=','KeepFile='])
     dict_opts=dict(opts)
     Define_Default_AllInOne()
     if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
@@ -11384,35 +11384,35 @@ if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict
         print 'Usage:'
         print 'SVelter.py [options] [parameters]'
         print 'options:'
-        print 'NullModel'
-        print 'BPSearch'
-        print 'BPIntegrate'
+        print 'NullModel' 
+        print 'BPSearch'  
+        print 'BPIntegrate' 
         print 'SVPredict'
         print 'SVIntegrate'
         print 'Required Parameters:'
-        print '--WorkDir: writable working directory; default: ./(current directory)'
-        print '--Sample: absolute path of one sample need to run; default: all Samples under workdir/BamFiles'
+        print '--workdir: writable working directory; default: ./(current directory)'
+        print '--sample: absolute path of one sample need to run; default: all Samples under workdir/BamFiles'
         print ' '
         print 'Optional Parameters:'
-        print '--CN: absolute path of cn2 files; or other Ref bed files that contains regions users are interested in; default: workdir/Support/CN2.bed'
-        print '--EX: absolute path of exculde files; default: workdir/Support/Exclude.bed'
-        print '--Ploidy: 0:heterozygous 1:homozygous 2: diploid module'
-        print '--Output, absolute path of output vcf file. eg: .../SVelter/sample.vcf'
-        print '--NullModel, specify which stat model to be fitted on each parameter. if --NullModel==C / Complex, negative bimodal distribution will be fitted to insertlenth; else, normal will be used'
-        print '--NullBedLength, minimum requirement for length of regions used to build null model; default: 2000bp'
-        print '--NullSamplePercentage, sampling percentage of regions from Nullbed'
-        print '--NullSampleLength, if not --NullBed provided, SVelter will randomly Sample regions on genome to build null model; --NullSampleLength specify the length of region picked; default: 5kb'
-        print '--NullSampleNumber, if not --NullBed provided, SVelter will randomly Sample regions on genome to build null model; --NullSampleNumber specify the number of region picked; default: 10k'
-        print '--QCAlign, minimum alignment quality required for mapped reads in bam file; default: 20'
-        print '--QCSplit, minimum alighment of clipped parts of reads considered as a soft clip; default: 20'
-        print '--NullSplitLength, the minumum length of cutoff considered as split; default:10% of read length '
-        print '--KeepFile, whether to keep interval files during the program; to remove interval file, specify the parameter with "no"/"N"/"No"/"n"; else, interval files will be kept'
-        print '--KeepFigure, whether to keep interval figures during the program; to remove interval file, specify the parameter with "no"/"N"/"No"/"n"; else, interval files will be kept'
+        print '--copyneutral: file in BED format containing regions from which to build null models (default: random)'
+        print '--exclude: file in BED format containing regions to exclude form analysis (default: none)'
+        print '--ploidy: limit algorithm to specific zygosity (0:heterozygous only; 1:homozygous only; 2:both; default:2)'
+        print '--prefix, output prefix for vcf and svelter files (default: input.vcf, input.svelter)'
+        print '--null-model, specify which stat model to be fitted on each parameter. if --null-model==C / Complex, negative bimodal distribution will be fitted to insertlenth; else, normal will be used'
+        print '--null-copyneutral-length, minimum length requirement for --copyneutral regions used to build null model (default: 2000)'
+        print '--null-copyneutral-perc, percentage of regions from --copyneutral to utilize (default: 0.1)'
+        print '--null-random-length, specify the length of random regions if --copyneutral parameter not used (default: 5000)'
+        print '--null-random-num, specify the number of random regions if --copyneutral parameter not used (default: 10000)'
+        print '--qc-align, minimum alignment quality required for mapped reads in bam file (default: 20)'
+        print '--qc-split, minimum alighment of clipped parts of reads considered as a soft clip (default: 20)'
+        print '--split-min-len, the minumum length of clip read considered as split; (default:10% of read length)'
+        #print '--keep-temp-files, whether to keep interval files during the program; to remove interval file, specify the parameter with "no"/"N"/"No"/"n"; else, interval files will be kept'
+        #print '--keep-temp-figs, whether to keep interval figures during the program; to remove interval file, specify the parameter with "no"/"N"/"No"/"n"; else, interval files will be kept'
     else:
-        if not '--WorkDir' in dict_opts.keys():
-            print 'Error: please specify working directory using: --WorkDir'
+        if not '--workdir' in dict_opts.keys():
+            print 'Error: please specify working directory using: --workdir'
         else:
-            workdir=path_modify(dict_opts['--WorkDir'])
+            workdir=path_modify(dict_opts['--workdir'])
             if not os.path.isdir(workdir):
                 print 'Error: working directory does not exit!'
             Code_Files_Define()
@@ -11420,14 +11420,14 @@ if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict
             #if not script_test==[]:
             #    print 'Error: please make sure all required scripts are under working directory'
             #else:
-            if not '--Sample' in dict_opts.keys() and not '--SamplePath' in dict_opts.keys():
-                print 'Error: please specify input file using --Sample'
+            if not '--sample' in dict_opts.keys() and not '--samplePath' in dict_opts.keys():
+                print 'Error: please specify input file using --sample'
             else:
-                if '--Sample' in dict_opts.keys():
-                    bam_path='/'.join(dict_opts['--Sample'].split('/')[:-1])+'/'
-                    bam_files=[dict_opts['--Sample']]
+                if '--sample' in dict_opts.keys():
+                    bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
+                    bam_files=[dict_opts['--sample']]
                 else:
-                    bam_path=path_modify(dict_opts['--SamplePath'])
+                    bam_path=path_modify(dict_opts['--samplePath'])
                     bam_files=[]
                     for file in os.listdir(bam_path):
                         if file.split('.')[-1]=='bam':
@@ -11472,21 +11472,21 @@ if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict
                         cn2_path='/'.join(cn2_file.split('/')[:-1])+'/'
                         if not os.path.isdir(cn2_path): 
                             os.system(r'''mkdir %s'''%(cn2_path))
-                        if not '--NullSampleLength' in dict_opts.keys():
-                            dict_opts['--NullSampleLength']=5000
+                        if not '--null-random-length' in dict_opts.keys():
+                            dict_opts['--null-random-length']=5000
                         else:
-                            dict_opts['--NullSampleLength']=int(dict_opts['--NullSampleLength'])
-                        if not '--NullSampleNumber' in dict_opts.keys():
-                            dict_opts['--NullSampleNumber']=10000
+                            dict_opts['--null-random-length']=int(dict_opts['--null-random-length'])
+                        if not '--null-random-num' in dict_opts.keys():
+                            dict_opts['--null-random-num']=10000
                         else:
-                            dict_opts['--NullSampleNumber']=int(dict_opts['--NullSampleNumber'])
-                        cn2_length=dict_opts['--NullSampleLength']-100
+                            dict_opts['--null-random-num']=int(dict_opts['--null-random-num'])
+                        cn2_length=dict_opts['--null-random-length']-100
                         fo=open(cn2_file,'w')
                         for i in sorted(whole_genome.keys()):
-                            num_i=int(float(whole_genome[i][0])/float(len_genome)*dict_opts['--NullSampleNumber'])
-                            reg_i=[random.randint(1,whole_genome[i][0]-dict_opts['--NullSampleLength']) for j in range(num_i)]
+                            num_i=int(float(whole_genome[i][0])/float(len_genome)*dict_opts['--null-random-num'])
+                            reg_i=[random.randint(1,whole_genome[i][0]-dict_opts['--null-random-length']) for j in range(num_i)]
                             for j in sorted(reg_i):
-                                print >>fo, ' '.join([i,str(j),str(j+dict_opts['--NullSampleLength']-1)])
+                                print >>fo, ' '.join([i,str(j),str(j+dict_opts['--null-random-length']-1)])
                         fo.close()
                         SamplingPercentage=1
                     if not os.path.isfile(ex_file):
@@ -11494,15 +11494,16 @@ if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict
                             for chr_ex in chromos:
                                 print >>fo, ' '.join([chr_ex,'0','0'])
                             fo.close()
-                    if '--Output' in dict_opts.keys():
-                        out_vcf=dict_opts['--Output']
+                    if '--prefix' in dict_opts.keys():
+                        out_vcf=dict_opts['--prefix']+'.vcf'
+                        out_svelter=dict_opts['--prefix']+'.svelter'
                     else:
-                        out_vcf=workdir+dict_opts['--Sample'].split('/')[-1].replace('.bam','.vcf')
-                        out_svelter=workdir+dict_opts['--Sample'].split('/')[-1].replace('.bam','.svelter')
+                        out_vcf=workdir+dict_opts['--sample'].split('/')[-1].replace('.bam','.vcf')
+                        out_svelter=workdir+dict_opts['--sample'].split('/')[-1].replace('.bam','.svelter')
                         print 'Warning: output file is not specified'
                         print 'output file: '+out_vcf
                         print 'output file: '+out_svelter
-                    #temp_inter=workdir+dict_opts['--Sample'].split('/')[-1].replace('.bam','.temp')
+                    #temp_inter=workdir+dict_opts['--sample'].split('/')[-1].replace('.bam','.temp')
                     temp_inter_replace=0
                     for sin_bam_file in bam_files:
                         running_time=[]
@@ -11545,9 +11546,9 @@ if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict
                         print ' '
                         print 'Step4: Resolving structure ... '
                         time1=time.time()
-                        for k1 in os.listdir(workdir+'bp_files.'+dict_opts['--Sample'].split('/')[-1]+'/'):
-                            if k1==dict_opts['--Sample'].split('/')[-1].replace('.bam',''):
-                                path1=workdir+'bp_files.'+dict_opts['--Sample'].split('/')[-1]+'/'+k1+'/'
+                        for k1 in os.listdir(workdir+'bp_files.'+dict_opts['--sample'].split('/')[-1]+'/'):
+                            if k1==dict_opts['--sample'].split('/')[-1].replace('.bam',''):
+                                path1=workdir+'bp_files.'+dict_opts['--sample'].split('/')[-1]+'/'+k1+'/'
                                 for k2 in os.listdir(path1):
                                     path2=path1+k2+'/'
                                     all_txt_files=[]
@@ -11561,8 +11562,8 @@ if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict
                         print 'Structure resolved !'
                         print 'Time Consuming: '+str(datetime.timedelta(seconds=(time2-time1)))
                         print ' '
-                        for k1 in os.listdir(workdir+'bp_files.'+dict_opts['--Sample'].split('/')[-1]+'/'):
-                            path1=workdir+'bp_files.'+dict_opts['--Sample'].split('/')[-1]+'/'+k1+'/'
+                        for k1 in os.listdir(workdir+'bp_files.'+dict_opts['--sample'].split('/')[-1]+'/'):
+                            path1=workdir+'bp_files.'+dict_opts['--sample'].split('/')[-1]+'/'+k1+'/'
                             for k2 in os.listdir(path1):
                                 path2=path1+k2+'/'
                                 print 'Step5: Integrating results in VCF file: '+out_vcf+' ... '
@@ -11576,9 +11577,9 @@ if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict
                                     print 'Time Consuming: '+str(datetime.timedelta(seconds=(time2-time1)))
                         print 'Total Running Time:'+' '.join([str(i) for i in running_time])
                     if os.path.isfile(out_vcf):
-                        NullPath=workdir+'NullModel.'+dict_opts['--Sample'].split('/')[-1]
-                        BPPath=workdir+'BreakPoints.'+dict_opts['--Sample'].split('/')[-1]
-                        TXTPath=workdir+'bp_files.'+dict_opts['--Sample'].split('/')[-1]
+                        NullPath=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]
+                        BPPath=workdir+'BreakPoints.'+dict_opts['--sample'].split('/')[-1]
+                        TXTPath=workdir+'bp_files.'+dict_opts['--sample'].split('/')[-1]
                         RefPath=workdir+'reference/'
                         os.system(r'''rm -r %s'''%(NullPath))
                         os.system(r'''rm -r %s'''%(BPPath))
