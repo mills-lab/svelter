@@ -24,7 +24,7 @@ import datetime
 import itertools
 script_name=sys.argv[0]
 if len(sys.argv)<2:
-    print 'SVelter-0.1          Last Update:2014-08-20'
+    print 'SVelter-0.1          Last Update:2015-08-20'
     print ''
     print 'SVelter.py Index should be run first:'
     print 'SVelter.py Index [parameters]'
@@ -321,14 +321,14 @@ else:
         dict_opts=dict(opts)
         Code_path='/'.join(sys.argv[0].split('/')[:-1])+'/'
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
-            print 'SVelter-0.1          Last Update:2014-08-20'
+            print 'SVelter-0.1          Last Update:2015-08-20'
             print ''
             print 'Required Parameters:'
             print '--workdir, writable working directory.'
             print '--reference, absolute path of reference genome. eg: .../SVelter/reference/genome.fa'
-            print '--exclude, absolute path of bed file indicating regions to be excluded from analysis. If not provided, no mappable regions will be excluded'
-            print '--copyneutral,absolute, path of bed file indicating copy neutural regions based on which null statistical models would be built. If not provided, genome would be randomly sampled for null model'
-            print '--svelter-path, folder which contains all SVelter scripts'
+            print '--exclude, absolute path of bed file indicating regions to be excluded from analysis. If not provided, no mappable regions will be excluded.'
+            print '--copyneutral,absolute, path of bed file indicating copy neutural regions based on which null statistical models would be built. If not provided, genome would be randomly sampled for null model.'
+            print '--svelter-path, folder which contains all SVelter scripts.'
         else:
             if not '--workdir' in dict_opts.keys():
                 print 'working directory not specified'
@@ -844,7 +844,7 @@ else:
         dict_opts=dict(opts)
         dict_opts_modify(dict_opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
-            print 'SVelter-0.1          Last Update:2014-08-20'
+            print 'SVelter-0.1          Last Update:2015-08-20'
             print ''
             print 'Required Parameters:'
             print '--workdir, writable working directory.'
@@ -2123,7 +2123,7 @@ else:
         dict_opts=dict(opts)
         CN2_Region={}
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
-            print 'SVelter-0.1          Last Update:2014-08-20'
+            print 'SVelter-0.1          Last Update:2015-08-20'
             print 'Required Parameters:'
             print '--workdir, writable working directory.'
             print '--sample, input alignment file in bam format'
@@ -2136,7 +2136,6 @@ else:
             print '--qc-map-tool, the tool extracts mappability information from a bigWig file,avaliable from: http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bigWigSummary'
             print '--qc-map-file, .bigWig file used to decide local genomic mappability, avaliable from: ftp://hgdownload.cse.ucsc.edu/goldenPath/currentGenomes/Homo_sapiens/encodeDCC/wgEncodeMapability/'
             print '--qc-map-cutoff, the minimum mapping quality required for a breakpoint to be reported (default: 0.0)'
-            print '--batch, specify number of structures in each separate file (if 0, output files will be calssified by chromosomes; default, all BP clustered will be integrated in one txt file)'
         else:
             Define_Default_BPSearching()
             if not '--workdir' in dict_opts.keys():
@@ -4159,7 +4158,7 @@ else:
         opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
-            print 'SVelter-0.1          Last Update:2014-08-20'
+            print 'SVelter-0.1          Last Update:2015-08-20'
             print ' '
             print 'Required Parameters:'
             print '--workdir, writable working directory.'
@@ -8056,7 +8055,7 @@ else:
         opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
-            print 'SVelter-0.1        Last Update:2014-10-27'
+            print 'SVelter-0.1        Last Update:2015-08-20'
             print 'Required Parameters:'
             print '--workdir, writable working directory.'
             print '--sample, input alignment file in bam format'
@@ -10793,7 +10792,7 @@ else:
         opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
-            print 'SVelter-0.1          Last Update:2014-08-20'
+            print 'SVelter-0.1          Last Update:2015-08-20'
             print 'Required Parameters:'
             print '--workdir, writable working directory.'
             print '--input-path, path of .coverage files produced by SVelter.py SVPredict'
@@ -11035,7 +11034,7 @@ else:
         opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
-            print 'SVelter-0.1          Last Update:2014-10-27'
+            print 'SVelter-0.1          Last Update:2015-08-20'
             print 'Usage:'
             print 'SVelter.py [options] [parameters]'
             print 'options:'
