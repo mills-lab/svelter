@@ -11035,7 +11035,7 @@ else:
             Code1a_file=RCode_Path+'SVelter1.NullModel.Figure.a.r'
             Code1d_file=RCode_Path+'SVelter1.NullModel.Figure.d.r'
             Code1d2_file=RCode_Path+'SVelter1.NullModel.Figure.d2.r'
-        opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
+        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
         Define_Default_AllInOne()
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
