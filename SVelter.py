@@ -22,6 +22,7 @@ import pickle
 import time
 import datetime
 import itertools
+script_name=sys.argv[0]
 if len(sys.argv)<2:
     print 'SVelter-0.1          Last Update:2014-08-20'
     print ''
@@ -11024,7 +11025,7 @@ else:
             global Code1a_file
             global Code1d_file
             global Code1d2_file
-            Code_File='SVelter.py'
+            Code_File=script_name
             Code0_Function='Index'
             Code1_Function='NullModel'
             Code2_Function='BPSearch'
