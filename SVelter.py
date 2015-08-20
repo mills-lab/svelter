@@ -22,7 +22,7 @@ import pickle
 import time
 import datetime
 import itertools
-if len(sys.argv)<1:
+if len(sys.argv)<2:
     print 'SVelter-0.1          Last Update:2014-08-20'
     print ''
     print 'SVelter.py Index should be run first:'
@@ -316,7 +316,7 @@ else:
             Gap_Hash={}
             for chr_ex in chromos:
                 Gap_Hash[chr_ex]=[]
-        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration']
+        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
         Code_path='/'.join(sys.argv[0].split('/')[:-1])+'/'
         time1=time.time()
@@ -839,7 +839,7 @@ else:
             if not os.path.isdir(path_BP):
                 os.system(r'''mkdir %s'''%(path_BP))
             return path_BP
-        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration']
+        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
         dict_opts_modify(dict_opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
@@ -2118,7 +2118,7 @@ else:
             fTBS.close()
             return TBStats
         time1=time.time()
-        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration']
+        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
         Define_Default_BPSearching()
         CN2_Region={}
@@ -4159,7 +4159,7 @@ else:
             fin.close()
             return chromos
         time1=time.time()
-        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration']
+        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
         Define_Default_BPIntegrate()
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
@@ -8057,7 +8057,7 @@ else:
                 if not x in GC_Std_Coverage.keys():
                     GC_Std_Coverage[x]=GC_Std_Coverage[chrom_N]
         time1=time.time()
-        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration']
+        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
         Define_Default_SVPredict()
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
@@ -10794,7 +10794,7 @@ else:
                 path+='/'
             return path
         time1=time.time()
-        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration']
+        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
         Define_Default_SVIntegrate()
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
@@ -11035,7 +11035,7 @@ else:
             Code1a_file=RCode_Path+'SVelter1.NullModel.Figure.a.r'
             Code1d_file=RCode_Path+'SVelter1.NullModel.Figure.d.r'
             Code1d2_file=RCode_Path+'SVelter1.NullModel.Figure.d2.r'
-        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration']
+        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
         Define_Default_AllInOne()
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
