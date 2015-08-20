@@ -2121,7 +2121,6 @@ else:
         time1=time.time()
         opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
-        Define_Default_BPSearching()
         CN2_Region={}
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
             print 'SVelter-0.1          Last Update:2014-08-20'
@@ -2139,6 +2138,7 @@ else:
             print '--qc-map-cutoff, the minimum mapping quality required for a breakpoint to be reported (default: 0.0)'
             print '--batch, specify number of structures in each separate file (if 0, output files will be calssified by chromosomes; default, all BP clustered will be integrated in one txt file)'
         else:
+            Define_Default_BPSearching()
             if not '--workdir' in dict_opts.keys():
                 print 'Error: please specify working directory using: --workdir'
             else:
@@ -4162,7 +4162,6 @@ else:
         time1=time.time()
         opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
-        Define_Default_BPIntegrate()
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
             print 'SVelter-0.1          Last Update:2014-08-20'
             print ' '
@@ -4175,6 +4174,7 @@ else:
             print '--chromosome, name of chromosome to run. should match chromosome name in bam file'
             print '--batch, specify number of structures in each separate file (if 0, output files will be calssified by chromosomes; default, all BP clustered will be integrated in one txt file)'
         else:
+            Define_Default_BPIntegrate()
             if not '--workdir' in dict_opts.keys():
                 print 'Error: please specify working directory using: --workdir'
             else:
@@ -8060,7 +8060,6 @@ else:
         time1=time.time()
         opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
-        Define_Default_SVPredict()
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
             print 'SVelter-0.1        Last Update:2014-10-27'
             print 'Required Parameters:'
@@ -8074,6 +8073,7 @@ else:
             print '--null-model, specify which stat model to be fitted on each parameter. if --null-model==C / Complex, negative bimodal distribution will be fitted to insertlenth; else, normal will be used'
             print '--qc-align, minimum alignment quality required for mapped reads in bam file (default: 20)'
         else:
+            Define_Default_SVPredict()
             if not '--workdir' in dict_opts.keys():
                 print 'Error: please specify working directory using: --workdir'
             else:
@@ -10797,7 +10797,6 @@ else:
         time1=time.time()
         opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
-        Define_Default_SVIntegrate()
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
             print 'SVelter-0.1          Last Update:2014-08-20'
             print 'Required Parameters:'
@@ -10807,6 +10806,7 @@ else:
             print '--prefix, output prefix for vcf and svelter files (default: input.vcf, input.svelter)'
             print '--qc-structure, minimum quality score of a resolved structure to be considered as PASS and included in the output vcf file'
         else:
+            Define_Default_SVIntegrate()
             if not '--workdir' in dict_opts.keys():
                 print 'Error: please specify working directory using: --workdir'
             else:
@@ -11038,7 +11038,6 @@ else:
             Code1d2_file=RCode_Path+'SVelter1.NullModel.Figure.d2.r'
         opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
         dict_opts=dict(opts)
-        Define_Default_AllInOne()
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
             print 'SVelter-0.1          Last Update:2014-10-27'
             print 'Usage:'
@@ -11071,6 +11070,7 @@ else:
             print '--qc-map-cutoff, the minimum mapping quality required for a breakpoint to be reported (default: 0.0)'
             print '--batch, specify number of structures in each separate file (if 0, output files will be calssified by chromosomes; default, all BP clustered will be integrated in one txt file)'
         else:
+            Define_Default_AllInOne()
             if not '--workdir' in dict_opts.keys():
                 print 'Error: please specify working directory using: --workdir'
             else:
