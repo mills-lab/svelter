@@ -723,6 +723,7 @@ else:
                     Total_Split_Reads+=SplitLength[key]
             fslo.close()
             Sub_Split_Reads=0
+            SplitLenPNum=1
             if not NullSplitLen_perc<1:
                 SplitLenPNum=int(NullSplitLen_perc)
             elif NullSplitLen_perc<1:
