@@ -2960,6 +2960,7 @@ else:
                                                                             temp_mate_NewChr[abLink[k2][2]][abLink[k2][0]]=[]
                                                                         temp_mate_NewChr[abLink[k2][2]][abLink[k2][0]].append(abLink[k2][1])
                                                             if clusterQC(clusterNums4(temp_mate_F, ClusterLen, 'f'),LinkCluMin)==[] and clusterQC(clusterNums4(temp_mate_R, ClusterLen, 'r'),LinkCluMin)==[] and len(temp_mate_NewChr.keys())>5:
+                                                                print temp_mate_NewChr
                                                                 del tempIL[k1]
                                                             else:
                                                                 for k1x in temp_mate_F.keys():
@@ -2980,7 +2981,6 @@ else:
                                                                             LinkILTemp=clusterQC(clusterNums(temp_mate_NewChr[xa][xb],ClusterLen,'f'),LinkCluMin)
                                                                             if not LinkILTemp==[]:
                                                                                 LinkIL[k1].append([xa,xb]+LinkILTemp)
-                                                        print LinkIL
                                                         for k1 in LinkIL.keys():
                                                                 for k2 in LinkIL[k1]:
                                                                         for k3 in k2:
@@ -3000,22 +3000,34 @@ else:
                                                                                             elif  k1==k3:     
                                                                                                 out_single_bp.append(k1)                                  
                                                         if not out_pair_bp==[]:
+                                                            out_pair_bp_2=[]
+                                                            for x in out_pair_bp:
+                                                                out_pair_bp_flag=0
+                                                                for y in x:
+                                                                    if not type(y)==type(1):
+                                                                        out_pair_bp_flag+=1
+                                                                if out_pair_bp_flag==0:
+                                                                    out_pair_bp_2.append(x)
+                                                            out_pair_bp=out_pair_bp_2
                                                             temp_out_pair_bp=[]
                                                             out_BPmodify={}
                                                             for k1 in out_pair_bp:
                                                                 for k2 in k1:
-                                                                    out_BPmodify[k2]=[]
+                                                                    if type(k2)==type(1):
+                                                                        out_BPmodify[k2]=[]
                                                             if not SP4S==[]:
                                                                 LBSP_tempIL=clusterSupVis3(sorted(SP4S),sorted(out_BPmodify.keys()))
                                                                 for k1 in out_pair_bp:
                                                                     temp_k1=[]
                                                                     for k2 in k1:
-                                                                        k3=LBSP_tempIL[k2]
-                                                                        if abs(k2-k3)<ClusterLen:
-                                                                            temp_k1.append(k3)
-                                                                        else:
-                                                                            temp_k1.append(k2)
-                                                                    temp_out_pair_bp.append(temp_k1)
+                                                                        if type(k2)==type(1):
+                                                                            k3=LBSP_tempIL[k2]
+                                                                            if abs(k2-k3)<ClusterLen:
+                                                                                temp_k1.append(k3)
+                                                                            else:
+                                                                                temp_k1.append(k2)
+                                                                    if len(temp_k1)>1:
+                                                                        temp_out_pair_bp.append(temp_k1)
                                                             if not temp_out_pair_bp==[]:
                                                                 out_pair_bp=temp_out_pair_bp
                                                             for k1 in out_pair_bp:
