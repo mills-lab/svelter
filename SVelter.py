@@ -317,7 +317,7 @@ else:
             Gap_Hash={}
             for chr_ex in chromos:
                 Gap_Hash[chr_ex]=[]
-        opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
+        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['help=','batch=','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         Code_path='/'.join(sys.argv[0].split('/')[:-1])+'/'
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
@@ -826,10 +826,10 @@ else:
             SamplingPercentage=1
             return [cn2_length,SamplingPercentage]
         def genome_name_readin():
-            if not '--chromosome' in dict_opts.keys():
+            if not '--NullGenomeName' in dict_opts.keys():
                 genome_name='genome'
             else:
-                genome_name=chromos[0]
+                genome_name=dict_opts['--NullGenomeName']
             return genome_name
         def NullPath_SetUp(out_path):
             NullPath=out_path+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/'
@@ -841,7 +841,7 @@ else:
             if not os.path.isdir(path_BP):
                 os.system(r'''mkdir %s'''%(path_BP))
             return path_BP
-        opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
+        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['help=','batch=','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         dict_opts_modify(dict_opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
@@ -2277,7 +2277,7 @@ else:
                         tPairF_b=float(LNSPFR_aqb.read().strip()) 
                         if tPairF_b<float(BPAlignQC):
                             del tempIL[aqb]
-        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
+        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['help=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         CN2_Region={}
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
@@ -2961,7 +2961,6 @@ else:
                                                                             temp_mate_NewChr[abLink[k2][2]][abLink[k2][0]]=[]
                                                                         temp_mate_NewChr[abLink[k2][2]][abLink[k2][0]].append(abLink[k2][1])
                                                             if clusterQC(clusterNums4(temp_mate_F, ClusterLen, 'f'),LinkCluMin)==[] and clusterQC(clusterNums4(temp_mate_R, ClusterLen, 'r'),LinkCluMin)==[] and len(temp_mate_NewChr.keys())>5:
-                                                                print temp_mate_NewChr
                                                                 del tempIL[k1]
                                                             else:
                                                                 for k1x in temp_mate_F.keys():
@@ -4286,7 +4285,7 @@ else:
                 chromos.append(pin[0])
             fin.close()
             return chromos
-        opts,args=getopt.getopt(sys.argv[2:],'o:h:',['batch=','help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
+        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['help=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
             print 'SVelter-0.1          Last Update:2015-08-20'
@@ -5395,7 +5394,7 @@ else:
             Overall_Median_Coverage=float(GC_Overall_Median_Num)
             for key_1 in GC_Content.keys():
                     Be_Adj_RD=Coverage[key_1]
-                    GC_Con=int(round(GC_Content[key_1]*Window_Size))
+                    GC_Con=int(round(GC_Content[key_1]*100))
                     if GC_Con in GC_Median_Num.keys():
                             Median_Coverage=GC_Median_Num[GC_Con]
                             Af_Adj_RD=Be_Adj_RD*Overall_Median_Coverage/Median_Coverage
@@ -6872,11 +6871,16 @@ else:
             IL_Rec={}
             DR_Penal=0
             out_tb=[[0 for i in temp_bp[0]],[0 for i in temp_bp[1]]]
+            IL_All=[]
             for i in Map_All:
                 if len(i)>4:
-                    if not i[6] in IL_Rec.keys():
+                    IL_All.append(i[6])
+            IL_All_Mean=numpy.mean(IL_All)
+            for i in Map_All:
+                if len(i)>4:
+                    if not i[6] in IL_Rec.keys() and not abs(i[6]/IL_All_Mean)>10:
                         IL_Rec[i[6]]=i[8]
-                    else:
+                    elif i[6] in IL_Rec.keys() and not abs(i[6]/IL_All_Mean)>10:
                         IL_Rec[i[6]]+=i[8]
                     if not i[4:6]==['+','-']:
                         DR_Penal+=1
@@ -8184,7 +8188,7 @@ else:
                     GC_Mean_Coverage[x]=GC_Mean_Coverage[chrom_N]
                 if not x in GC_Std_Coverage.keys():
                     GC_Std_Coverage[x]=GC_Std_Coverage[chrom_N]
-        opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
+        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['help=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
             print 'SVelter-0.1        Last Update:2015-08-20'
@@ -8748,7 +8752,7 @@ else:
                                                                         best_iterations+=1
                                                                 score_record.append(S_DECISION)
                                                     t2_sptest=time.time()
-                                                    if t2_sptest-t1_sptest<30 or bpsk1<4:
+                                                    if t2_sptest-t1_sptest<10 or bpsk1<4:
                                                         while True:
                                                                 if Move_Step>Trail_Number: break
                                                                 if best_iterations>100: 
@@ -10921,7 +10925,7 @@ else:
             if not path[-1]=='/':
                 path+='/'
             return path
-        opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
+        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['help=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
             print 'SVelter-0.1          Last Update:2015-08-20'
@@ -11041,6 +11045,11 @@ else:
                 Ploidy=int(dict_opts['--ploidy'])
             else:
                 Ploidy=2
+            global ILCff_STD_Time
+            if '-S' in dict_opts.keys():
+                ILCff_STD_Time=int(dict_opts['-S'])
+            else:
+                ILCff_STD_Time=3
         def Indicator_Readin(temp_inter):
             ft=open(temp_inter)
             F_test='ERROR'
@@ -11130,8 +11139,10 @@ else:
             os.system(r'''%s --workdir %s --ref %s --ex %s --sample %s --chr %s'''%(Code0_file,workdir,ref_file,ex_file,sin_bam_file,chrom_name))
         def run_SVelter1_chrom(sin_bam_file):
             os.system(r'''%s %s --keep-temp-files %s --keep-temp-figs %s --null-model %s --workdir %s --sample %s'''%(Code_File,Code1_Function,KeepFile,KeepFigure,model_comp,workdir,sin_bam_file)) 
-        def run_SVelter2_chrom(chrom_name,sin_bam_file):
-            os.system(r'''%s %s --chromosome %s --workdir %s --sample %s --null-model %s'''%(Code_File,Code2_Function,chrom_name,workdir,sin_bam_file,model_comp))
+        def run_SVelter1_Single_chrom(sin_bam_file,chromos_single):
+            os.system(r'''%s %s --keep-temp-files %s --keep-temp-figs %s --null-model %s --workdir %s --sample %s --chromosome %s'''%(Code_File,Code1_Function,KeepFile,KeepFigure,model_comp,workdir,sin_bam_file,chromos_single)) 
+        def run_SVelter2_chrom(chrom_name,sin_bam_file,ILCff_STD_Time):
+            os.system(r'''%s %s --chromosome %s --workdir %s --sample %s --null-model %s -S %s'''%(Code_File,Code2_Function,chrom_name,workdir,sin_bam_file,model_comp,ILCff_STD_Time))
             print chrom_name+' done!'
         def run_SVelter3_chrom(sin_bam_file):
             os.system(r'''%s %s --batch %s --workdir %s --sample %s'''%(Code_File,Code3_Function,dict_opts['--batch'],workdir,sin_bam_file)) 
@@ -11163,7 +11174,7 @@ else:
             Code1a_file=RCode_Path+'SVelter1.NullModel.Figure.a.r'
             Code1d_file=RCode_Path+'SVelter1.NullModel.Figure.d.r'
             Code1d2_file=RCode_Path+'SVelter1.NullModel.Figure.d2.r'
-        opts,args=getopt.getopt(sys.argv[1:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
+        opts,args=getopt.getopt(sys.argv[1:],'o:h:S:',['help=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
             print 'SVelter-0.1          Last Update:2015-08-20'
@@ -11289,12 +11300,22 @@ else:
                             print 'output file: '+out_vcf
                             print 'output file: '+out_svelter
                         temp_inter_replace=0
+                        if '--chromosome' in dict_opts.keys():
+                            chrom_single=dict_opts['--chromosome']
+                            if not chrom_single in chromos:
+                                print 'Error: please make sure the chromosome defined by --chr is correct based on the reference genome'
+                                chromos=[]
+                            else:
+                                chromos=[chrom_single]
                         for sin_bam_file in bam_files:
                             running_time=[]
                             print ' '
                             print 'Step1: Running null parameters for '+sin_bam_file.split('/')[-1].replace('.bam','')+' ...'
                             time1=time.time()
-                            run_SVelter1_chrom(sin_bam_file)
+                            if len(chromos)>1:
+                                run_SVelter1_chrom(sin_bam_file)
+                            elif len(chromos)==1:
+                                run_SVelter1_Single_chrom(sin_bam_file,chromos[0])
                             time2=time.time()
                             running_time.append(time2-time1)
                             print 'Null model built for '+sin_bam_file.split('/')[-1].replace('.bam','')
@@ -11304,7 +11325,7 @@ else:
                             time1=time.time()
                             for x in chromos:
                                 print x
-                                run_SVelter2_chrom(x,sin_bam_file)
+                                run_SVelter2_chrom(x,sin_bam_file,ILCff_STD_Time)
                                 print time.time()-time1
                             time2=time.time()
                             running_time.append(time2-time1)
@@ -11363,7 +11384,7 @@ else:
                             os.system(r'''rm -r %s'''%(RefPath))
 
 #Not In Use For Now:
-    if function_name=='BPSearch':
+    if function_name=='BPSearching2NotInUSE':
         def IL_Prob_Bimodal(IL_Length,ILStats):
             log_y1=-0.5*numpy.log(2*numpy.pi)-numpy.log(float(ILStats['bimodal']['std1']))-(float(IL_Length)-float(ILStats['bimodal']['Mean1']))**2/2/float(ILStats['bimodal']['std1'])**2
             log_y2=-0.5*numpy.log(2*numpy.pi)-numpy.log(float(ILStats['bimodal']['std2']))-(float(IL_Length)-float(ILStats['bimodal']['Mean2']))**2/2/float(ILStats['bimodal']['std2'])**2
@@ -12118,7 +12139,7 @@ else:
                         TBStats['bimodal'][pTBS1[i]]=pTBS2[i]
             fTBS.close()
             return TBStats
-        opts,args=getopt.getopt(sys.argv[2:],'o:h:',['help==','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure','qc-map-tool','qc-map-file','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration'])
+        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['help=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         CN2_Region={}
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
@@ -12163,7 +12184,7 @@ else:
                         if '--chromosome' in dict_opts.keys():
                             chrom_single=dict_opts['--chromosome']
                             if not chrom_single in chromos:
-                                print 'Error: please make sure the chromosome defined by --chr is correct based on the reference genome'
+                                print 'Error: please make sure the chromosome defined by --chromosome is correct based on the reference genome'
                                 chromos=[]
                             else:
                                 chromos=[chrom_single]
