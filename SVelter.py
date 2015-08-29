@@ -7568,7 +7568,7 @@ else:
             Regulator=1
             ILTemp=[j/Regulator for j in Regu_IL]
             RDTemp=[i for i in Regu_RD]
-            return [ILTemp,RDTemp]
+            return [ILTemp,RDTemp,Letter_Rec,BP_Rec,Regu_IL,Regu_RD]
         def score_rec_hash_Modify_for_short_del(Score_rec_hash):
             Score_rec_hash_new={}
             for x in sorted(Score_rec_hash.keys())[::-1][:1]:
@@ -7593,6 +7593,10 @@ else:
             IL_RD_Temp_Info=Af_Rearrange_Info_Collect(Letter_Candidates)
             ILTemp=IL_RD_Temp_Info[0]
             RDTemp=IL_RD_Temp_Info[1]
+            Letter_Rec=IL_RD_Temp_Info[2]
+            BP_Rec=IL_RD_Temp_Info[3]
+            Regu_IL=IL_RD_Temp_Info[4]
+            Regu_RD=IL_RD_Temp_Info[5]
             if not ILTemp==[]:
                 DECISION_Score=Move_Decide_3(ILTemp,RDTemp,GC_Overall_Median_Num,GC_Var_Coverage)
                 Best_Letter_Rec=[Letter_Rec[DECISION_Score[0]]]
@@ -7620,6 +7624,10 @@ else:
             IL_RD_Temp_Info=Af_Rearrange_Info_Collect(Letter_Candidates)
             ILTemp=IL_RD_Temp_Info[0]
             RDTemp=IL_RD_Temp_Info[1]
+            Letter_Rec=IL_RD_Temp_Info[2]
+            BP_Rec=IL_RD_Temp_Info[3]
+            Regu_IL=IL_RD_Temp_Info[4]
+            Regu_RD=IL_RD_Temp_Info[5]
             if not ILTemp==[]:
                 DECISION_Score=Move_Decide_3(ILTemp,RDTemp,GC_Overall_Median_Num,GC_Var_Coverage)
                 Best_Letter_Rec=[Letter_Rec[DECISION_Score[0]]]
@@ -7646,6 +7654,10 @@ else:
             IL_RD_Temp_Info=Af_Rearrange_Info_Collect(Letter_Candidates)
             ILTemp=IL_RD_Temp_Info[0]
             RDTemp=IL_RD_Temp_Info[1]
+            Letter_Rec=IL_RD_Temp_Info[2]
+            BP_Rec=IL_RD_Temp_Info[3]
+            Regu_IL=IL_RD_Temp_Info[4]
+            Regu_RD=IL_RD_Temp_Info[5]
             if not ILTemp==[]:
                 DECISION_Score=Move_Decide_3(ILTemp,RDTemp,GC_Overall_Median_Num,GC_Var_Coverage)
                 Best_Letter_Rec=[Letter_Rec[DECISION_Score[0]]]
@@ -7757,6 +7769,10 @@ else:
             IL_RD_Temp_Info=Af_Rearrange_Info_Collect(Letter_Candidates)
             ILTemp=IL_RD_Temp_Info[0]
             RDTemp=IL_RD_Temp_Info[1]
+            Letter_Rec=IL_RD_Temp_Info[2]
+            BP_Rec=IL_RD_Temp_Info[3]
+            Regu_IL=IL_RD_Temp_Info[4]
+            Regu_RD=IL_RD_Temp_Info[5]
             if not ILTemp==[]:
                 DECISION_Score=Move_Decide_3(ILTemp,RDTemp,GC_Overall_Median_Num,GC_Var_Coverage)
                 Best_Letter_Rec=[Letter_Rec[DECISION_Score[0]]]
@@ -8122,6 +8138,7 @@ else:
             pin=fin.readline().strip().split()
             pin=fin.readline().strip().split()
             pin=fin.readline().strip().split()
+            global Window_Size
             Window_Size=int(pin[0])/3                   
             for line in fin:
                 pin=line.strip().split()
@@ -8153,7 +8170,7 @@ else:
             global IL_Penal_Two_End_Limit
             IL_Penal_Two_End_Limit=min([pdf_calculate(IL_Estimate-3*IL_SD,IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero),pdf_calculate(IL_Estimate+3*IL_SD,IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero)])
             global low_qual_edge
-                low_qual_edge=5
+            low_qual_edge=5
         def bps_info_ReadIn(Input_File):
             global bps_hash
             global bps_temp
@@ -8208,8 +8225,8 @@ else:
             Coverage=[int(k) for k in GC_Stat[2][1:]]
             global GC_Overall_Median_Coverage
             GC_Overall_Median_Coverage={}
-            global GC_Overall_Median_Num
-            GC_Overall_Median_Num=[]
+            global GC_Overall_Median_Num_a
+            GC_Overall_Median_Num_a=[]
             global GC_Median_Coverage
             GC_Median_Coverage={}
             global GC_Median_Num
@@ -8230,7 +8247,7 @@ else:
                             num_list=[float(c) for c in GC_Content_Coverage[a][b][0][2:].split(',')]
                             if not sum(num_list)==0:
                                 GC_Median_Num[b]+=num_list
-                                GC_Overall_Median_Num+=num_list
+                                GC_Overall_Median_Num_a+=num_list
                                 GC_Overall_temp=GC_Overall_temp+num_list
                                 if not Median_Pick(num_list)==0.0:
                                     if not a in GC_Median_Coverage.keys():
@@ -8244,7 +8261,7 @@ else:
                         GC_Std_Coverage[a]=numpy.std(GC_Overall_temp)
                         GC_Var_Coverage[a]=(GC_Std_Coverage[a])**2
             global GC_Overall_Median_Num
-            GC_Overall_Median_Num=Median_Pick(GC_Overall_Median_Num)
+            GC_Overall_Median_Num=Median_Pick(GC_Overall_Median_Num_a)
             for a in GC_Median_Num.keys():
                 if GC_Median_Num[a]==[]:
                     GC_Median_Num[a]=GC_Overall_Median_Num
@@ -8356,7 +8373,7 @@ else:
                             GC_RD_Info_Complete(ref_file)
                             RD_Stat_Info_Readin()
                             for bpsk1 in sorted(bps_hash.keys()):
-                                for bps2 in bps_hash[bpsk1][1:2]:
+                                for bps2 in bps_hash[bpsk1]:
                                     if qual_check_bps2(bps2)=='right':
                                         Chromo=bps2[0][0]
                                         K_RD=GC_Std_Coverage[str(Chromo)]/GC_Mean_Coverage[str(Chromo)]
