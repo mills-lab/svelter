@@ -31,7 +31,9 @@ SVelter.py  [options]  [parameters]
 
 ####Optional:
 
-`--null-model`, specify which stat model to be fitted on each parameter. if --null-model==C / Complex, negative bimodal distribution will be fitted to insertlenth; else, normal will be used
+`--null-model`
+
+specify which stat model to be fitted on each parameter. if --null-model==C / Complex, negative bimodal distribution will be fitted to insertlenth; else, normal will be used
 
 `--null-copyneutral-length`, minimum length requirement for --copyneutral regions used to build null model (default: 2000)
 
