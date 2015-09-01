@@ -35,33 +35,75 @@ SVelter.py  [options]  [parameters]
 
 specify which stat model to be fitted on each parameter. if --null-model==C / Complex, negative bimodal distribution will be fitted to insertlenth; else, normal will be used
 
-`--null-copyneutral-length`, minimum length requirement for --copyneutral regions used to build null model (default: 2000)
 
-`--null-copyneutral-perc`, percentage of regions from --copyneutral to utilize (default: 0.1)
+`--null-copyneutral-length`
 
-`--null-random-length`, specify the length of random regions if --copyneutral parameter not used (default: 5000)
+minimum length requirement for --copyneutral regions used to build null model (default: 2000)
 
-`--null-random-num`, specify the number of random regions if --copyneutral parameter not used (default: 10000)
 
-`--num-iteration`, maximum number of iterations per structure will run in SV predicting step
+`--null-copyneutral-perc`
 
-`--qc-map-tool`, the tool extracts mappability information from a bigWig file,avaliable from: http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bigWigSummary
+percentage of regions from --copyneutral to utilize (default: 0.1)
 
-`--qc-map-file`, .bigWig file used to decide local genomic mappability, avaliable from: ftp://hgdownload.cse.ucsc.edu/goldenPath/currentGenomes/Homo_sapiens/encodeDCC/wgEncodeMapability/ 
 
-`--qc-map-cutoff`, the minimum mapping quality required for a breakpoint to be reported (default: 0.0)
+`--null-random-length`
 
-`--qc-align`, minimum alignment quality required for mapped reads in bam file (default: 20)
+specify the length of random regions if --copyneutral parameter not used (default: 5000)
 
-`--qc-split`, minimum alighment of clipped parts of reads considered as a soft clip (default: 20)
 
-`--qc-structure`, minimum quality score of a resolved structure to be considered as PASS and included in the output vcf file
+`--null-random-num`
 
-`--split-min-len`, the minumum length of clip read considered as split; (default:10% of read length)
+specify the number of random regions if --copyneutral parameter not used (default: 10000)
 
-`--prefix`, output prefix for vcf and svelter files (default: input.vcf, input.svelter)
 
-`--ploidy`, limit algorithm to specific zygosity (0:heterozygous only; 1:homozygous only; 2:both; default:2)
+`--num-iteration`
+
+maximum number of iterations per structure will run in SV predicting step
+
+
+`--qc-map-tool`
+
+the tool extracts mappability information from a bigWig file,avaliable from: http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bigWigSummary
+
+
+`--qc-map-file`
+
+.bigWig file used to decide local genomic mappability, avaliable from: ftp://hgdownload.cse.ucsc.edu/goldenPath/currentGenomes/Homo_sapiens/encodeDCC/wgEncodeMapability/ 
+
+
+`--qc-map-cutoff`
+
+the minimum mapping quality required for a breakpoint to be reported (default: 0.0)
+
+
+`--qc-align`
+
+minimum alignment quality required for mapped reads in bam file (default: 20)
+
+
+`--qc-split`
+
+minimum alighment of clipped parts of reads considered as a soft clip (default: 20)
+
+
+`--qc-structure`
+
+minimum quality score of a resolved structure to be considered as PASS and included in the output vcf file
+
+
+`--split-min-len`
+
+the minumum length of clip read considered as split; (default:10% of read length)
+
+
+`--prefix`
+
+output prefix for vcf and svelter files (default: input.vcf, input.svelter)
+
+
+`--ploidy`
+
+limit algorithm to specific zygosity (0:heterozygous only; 1:homozygous only; 2:both; default:2)
 
 
 ###Attentions:
