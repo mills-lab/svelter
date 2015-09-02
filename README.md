@@ -80,7 +80,7 @@ SVelter.py  [options]  [parameters]
 --ploidy, limit algorithm to specific zygosity (0:heterozygous only; 1:homozygous only; 2:both; default:2)
 ```
 
-###Attentions:
+###Attention:
 
 > reference file should have been indexed by calling samtools first:  `samtools faidx ref.fasta`
 
