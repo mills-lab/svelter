@@ -21,7 +21,7 @@ Index Reference genome
 ``` 
 SVelter.py Index --reference reference.fa --workdir /working/directory --exclude exclude.ref.bed --copyneutral CN2.ref.bed --svelter-path SVelter/ 
 ```
-Run SVelter with its default setting:
+Run SVelter with default parameters:
 ```
 SVelter.py --sample /absolute/path/of/sample.bam --workdir /working/directory
 ```
@@ -152,11 +152,11 @@ limit algorithm to specific zygosity (0:heterozygous only; 1:homozygous only; 2:
 --ploidy, limit algorithm to specific zygosity (0:heterozygous only; 1:homozygous only; 2:both; default:2)
 ```
 
-###Attentions:
+###Attention:
 
 > reference file should have been indexed by calling samtools first:  `samtools faidx ref.fasta`
 
-> working directory is required to be writable for temporal files 
+> working directory is required to be writable for temporary files 
 
 
 
