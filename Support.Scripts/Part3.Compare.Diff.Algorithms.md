@@ -8,8 +8,6 @@ we used several **shell**, **python** and **R** commands to accomplish the whole
 
 `Produce.Pseudo.ROC.stats.py`
 
-
-
 ###Usage 
 SV.Output.Process.py  [options] [parameter]
 ####Options:
@@ -22,7 +20,8 @@ TRA-Control: remove SVs overlap with defined SVs
 ```
 ####Required Parameters:
 ######Parameters for vcf-to-bed:
-```--input: input file
+```
+--input: input file
 ``` 
 ######Parameters for bedpe-to-bed:
 ```
@@ -78,7 +77,6 @@ Produce.Pseudo.ROC.stats.py --path_ref folder/contains/simulatd.sv.bed --path_in
 ###Step7. Visualize
 ```
 ```
-
 
 
 ###Detailed Code Used:
