@@ -46,22 +46,21 @@ TRA-Control: remove SVs overlap with defined SVs
 ```
 
 ##Example Workflow:
-####Step1. Remove low quality calls from vcf / bedpe files
+>####Step1. Remove low quality calls from vcf / bedpe files
 ```
-grep -v LowQual Input.vcf> Input_QC.vcf
+grep -v LowQual Input.vcf>Input_QC.vcf
 ```
 ####Step2. Extract simple SVs from vcf/bedpe file to write in bed format.
 ```
 SV.Output.Process.py vcf --input Input_QC.vcf
 SV.Output.Process.py bedpe --input Input_QC.vcf --reference genome.fa
-
 ```
 ####Step3. Extract only SVs within mappable gemoic regions:
 ```
 SV.Output.Process.py Mappable-Control --input Input_QC.SV.bed --ref-prefix genome.Mappable
 ```
 ####Step4. Remove any predictions that interset with preset Translocations
->as other algorithms we compapre SVelter to tend to misinteprete translocation as deletion+duplication. 
+as other algorithms we compapre SVelter to tend to misinteprete translocation as deletion+duplication. 
 ```
 SV.Output.Process.py TRA-Control --TRA-rec Simulate.TRA.rec --input Input_QC.SV.Mappable.bed
 ```
@@ -72,7 +71,6 @@ SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input S
 ####Step6. Compare predicted SVs against simulated set to decide sensitivity and specificity of each algorithm:
 ```
 Produce.Pseudo.ROC.stats.py --path_ref folder/contains/simulatd.sv.bed --path_in folder/contains/predicted.sv.bed --appdix .Mappable.TRAFree.min100.max1000000000.bed
-
 ```
 ###Step7. Visualize
 ```
@@ -80,14 +78,13 @@ Produce.Pseudo.ROC.stats.py --path_ref folder/contains/simulatd.sv.bed --path_in
 
 
 ###Detailed Code Used:
-
+>!
 #####To process **Simulated Simple Homo** events:
-<
 ######SVelter:
 ```
 change.vcf.name.py -p ./
 
-grep -v LowQual homo_RD10_sorted.vcf > SVelter_QC_homo_RD10_sorted.vcf
+grep -v LowQual homo_RD10_sorted.vcf>SVelter_QC_homo_RD10_sorted.vcf
 SV.Output.Process.py vcf --input SVelter_QC_homo_RD10_sorted.vcf 
 SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD10_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
 SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD10_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
