@@ -29,6 +29,9 @@ Run SVelter with its default setting:
 SVelter.py --sample /absolute/path/of/sample.bam --workdir /working/directory
 ```
 
+##Output
+*SVelter* integrates predicted SVs in both vcf4.1 format and SVelter format. Examples of both could be found under folder *Example*
+
 ##Usage
 SVelter.py  [options]  [parameters]
 
@@ -176,7 +179,7 @@ Optional Parameters:
 --qc-align, minimum alignment quality required for mapped reads in bam file (default: 20)
 ```
 
-####Step5: Write output in vcf format:
+####Step5: Write output in vcf and svelter format:
 ```
 SVelter.py SVIntegrate --workdir /working/directory --prefix output  --input-path path/of/output/from/Step4
 ```
