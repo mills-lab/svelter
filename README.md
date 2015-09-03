@@ -10,6 +10,9 @@ python:   https://www.python.org/
 samtools: http://samtools.sourceforge.net/
 ```
 
+##Supportive files  
+see *Supportive* folder for more details.
+
 ## Quick Start
 Download and Install
 ```
