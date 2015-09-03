@@ -2,9 +2,10 @@
 
 ###Description
 This folder contains two supportive files required for SVelter to run: exclude.ref.bed and CN2.ref.bed.  
-`exclude.ref.bed` indicates genomic regions that would be excluded from SV analysis. Users could either use the files provided in this folder, or their own customized versions to exclude genomic regions that they are not interested in.
 
-`CN2.ref.bed` indicates copy neutral genomic regions, where no SVs have yet been reported. Null distribution of insert size of paired end read pairs and read depth would be built based on such regions. If not provided, SVelter would randomly sample genomic regions for null model foundation.
+`exclude.ref.bed` indicates genomic regions that would be excluded from SV analysis. Users may either use the files provided in this folder, or their own custom version to exclude genomic regions that they are not interested in.
+
+`CN2.ref.bed` indicates copy neutral genomic regions, where no SVs have yet been reported. Null distribution of insert size of paired-end read pairs and read depth are  built based on such regions. If not provided, SVelter would randomly sample genomic regions for null model foundation.
 
 Both files are not required but strongly recommended to be included in the *SVelter Index* step.
 
@@ -16,6 +17,9 @@ wget http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeMapability
 wget http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeMapability/wgEncodeDukeMapabilityRegionsExcludable.bed.gz 
 ```
 
-`CN2.ref.bed` were ... ... 
+`CN2.ref.bed` were obtained from the Genome STRiP reference metadata at the Broad Institute:
+```
+wget ftp://ftp.broadinstitute.org/pub/svtoolkit/reference_metadata_bundles/1000G_phase3_12May2015.tar.gz
+```
 
-*liftover* was used to transfer both files to different version accurding the reference genome used 
+The UCSC Genome Browser tool *liftover* was used to convert both files to different versions according the reference genome used 
