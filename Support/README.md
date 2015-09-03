@@ -18,4 +18,4 @@ wget http://hgdownload.cse.ucsc.edu/goldenPath/hg19/encodeDCC/wgEncodeMapability
 
 `CN2.ref.bed` were ... ... 
 
-
+*liftover* was used to transfer both files to different version accurding the reference genome used 
