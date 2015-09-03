@@ -78,7 +78,7 @@ Produce.Pseudo.ROC.stats.py --path_ref folder/contains/simulatd.sv.bed --path_in
 
 
 ###Detailed Code Used:
->!
+<!---
 #####To process **Simulated Simple Homo** events:
 ######SVelter:
 ```
@@ -928,4 +928,4 @@ ln -s het.het.INV.Mappable.min100.max1000000000.bed SVelter_QC_het_RD50_sorted.I
 ```
 Produce.Pseudo.ROC.stats.py --path_ref rec_sv_TRAFree_rec2_20150903/ --path_in alt_sv_TRAFree_rec2_20150903/ --appdix .Mappable.TRAFree.min100.max1000000000.bed
 ```
->
+-->
