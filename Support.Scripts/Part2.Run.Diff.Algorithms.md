@@ -52,3 +52,16 @@ example of input.config.txt:
 /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.het/BamFiles/het.RD10.sorted.bam	500	het.RD10.sorted.bam
 ```
 
+#### Detailed Code Used:
+######SVelter
+```
+```
+######Delly
+```
+```
+######Lumpy
+```
+```
+######Pindel
+```
+```
