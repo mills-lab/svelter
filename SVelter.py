@@ -26,8 +26,8 @@ script_name=sys.argv[0]
 if len(sys.argv)<2:
     print 'SVelter-0.1          Last Update:2015-08-20'
     print ''
-    print 'SVelter.py Index should be run first:'
-    print 'SVelter.py Index [parameters]'
+    print 'SVelter.py Setup should be run first:'
+    print 'SVelter.py Setup [parameters]'
     print 'Required Parameters:'
     print '--workdir, writable working directory.'
     print '--reference, absolute path of reference genome. eg: .../SVelter/reference/genome.fa'
@@ -69,7 +69,7 @@ if len(sys.argv)<2:
     print 'for more details, please see: README'
 else:
     function_name=sys.argv[1]
-    if function_name=='Index':
+    if function_name=='Setup':
         def File_Path_Modify(dict_opts):
             if not dict_opts.has_key('-p'):
                 dict_opts['-p']='./'
@@ -247,6 +247,9 @@ else:
                         Gap_Hash_Ref1[pgap[0]]=[]
                     Gap_Hash_Ref1[pgap[0]].append(pgap[1:4])
                 fgap.close()
+            for x in chromos:
+                if not x in Gap_Hash_Ref1.keys():
+                    Gap_Hash_Ref1[x]=['0','0']
             return Gap_Hash_Ref1
         def write_ExcludeBed(ExcludeBed):
             if not os.path.isfile(ExcludeBed):
@@ -317,7 +320,11 @@ else:
             Gap_Hash={}
             for chr_ex in chromos:
                 Gap_Hash[chr_ex]=[]
-        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['help=','batch=','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
+        def file_initiate(file_name):
+            if not os.path.isfile(file_name):
+                fo=open(file_name,'w')
+                fo.close()
+        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['ref-index=','help=','batch=','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         Code_path='/'.join(sys.argv[0].split('/')[:-1])+'/'
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
@@ -329,6 +336,8 @@ else:
             print '--exclude, absolute path of bed file indicating regions to be excluded from analysis. If not provided, no mappable regions will be excluded.'
             print '--copyneutral,absolute, path of bed file indicating copy neutural regions based on which null statistical models would be built. If not provided, genome would be randomly sampled for null model.'
             print '--svelter-path, folder which contains all SVelter scripts.'
+            print 'Optional Parameters:'
+            print '--ref-index, folders containin pre-indexed files, if applicable. For certain versions of human genome, the indexed files are availabel from https://github.com/mills-lab/svelter.'
         else:
             if not '--workdir' in dict_opts.keys():
                 print 'working directory not specified'
@@ -360,6 +369,11 @@ else:
                             os.system(r'''ln -s %s %s'''%(dict_opts['--svelter-path']+'/SVelter*.r',ref_path))  
                             os.system(r'''ln -s %s %s'''%(ref_file,ref_path+'genome.fa'))
                             os.system(r'''ln -s %s %s'''%(ref_index,ref_path+'genome.fa.fai'))
+                            if '--ref-index' in dict_opts.keys():
+                                if os.path.isdir(dict_opts['--ref-index']):
+                                    ref_index_path=path_modify(dict_opts['--ref-index'])
+                                    for ref_index_file in os.listdir(ref_index_path):
+                                        os.system(r'''ln -s %s %s'''%(ref_index_path+ref_index_file,ref_path))  
                             if '--copyneutral' in dict_opts.keys():
                                 os.system(r'''ln -s %s %s'''%(dict_opts['--copyneutral'],ref_path+'CN2.bed'))
                             if '--exclude' in dict_opts.keys():
@@ -375,10 +389,12 @@ else:
                         Gap_Refs=[ExcludeBed]
                         Gap_Hash_Ref1=Gap_Hash_Ref1_read_in(Gap_Refs)
                         Gap_Hash_Initiate(chromos)
-                        for chrom in chromos:
-                            fout_Name='.'.join(ref_file.split('.')[:-1])+'.Mappable.'+chrom+'.bed'
-                            fout_N2='.'.join(ref_file.split('.')[:-1])+'.GC_Content.'+chrom
-                            if not os.path.isfile(fout_Name):
+                        fout_Name='.'.join(ref_file.split('.')[:-1])+'.Mappable.bed'
+                        fout_N2='.'.join(ref_file.split('.')[:-1])+'.GC_Content'
+                        if not os.path.isfile(fout_Name):
+                            file_initiate(fout_Name)
+                            file_initiate(fout_N2)                        
+                            for chrom in chromos:
                                 fref=os.popen(r'''samtools faidx %s %s:'''%(ref_file,chrom))
                                 pref=fref.readline().strip().split()
                                 while True:
@@ -386,8 +402,8 @@ else:
                                     if not pref:break
                                     Gap_Hash[chrom].append(pref[0])
                                 fref.close()
-                                fout=open(fout_Name,'w')
-                                fout2=open(fout_N2,'w')
+                                fout=open(fout_Name,'a')
+                                fout2=open(fout_N2,'a')
                                 hash_key=chrom
                                 if not Gap_Hash[hash_key]==[]:
                                     hash_to_Seq=''.join(Gap_Hash[hash_key])
@@ -2340,7 +2356,7 @@ else:
                                 for chrF in chromos:
                                     bamF_Name=bamF.split('/')[-1].replace('.bam','')
                                     floc_Name=BPPath+bamF_Name+'.'+chrF
-                                    Refloc_name='.'.join(ref_file.split('.')[:-1])+'.Mappable.'+chrF+'.bed'
+                                    Refloc_name='.'.join(ref_file.split('.')[:-1])+'.Mappable.bed'
                                     stat_file_name(bamF_Name,genome_name)
                                     if os.path.isfile(Refloc_name):
                                         BamInput=bamF
@@ -5048,9 +5064,8 @@ else:
             block_range={}
             GC_hash={}
             test_flag=0
-            for i in chr_letter_bp.keys():
-                if not os.path.isfile(filein+'.'+str(i)):
-                    test_flag+=1
+            if not os.path.isfile(filein):
+                test_flag+=1
             if test_flag==0:
                 for i in chr_letter_bp.keys():
                     GC_hash[i]={}
@@ -5058,17 +5073,11 @@ else:
                     for j in chr_letter_bp[i].keys():
                         block_range[i]+=chr_letter_bp[i][j]
                     block_range[i]=[min(block_range[i]),max(block_range[i])]
-                    fin=open(filein+'.'+str(i))
+                    fin=open(filein)
                     while True:
                         pin=fin.readline().strip().split()
                         if not pin: break
                         pin2=fin.readline().strip().split()
-                        if 'chr' in block_range.keys()[0]:
-                            if not 'chr' in pin[0]:
-                                pin[0]='chr'+pin[0]
-                        elif not 'chr' in block_range.keys()[0]:
-                            if 'chr' in pin[0]:
-                                pin[0]=pin[0][3:]
                         if pin[0] in block_range.keys():
                             if not int(pin[2])<block_range[pin[0]][0] and not int(pin[1])>block_range[pin[0]][1]:
                                 GC_hash[pin[0]][pin[1]+'-'+pin[2]]=pin2
@@ -10581,7 +10590,7 @@ else:
                             time2=time.time()
                             print 'SVIntegrate Complete !'
                             print 'Time Consuming: '+str(time2-time1)
-    if not function_name in ['Index','NullModel','BPSearch','BPIntegrate','SVPredict','SVIntegrate']:
+    if not function_name in ['Setup','NullModel','BPSearch','BPIntegrate','SVPredict','SVIntegrate']:
         def Define_Default_AllInOne():
             if '--core' in dict_opts.keys():
                 global pool
@@ -10650,7 +10659,7 @@ else:
         def check_scripts(Code_path):
             flag=0
             out=[]
-            Code0_file=Code_path+'SVelter0.Ref.Index.py'
+            Code0_file=Code_path+'SVelter0.Ref.Setup.py'
             if not os.path.isfile(Code0_file):
                 flag+=1
                 out.append(Code0_file)
@@ -10748,7 +10757,7 @@ else:
             global Code1d_file
             global Code1d2_file
             Code_File=script_name
-            Code0_Function='Index'
+            Code0_Function='Setup'
             Code1_Function='NullModel'
             Code2_Function='BPSearch'
             Code3_Function='BPIntegrate'
