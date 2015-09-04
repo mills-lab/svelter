@@ -85,79 +85,79 @@ Produce.Pseudo.ROC.stats.py --path_ref folder/contains/simulatd.sv.bed --path_in
 change.vcf.name.py -p ./
 
 grep -v LowQual homo_RD10_sorted.vcf>SVelter_QC_homo_RD10_sorted.vcf
-SV.Output.Process.py vcf --input SVelter_QC_homo_RD10_sorted.vcf 
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD10_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD10_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD10_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD10_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD10_sorted.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD10_sorted.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD10_sorted.INV.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD10_sorted.DUP.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD10_sorted.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD10_sorted.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD10_sorted.INV.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD10_sorted.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input SVelter_QC_homo_RD10_sorted.vcf 
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD10_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD10_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD10_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD10_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD10_sorted.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD10_sorted.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD10_sorted.INV.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD10_sorted.DUP.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD10_sorted.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD10_sorted.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD10_sorted.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD10_sorted.DUP.Mappable.TRAFree.bed
 
 grep -v LowQual homo_RD20_sorted.vcf > SVelter_QC_homo_RD20_sorted.vcf
-SV.Output.Process.py vcf --input SVelter_QC_homo_RD20_sorted.vcf 
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD20_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD20_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD20_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD20_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD20_sorted.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD20_sorted.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD20_sorted.INV.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD20_sorted.DUP.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD20_sorted.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD20_sorted.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD20_sorted.INV.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD20_sorted.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input SVelter_QC_homo_RD20_sorted.vcf 
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD20_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD20_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD20_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD20_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD20_sorted.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD20_sorted.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD20_sorted.INV.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD20_sorted.DUP.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD20_sorted.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD20_sorted.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD20_sorted.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD20_sorted.DUP.Mappable.TRAFree.bed
 
 grep -v LowQual homo_RD30_sorted.vcf > SVelter_QC_homo_RD30_sorted.vcf
-SV.Output.Process.py vcf --input SVelter_QC_homo_RD30_sorted.vcf 
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD30_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD30_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD30_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD30_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD30_sorted.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD30_sorted.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD30_sorted.INV.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD30_sorted.DUP.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD30_sorted.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD30_sorted.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD30_sorted.INV.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD30_sorted.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input SVelter_QC_homo_RD30_sorted.vcf 
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD30_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD30_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD30_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD30_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD30_sorted.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD30_sorted.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD30_sorted.INV.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD30_sorted.DUP.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD30_sorted.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD30_sorted.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD30_sorted.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD30_sorted.DUP.Mappable.TRAFree.bed
 
 grep -v LowQual homo_RD40_sorted.vcf > SVelter_QC_homo_RD40_sorted.vcf
-SV.Output.Process.py vcf --input SVelter_QC_homo_RD40_sorted.vcf 
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD40_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD40_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD40_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD40_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD40_sorted.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD40_sorted.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD40_sorted.INV.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD40_sorted.DUP.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD40_sorted.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD40_sorted.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD40_sorted.INV.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD40_sorted.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input SVelter_QC_homo_RD40_sorted.vcf 
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD40_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD40_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD40_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD40_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD40_sorted.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD40_sorted.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD40_sorted.INV.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD40_sorted.DUP.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD40_sorted.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD40_sorted.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD40_sorted.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD40_sorted.DUP.Mappable.TRAFree.bed
 
 grep -v LowQual homo_RD50_sorted.vcf > SVelter_QC_homo_RD50_sorted.vcf
-SV.Output.Process.py vcf --input SVelter_QC_homo_RD50_sorted.vcf 
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD50_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD50_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD50_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD50_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD50_sorted.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD50_sorted.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD50_sorted.INV.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD50_sorted.DUP.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD50_sorted.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD50_sorted.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD50_sorted.INV.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD50_sorted.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input SVelter_QC_homo_RD50_sorted.vcf 
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD50_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD50_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD50_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_homo_RD50_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD50_sorted.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD50_sorted.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD50_sorted.INV.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input SVelter_QC_homo_RD50_sorted.DUP.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD50_sorted.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD50_sorted.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD50_sorted.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_homo_RD50_sorted.DUP.Mappable.TRAFree.bed
 ```
 ######Delly
 ```
@@ -167,91 +167,91 @@ grep -v LowQual homo_RD10_DEL.vcf > Delly_QC_homo_RD10_DEL.vcf
 grep -v LowQual homo_RD10_DUP.vcf > Delly_QC_homo_RD10_DUP.vcf
 grep -v LowQual homo_RD10_INV.vcf > Delly_QC_homo_RD10_INV.vcf
 grep -v LowQual homo_RD10_TRA.vcf > Delly_QC_homo_RD10_TRA.vcf
-SV.Output.Process.py vcf --input Delly_QC_homo_RD10_DEL.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD10_DUP.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD10_INV.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD10_TRA.vcf  
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD10_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD10_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD10_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD10_DEL.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD10_DUP.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD10_INV.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD10_DEL.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD10_DUP.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD10_INV.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD10_DEL.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD10_DUP.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD10_INV.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD10_TRA.vcf  
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD10_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD10_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD10_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD10_DEL.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD10_DUP.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD10_INV.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD10_DEL.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD10_DUP.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD10_INV.INV.Mappable.TRAFree.bed
 
 grep -v LowQual homo_RD20_DEL.vcf > Delly_QC_homo_RD20_DEL.vcf
 grep -v LowQual homo_RD20_DUP.vcf > Delly_QC_homo_RD20_DUP.vcf
 grep -v LowQual homo_RD20_INV.vcf > Delly_QC_homo_RD20_INV.vcf
 grep -v LowQual homo_RD20_TRA.vcf > Delly_QC_homo_RD20_TRA.vcf
-SV.Output.Process.py vcf --input Delly_QC_homo_RD20_DEL.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD20_DUP.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD20_INV.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD20_TRA.vcf  
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD20_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD20_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD20_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD20_DEL.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD20_DUP.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD20_INV.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD20_DEL.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD20_DUP.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD20_INV.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD20_DEL.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD20_DUP.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD20_INV.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD20_TRA.vcf  
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD20_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD20_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD20_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD20_DEL.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD20_DUP.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD20_INV.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD20_DEL.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD20_DUP.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD20_INV.INV.Mappable.TRAFree.bed
 
 grep -v LowQual homo_RD30_DEL.vcf > Delly_QC_homo_RD30_DEL.vcf
 grep -v LowQual homo_RD30_DUP.vcf > Delly_QC_homo_RD30_DUP.vcf
 grep -v LowQual homo_RD30_INV.vcf > Delly_QC_homo_RD30_INV.vcf
 grep -v LowQual homo_RD30_TRA.vcf > Delly_QC_homo_RD30_TRA.vcf
-SV.Output.Process.py vcf --input Delly_QC_homo_RD30_DEL.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD30_DUP.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD30_INV.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD30_TRA.vcf  
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD30_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD30_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD30_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD30_DEL.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD30_DUP.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD30_INV.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD30_DEL.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD30_DUP.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD30_INV.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD30_DEL.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD30_DUP.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD30_INV.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD30_TRA.vcf  
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD30_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD30_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD30_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD30_DEL.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD30_DUP.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD30_INV.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD30_DEL.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD30_DUP.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD30_INV.INV.Mappable.TRAFree.bed
 
 grep -v LowQual homo_RD40_DEL.vcf > Delly_QC_homo_RD40_DEL.vcf
 grep -v LowQual homo_RD40_DUP.vcf > Delly_QC_homo_RD40_DUP.vcf
 grep -v LowQual homo_RD40_INV.vcf > Delly_QC_homo_RD40_INV.vcf
 grep -v LowQual homo_RD40_TRA.vcf > Delly_QC_homo_RD40_TRA.vcf
-SV.Output.Process.py vcf --input Delly_QC_homo_RD40_DEL.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD40_DUP.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD40_INV.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD40_TRA.vcf  
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD40_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD40_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD40_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD40_DEL.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD40_DUP.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD40_INV.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD40_DEL.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD40_DUP.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD40_INV.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD40_DEL.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD40_DUP.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD40_INV.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD40_TRA.vcf  
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD40_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD40_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD40_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD40_DEL.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD40_DUP.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD40_INV.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD40_DEL.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD40_DUP.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD40_INV.INV.Mappable.TRAFree.bed
 
 grep -v LowQual homo_RD50_DEL.vcf > Delly_QC_homo_RD50_DEL.vcf
 grep -v LowQual homo_RD50_DUP.vcf > Delly_QC_homo_RD50_DUP.vcf
 grep -v LowQual homo_RD50_INV.vcf > Delly_QC_homo_RD50_INV.vcf
 grep -v LowQual homo_RD50_TRA.vcf > Delly_QC_homo_RD50_TRA.vcf
-SV.Output.Process.py vcf --input Delly_QC_homo_RD50_DEL.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD50_DUP.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD50_INV.vcf  
-SV.Output.Process.py vcf --input Delly_QC_homo_RD50_TRA.vcf  
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD50_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD50_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_homo_RD50_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD50_DEL.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD50_DUP.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD50_INV.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD50_DEL.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD50_DUP.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD50_INV.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD50_DEL.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD50_DUP.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD50_INV.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_homo_RD50_TRA.vcf  
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD50_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD50_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_homo_RD50_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD50_DEL.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD50_DUP.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Delly_QC_homo_RD50_INV.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD50_DEL.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD50_DUP.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_homo_RD50_INV.INV.Mappable.TRAFree.bed
 
 ln -s Delly_QC_homo_RD10_DUP.DUP.Mappable.TRAFree.min100.max1000000000.bed Delly_QC_homo_RD10_DUP_TANDEM.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
 ln -s Delly_QC_homo_RD20_DUP.DUP.Mappable.TRAFree.min100.max1000000000.bed Delly_QC_homo_RD20_DUP_TANDEM.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
@@ -264,64 +264,64 @@ ln -s Delly_QC_homo_RD50_DUP.DUP.Mappable.TRAFree.min100.max1000000000.bed Delly
 change.bedpe.name.py -p ./
 
 mv homo_RD10_pesr.bedpe Lumpy_QC_RD10_pesr.bedpe
-SV.Output.Process.py bedpe --input Lumpy_QC_RD10_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD10_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD10_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD10_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD10_pesr.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD10_pesr.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD10_pesr.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD10_pesr.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD10_pesr.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD10_pesr.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py bedpe --input Lumpy_QC_RD10_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD10_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD10_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD10_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD10_pesr.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD10_pesr.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD10_pesr.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD10_pesr.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD10_pesr.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD10_pesr.INV.Mappable.TRAFree.bed
 
 mv homo_RD20_pesr.bedpe Lumpy_QC_RD20_pesr.bedpe
-SV.Output.Process.py bedpe --input Lumpy_QC_RD20_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD20_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD20_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD20_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD20_pesr.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD20_pesr.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD20_pesr.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD20_pesr.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD20_pesr.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD20_pesr.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py bedpe --input Lumpy_QC_RD20_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD20_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD20_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD20_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD20_pesr.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD20_pesr.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD20_pesr.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD20_pesr.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD20_pesr.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD20_pesr.INV.Mappable.TRAFree.bed
 
 mv homo_RD30_pesr.bedpe Lumpy_QC_RD30_pesr.bedpe
-SV.Output.Process.py bedpe --input Lumpy_QC_RD30_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta 
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD30_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD30_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD30_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD30_pesr.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD30_pesr.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD30_pesr.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD30_pesr.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD30_pesr.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD30_pesr.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py bedpe --input Lumpy_QC_RD30_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta 
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD30_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD30_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD30_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD30_pesr.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD30_pesr.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD30_pesr.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD30_pesr.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD30_pesr.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD30_pesr.INV.Mappable.TRAFree.bed
 
 mv homo_RD40_pesr.bedpe Lumpy_QC_RD40_pesr.bedpe
-SV.Output.Process.py bedpe --input Lumpy_QC_RD40_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta 
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD40_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD40_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD40_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD40_pesr.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD40_pesr.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD40_pesr.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD40_pesr.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD40_pesr.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD40_pesr.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py bedpe --input Lumpy_QC_RD40_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta 
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD40_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD40_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD40_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD40_pesr.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD40_pesr.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD40_pesr.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD40_pesr.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD40_pesr.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD40_pesr.INV.Mappable.TRAFree.bed
 
 mv homo_RD50_pesr.bedpe Lumpy_QC_RD50_pesr.bedpe
-SV.Output.Process.py bedpe --input Lumpy_QC_RD50_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta 
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD50_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD50_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD50_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD50_pesr.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD50_pesr.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD50_pesr.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD50_pesr.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD50_pesr.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD50_pesr.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py bedpe --input Lumpy_QC_RD50_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta 
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD50_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD50_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD50_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD50_pesr.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD50_pesr.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Lumpy_QC_RD50_pesr.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD50_pesr.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD50_pesr.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD50_pesr.INV.Mappable.TRAFree.bed
 
 ln -s Lumpy_QC_RD10_pesr.DUP.Mappable.TRAFree.min100.max1000000000.bed Lumpy_QC_RD10_pesr.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
 ln -s Lumpy_QC_RD20_pesr.DUP.Mappable.TRAFree.min100.max1000000000.bed Lumpy_QC_RD20_pesr.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
@@ -335,68 +335,68 @@ change.vcf.name.py -p ./
 
 vcf.size.filter.py -i Pindel_homo_RD_10.vcf --size 100
 grep -v LowQual Pindel_homo_RD_10.LargerThan100.vcf > Pindel_QC_homo_RD10_LargerThan100.vcf
-SV.Output.Process.py vcf --input Pindel_QC_homo_RD10_LargerThan100.vcf
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD10_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD10_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD10_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD10_LargerThan100.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD10_LargerThan100.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD10_LargerThan100.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD10_LargerThan100.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD10_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD10_LargerThan100.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Pindel_QC_homo_RD10_LargerThan100.vcf
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD10_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD10_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD10_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD10_LargerThan100.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD10_LargerThan100.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD10_LargerThan100.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD10_LargerThan100.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD10_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD10_LargerThan100.INV.Mappable.TRAFree.bed
 
 vcf.size.filter.py -i Pindel_homo_RD_20.vcf --size 100
 grep -v LowQual Pindel_homo_RD_20.LargerThan100.vcf > Pindel_QC_homo_RD20_LargerThan100.vcf
-SV.Output.Process.py vcf --input Pindel_QC_homo_RD20_LargerThan100.vcf
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD20_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD20_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD20_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD20_LargerThan100.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD20_LargerThan100.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD20_LargerThan100.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD20_LargerThan100.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD20_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD20_LargerThan100.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Pindel_QC_homo_RD20_LargerThan100.vcf
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD20_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD20_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD20_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD20_LargerThan100.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD20_LargerThan100.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD20_LargerThan100.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD20_LargerThan100.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD20_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD20_LargerThan100.INV.Mappable.TRAFree.bed
 
 vcf.size.filter.py -i Pindel_homo_RD_30.vcf --size 100
 grep -v LowQual Pindel_homo_RD_30.LargerThan100.vcf > Pindel_QC_homo_RD30_LargerThan100.vcf
-SV.Output.Process.py vcf --input Pindel_QC_homo_RD30_LargerThan100.vcf
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD30_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD30_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD30_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD30_LargerThan100.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD30_LargerThan100.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD30_LargerThan100.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD30_LargerThan100.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD30_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD30_LargerThan100.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Pindel_QC_homo_RD30_LargerThan100.vcf
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD30_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD30_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD30_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD30_LargerThan100.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD30_LargerThan100.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD30_LargerThan100.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD30_LargerThan100.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD30_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD30_LargerThan100.INV.Mappable.TRAFree.bed
 
 vcf.size.filter.py -i Pindel_homo_RD_40.vcf --size 100
 grep -v LowQual Pindel_homo_RD_40.LargerThan100.vcf > Pindel_QC_homo_RD40_LargerThan100.vcf
-SV.Output.Process.py vcf --input Pindel_QC_homo_RD40_LargerThan100.vcf
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD40_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD40_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD40_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD40_LargerThan100.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD40_LargerThan100.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD40_LargerThan100.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD40_LargerThan100.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD40_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD40_LargerThan100.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Pindel_QC_homo_RD40_LargerThan100.vcf
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD40_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD40_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD40_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD40_LargerThan100.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD40_LargerThan100.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD40_LargerThan100.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD40_LargerThan100.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD40_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD40_LargerThan100.INV.Mappable.TRAFree.bed
 
 vcf.size.filter.py -i Pindel_homo_RD_50.vcf --size 100
 grep -v LowQual Pindel_homo_RD_50.LargerThan100.vcf > Pindel_QC_homo_RD50_LargerThan100.vcf
-SV.Output.Process.py vcf --input Pindel_QC_homo_RD50_LargerThan100.vcf
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD50_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD50_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD50_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD50_LargerThan100.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD50_LargerThan100.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD50_LargerThan100.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD50_LargerThan100.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD50_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD50_LargerThan100.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Pindel_QC_homo_RD50_LargerThan100.vcf
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD50_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD50_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_homo_RD50_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD50_LargerThan100.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD50_LargerThan100.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.homo.FussyJunc/sv_rec/homo.homo.TRA.rec --input Pindel_QC_homo_RD50_LargerThan100.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD50_LargerThan100.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD50_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_homo_RD50_LargerThan100.INV.Mappable.TRAFree.bed
 
 ln -s Pindel_QC_homo_RD10_LargerThan100.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Pindel_QC_homo_RD10_LargerThan100.DUP.Mappable.TRAFree.min100.max1000000000.bed
 ln -s Pindel_QC_homo_RD20_LargerThan100.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Pindel_QC_homo_RD20_LargerThan100.DUP.Mappable.TRAFree.min100.max1000000000.bed
@@ -406,14 +406,14 @@ ln -s Pindel_QC_homo_RD50_LargerThan100.DUP_TANDEM.Mappable.TRAFree.min100.max10
 ```
 Process ref SV for comparison:
 ```
-SV.Output.Process.py Mappable-Control --input homo.homo.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input homo.homo.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input homo.homo.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input homo.homo.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input homo.homo.DEL.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input homo.homo.DUP.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input homo.homo.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input homo.homo.INV.Mappable.bed
+SV.Simple.Output.Process.py Mappable-Control --input homo.homo.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input homo.homo.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input homo.homo.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input homo.homo.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input homo.homo.DEL.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input homo.homo.DUP.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input homo.homo.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input homo.homo.INV.Mappable.bed
 
 ln -s homo.homo.DEL.Mappable.min100.max1000000000.bed Delly_QC_homo_RD10_DEL.DEL.Mappable.min100.max1000000000.bed 
 ln -s homo.homo.DUP.Mappable.min100.max1000000000.bed Delly_QC_homo_RD10_DUP.DUP.Mappable.min100.max1000000000.bed 
@@ -511,79 +511,79 @@ Produce.Pseudo.ROC.stats.py --path_ref rec_sv_TRAFree_rec2_20150903/ --path_in a
 change.vcf.name.py -p ./
 
 grep -v LowQual het_RD10_sorted.vcf > SVelter_QC_het_RD10_sorted.vcf
-SV.Output.Process.py vcf --input SVelter_QC_het_RD10_sorted.vcf 
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD10_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD10_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD10_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD10_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD10_sorted.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD10_sorted.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD10_sorted.INV.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD10_sorted.DUP.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD10_sorted.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD10_sorted.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD10_sorted.INV.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD10_sorted.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input SVelter_QC_het_RD10_sorted.vcf 
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD10_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD10_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD10_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD10_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD10_sorted.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD10_sorted.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD10_sorted.INV.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD10_sorted.DUP.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD10_sorted.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD10_sorted.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD10_sorted.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD10_sorted.DUP.Mappable.TRAFree.bed
 
 grep -v LowQual het_RD20_sorted.vcf > SVelter_QC_het_RD20_sorted.vcf
-SV.Output.Process.py vcf --input SVelter_QC_het_RD20_sorted.vcf 
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD20_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD20_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD20_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD20_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD20_sorted.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD20_sorted.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD20_sorted.INV.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD20_sorted.DUP.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD20_sorted.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD20_sorted.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD20_sorted.INV.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD20_sorted.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input SVelter_QC_het_RD20_sorted.vcf 
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD20_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD20_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD20_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD20_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD20_sorted.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD20_sorted.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD20_sorted.INV.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD20_sorted.DUP.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD20_sorted.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD20_sorted.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD20_sorted.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD20_sorted.DUP.Mappable.TRAFree.bed
 
 grep -v LowQual het_RD30_sorted.vcf > SVelter_QC_het_RD30_sorted.vcf
-SV.Output.Process.py vcf --input SVelter_QC_het_RD30_sorted.vcf 
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD30_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD30_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD30_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD30_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD30_sorted.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD30_sorted.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD30_sorted.INV.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD30_sorted.DUP.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD30_sorted.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD30_sorted.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD30_sorted.INV.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD30_sorted.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input SVelter_QC_het_RD30_sorted.vcf 
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD30_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD30_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD30_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD30_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD30_sorted.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD30_sorted.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD30_sorted.INV.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD30_sorted.DUP.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD30_sorted.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD30_sorted.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD30_sorted.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD30_sorted.DUP.Mappable.TRAFree.bed
 
 grep -v LowQual het_RD40_sorted.vcf > SVelter_QC_het_RD40_sorted.vcf
-SV.Output.Process.py vcf --input SVelter_QC_het_RD40_sorted.vcf 
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD40_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD40_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD40_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD40_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD40_sorted.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD40_sorted.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD40_sorted.INV.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD40_sorted.DUP.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD40_sorted.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD40_sorted.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD40_sorted.INV.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD40_sorted.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input SVelter_QC_het_RD40_sorted.vcf 
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD40_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD40_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD40_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD40_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD40_sorted.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD40_sorted.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD40_sorted.INV.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD40_sorted.DUP.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD40_sorted.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD40_sorted.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD40_sorted.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD40_sorted.DUP.Mappable.TRAFree.bed
 
 grep -v LowQual het_RD50_sorted.vcf > SVelter_QC_het_RD50_sorted.vcf
-SV.Output.Process.py vcf --input SVelter_QC_het_RD50_sorted.vcf 
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD50_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD50_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD50_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input SVelter_QC_het_RD50_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD50_sorted.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD50_sorted.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD50_sorted.INV.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD50_sorted.DUP.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD50_sorted.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD50_sorted.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD50_sorted.INV.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD50_sorted.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input SVelter_QC_het_RD50_sorted.vcf 
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD50_sorted.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD50_sorted.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD50_sorted.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input SVelter_QC_het_RD50_sorted.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD50_sorted.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD50_sorted.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD50_sorted.INV.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input SVelter_QC_het_RD50_sorted.DUP.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD50_sorted.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD50_sorted.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD50_sorted.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input SVelter_QC_het_RD50_sorted.DUP.Mappable.TRAFree.bed
 ```
 ######Delly
 ```
@@ -593,91 +593,91 @@ grep -v LowQual het_RD10_DEL.vcf > Delly_QC_het_RD10_DEL.vcf
 grep -v LowQual het_RD10_DUP.vcf > Delly_QC_het_RD10_DUP.vcf
 grep -v LowQual het_RD10_INV.vcf > Delly_QC_het_RD10_INV.vcf
 grep -v LowQual het_RD10_TRA.vcf > Delly_QC_het_RD10_TRA.vcf
-SV.Output.Process.py vcf --input Delly_QC_het_RD10_DEL.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD10_DUP.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD10_INV.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD10_TRA.vcf  
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD10_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD10_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD10_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD10_DEL.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD10_DUP.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD10_INV.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD10_DEL.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD10_DUP.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD10_INV.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD10_DEL.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD10_DUP.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD10_INV.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD10_TRA.vcf  
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD10_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD10_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD10_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD10_DEL.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD10_DUP.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD10_INV.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD10_DEL.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD10_DUP.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD10_INV.INV.Mappable.TRAFree.bed
 
 grep -v LowQual het_RD20_DEL.vcf > Delly_QC_het_RD20_DEL.vcf
 grep -v LowQual het_RD20_DUP.vcf > Delly_QC_het_RD20_DUP.vcf
 grep -v LowQual het_RD20_INV.vcf > Delly_QC_het_RD20_INV.vcf
 grep -v LowQual het_RD20_TRA.vcf > Delly_QC_het_RD20_TRA.vcf
-SV.Output.Process.py vcf --input Delly_QC_het_RD20_DEL.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD20_DUP.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD20_INV.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD20_TRA.vcf  
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD20_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD20_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD20_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD20_DEL.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD20_DUP.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD20_INV.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD20_DEL.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD20_DUP.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD20_INV.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD20_DEL.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD20_DUP.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD20_INV.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD20_TRA.vcf  
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD20_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD20_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD20_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD20_DEL.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD20_DUP.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD20_INV.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD20_DEL.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD20_DUP.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD20_INV.INV.Mappable.TRAFree.bed
 
 grep -v LowQual het_RD30_DEL.vcf > Delly_QC_het_RD30_DEL.vcf
 grep -v LowQual het_RD30_DUP.vcf > Delly_QC_het_RD30_DUP.vcf
 grep -v LowQual het_RD30_INV.vcf > Delly_QC_het_RD30_INV.vcf
 grep -v LowQual het_RD30_TRA.vcf > Delly_QC_het_RD30_TRA.vcf
-SV.Output.Process.py vcf --input Delly_QC_het_RD30_DEL.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD30_DUP.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD30_INV.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD30_TRA.vcf  
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD30_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD30_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD30_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD30_DEL.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD30_DUP.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD30_INV.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD30_DEL.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD30_DUP.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD30_INV.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD30_DEL.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD30_DUP.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD30_INV.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD30_TRA.vcf  
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD30_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD30_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD30_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD30_DEL.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD30_DUP.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD30_INV.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD30_DEL.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD30_DUP.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD30_INV.INV.Mappable.TRAFree.bed
 
 grep -v LowQual het_RD40_DEL.vcf > Delly_QC_het_RD40_DEL.vcf
 grep -v LowQual het_RD40_DUP.vcf > Delly_QC_het_RD40_DUP.vcf
 grep -v LowQual het_RD40_INV.vcf > Delly_QC_het_RD40_INV.vcf
 grep -v LowQual het_RD40_TRA.vcf > Delly_QC_het_RD40_TRA.vcf
-SV.Output.Process.py vcf --input Delly_QC_het_RD40_DEL.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD40_DUP.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD40_INV.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD40_TRA.vcf  
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD40_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD40_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD40_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD40_DEL.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD40_DUP.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD40_INV.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD40_DEL.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD40_DUP.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD40_INV.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD40_DEL.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD40_DUP.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD40_INV.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD40_TRA.vcf  
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD40_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD40_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD40_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD40_DEL.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD40_DUP.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD40_INV.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD40_DEL.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD40_DUP.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD40_INV.INV.Mappable.TRAFree.bed
 
 grep -v LowQual het_RD50_DEL.vcf > Delly_QC_het_RD50_DEL.vcf
 grep -v LowQual het_RD50_DUP.vcf > Delly_QC_het_RD50_DUP.vcf
 grep -v LowQual het_RD50_INV.vcf > Delly_QC_het_RD50_INV.vcf
 grep -v LowQual het_RD50_TRA.vcf > Delly_QC_het_RD50_TRA.vcf
-SV.Output.Process.py vcf --input Delly_QC_het_RD50_DEL.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD50_DUP.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD50_INV.vcf  
-SV.Output.Process.py vcf --input Delly_QC_het_RD50_TRA.vcf  
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD50_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD50_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Delly_QC_het_RD50_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD50_DEL.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD50_DUP.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD50_INV.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD50_DEL.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD50_DUP.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD50_INV.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD50_DEL.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD50_DUP.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD50_INV.vcf  
+SV.Simple.Output.Process.py vcf --input Delly_QC_het_RD50_TRA.vcf  
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD50_DEL.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD50_DUP.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Delly_QC_het_RD50_INV.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD50_DEL.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD50_DUP.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Delly_QC_het_RD50_INV.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD50_DEL.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD50_DUP.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Delly_QC_het_RD50_INV.INV.Mappable.TRAFree.bed
 
 ln -s Delly_QC_het_RD10_DUP.DUP.Mappable.TRAFree.min100.max1000000000.bed Delly_QC_het_RD10_DUP_TANDEM.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
 ln -s Delly_QC_het_RD20_DUP.DUP.Mappable.TRAFree.min100.max1000000000.bed Delly_QC_het_RD20_DUP_TANDEM.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
@@ -690,64 +690,64 @@ ln -s Delly_QC_het_RD50_DUP.DUP.Mappable.TRAFree.min100.max1000000000.bed Delly_
 change.bedpe.name.py -p ./
 
 mv het_RD10_pesr.bedpe Lumpy_QC_RD10_pesr.bedpe
-SV.Output.Process.py bedpe --input Lumpy_QC_RD10_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD10_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD10_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD10_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD10_pesr.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD10_pesr.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD10_pesr.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD10_pesr.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD10_pesr.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD10_pesr.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py bedpe --input Lumpy_QC_RD10_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD10_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD10_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD10_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD10_pesr.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD10_pesr.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD10_pesr.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD10_pesr.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD10_pesr.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD10_pesr.INV.Mappable.TRAFree.bed
 
 mv het_RD20_pesr.bedpe Lumpy_QC_RD20_pesr.bedpe
-SV.Output.Process.py bedpe --input Lumpy_QC_RD20_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD20_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD20_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD20_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD20_pesr.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD20_pesr.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD20_pesr.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD20_pesr.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD20_pesr.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD20_pesr.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py bedpe --input Lumpy_QC_RD20_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD20_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD20_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD20_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD20_pesr.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD20_pesr.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD20_pesr.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD20_pesr.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD20_pesr.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD20_pesr.INV.Mappable.TRAFree.bed
 
 mv het_RD30_pesr.bedpe Lumpy_QC_RD30_pesr.bedpe
-SV.Output.Process.py bedpe --input Lumpy_QC_RD30_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta 
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD30_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD30_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD30_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD30_pesr.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD30_pesr.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD30_pesr.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD30_pesr.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD30_pesr.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD30_pesr.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py bedpe --input Lumpy_QC_RD30_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta 
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD30_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD30_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD30_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD30_pesr.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD30_pesr.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD30_pesr.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD30_pesr.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD30_pesr.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD30_pesr.INV.Mappable.TRAFree.bed
 
 mv het_RD40_pesr.bedpe Lumpy_QC_RD40_pesr.bedpe
-SV.Output.Process.py bedpe --input Lumpy_QC_RD40_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta 
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD40_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD40_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD40_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD40_pesr.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD40_pesr.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD40_pesr.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD40_pesr.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD40_pesr.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD40_pesr.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py bedpe --input Lumpy_QC_RD40_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta 
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD40_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD40_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD40_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD40_pesr.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD40_pesr.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD40_pesr.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD40_pesr.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD40_pesr.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD40_pesr.INV.Mappable.TRAFree.bed
 
 mv het_RD50_pesr.bedpe Lumpy_QC_RD50_pesr.bedpe
-SV.Output.Process.py bedpe --input Lumpy_QC_RD50_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta 
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD50_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD50_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Lumpy_QC_RD50_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD50_pesr.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD50_pesr.DUP.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD50_pesr.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD50_pesr.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD50_pesr.DUP.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD50_pesr.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py bedpe --input Lumpy_QC_RD50_pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta 
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD50_pesr.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD50_pesr.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Lumpy_QC_RD50_pesr.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD50_pesr.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD50_pesr.DUP.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Lumpy_QC_RD50_pesr.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD50_pesr.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD50_pesr.DUP.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Lumpy_QC_RD50_pesr.INV.Mappable.TRAFree.bed
 
 ln -s Lumpy_QC_RD10_pesr.DUP.Mappable.TRAFree.min100.max1000000000.bed Lumpy_QC_RD10_pesr.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
 ln -s Lumpy_QC_RD20_pesr.DUP.Mappable.TRAFree.min100.max1000000000.bed Lumpy_QC_RD20_pesr.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
@@ -761,68 +761,68 @@ change.vcf.name.py -p ./
 
 vcf.size.filter.py -i Pindel_het_RD_10.vcf --size 100
 grep -v LowQual Pindel_het_RD_10.LargerThan100.vcf > Pindel_QC_het_RD10_LargerThan100.vcf
-SV.Output.Process.py vcf --input Pindel_QC_het_RD10_LargerThan100.vcf
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD10_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD10_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD10_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD10_LargerThan100.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD10_LargerThan100.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD10_LargerThan100.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD10_LargerThan100.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD10_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD10_LargerThan100.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Pindel_QC_het_RD10_LargerThan100.vcf
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD10_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD10_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD10_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD10_LargerThan100.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD10_LargerThan100.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD10_LargerThan100.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD10_LargerThan100.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD10_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD10_LargerThan100.INV.Mappable.TRAFree.bed
 
 vcf.size.filter.py -i Pindel_het_RD_20.vcf --size 100
 grep -v LowQual Pindel_het_RD_20.LargerThan100.vcf > Pindel_QC_het_RD20_LargerThan100.vcf
-SV.Output.Process.py vcf --input Pindel_QC_het_RD20_LargerThan100.vcf
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD20_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD20_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD20_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD20_LargerThan100.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD20_LargerThan100.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD20_LargerThan100.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD20_LargerThan100.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD20_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD20_LargerThan100.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Pindel_QC_het_RD20_LargerThan100.vcf
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD20_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD20_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD20_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD20_LargerThan100.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD20_LargerThan100.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD20_LargerThan100.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD20_LargerThan100.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD20_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD20_LargerThan100.INV.Mappable.TRAFree.bed
 
 vcf.size.filter.py -i Pindel_het_RD_30.vcf --size 100
 grep -v LowQual Pindel_het_RD_30.LargerThan100.vcf > Pindel_QC_het_RD30_LargerThan100.vcf
-SV.Output.Process.py vcf --input Pindel_QC_het_RD30_LargerThan100.vcf
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD30_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD30_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD30_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD30_LargerThan100.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD30_LargerThan100.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD30_LargerThan100.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD30_LargerThan100.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD30_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD30_LargerThan100.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Pindel_QC_het_RD30_LargerThan100.vcf
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD30_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD30_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD30_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD30_LargerThan100.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD30_LargerThan100.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD30_LargerThan100.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD30_LargerThan100.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD30_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD30_LargerThan100.INV.Mappable.TRAFree.bed
 
 vcf.size.filter.py -i Pindel_het_RD_40.vcf --size 100
 grep -v LowQual Pindel_het_RD_40.LargerThan100.vcf > Pindel_QC_het_RD40_LargerThan100.vcf
-SV.Output.Process.py vcf --input Pindel_QC_het_RD40_LargerThan100.vcf
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD40_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD40_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD40_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD40_LargerThan100.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD40_LargerThan100.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD40_LargerThan100.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD40_LargerThan100.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD40_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD40_LargerThan100.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Pindel_QC_het_RD40_LargerThan100.vcf
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD40_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD40_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD40_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD40_LargerThan100.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD40_LargerThan100.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD40_LargerThan100.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD40_LargerThan100.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD40_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD40_LargerThan100.INV.Mappable.TRAFree.bed
 
 vcf.size.filter.py -i Pindel_het_RD_50.vcf --size 100
 grep -v LowQual Pindel_het_RD_50.LargerThan100.vcf > Pindel_QC_het_RD50_LargerThan100.vcf
-SV.Output.Process.py vcf --input Pindel_QC_het_RD50_LargerThan100.vcf
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD50_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD50_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input Pindel_QC_het_RD50_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD50_LargerThan100.DEL.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD50_LargerThan100.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD50_LargerThan100.INV.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD50_LargerThan100.DEL.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD50_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD50_LargerThan100.INV.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py vcf --input Pindel_QC_het_RD50_LargerThan100.vcf
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD50_LargerThan100.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD50_LargerThan100.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input Pindel_QC_het_RD50_LargerThan100.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD50_LargerThan100.DEL.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD50_LargerThan100.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py TRA-Control --TRA-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.het.FussyJunc/sv_rec/het.het.TRA.rec --input Pindel_QC_het_RD50_LargerThan100.INV.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD50_LargerThan100.DEL.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD50_LargerThan100.DUP_TANDEM.Mappable.TRAFree.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input Pindel_QC_het_RD50_LargerThan100.INV.Mappable.TRAFree.bed
 
 ln -s Pindel_QC_het_RD10_LargerThan100.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Pindel_QC_het_RD10_LargerThan100.DUP.Mappable.TRAFree.min100.max1000000000.bed
 ln -s Pindel_QC_het_RD20_LargerThan100.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Pindel_QC_het_RD20_LargerThan100.DUP.Mappable.TRAFree.min100.max1000000000.bed
@@ -834,14 +834,14 @@ ln -s Pindel_QC_het_RD50_LargerThan100.DUP_TANDEM.Mappable.TRAFree.min100.max100
 
 Process ref SV for comparison:
 ```
-SV.Output.Process.py Mappable-Control --input het.het.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input het.het.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input het.het.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Mappable-Control --input het.het.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input het.het.DEL.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input het.het.DUP.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input het.het.DUP_TANDEM.Mappable.bed
-SV.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input het.het.INV.Mappable.bed
+SV.Simple.Output.Process.py Mappable-Control --input het.het.DEL.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input het.het.DUP.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input het.het.DUP_TANDEM.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Mappable-Control --input het.het.INV.bed --ref-prefix /scratch/remills_flux/xuefzhao/reference/GRCh37_decoy/human_g1k_v37_decoy.Mappable
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input het.het.DEL.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input het.het.DUP.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input het.het.DUP_TANDEM.Mappable.bed
+SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input het.het.INV.Mappable.bed
 
 ln -s het.het.DEL.Mappable.min100.max1000000000.bed Delly_QC_het_RD10_DEL.DEL.Mappable.min100.max1000000000.bed 
 ln -s het.het.DUP.Mappable.min100.max1000000000.bed Delly_QC_het_RD10_DUP.DUP.Mappable.min100.max1000000000.bed 
