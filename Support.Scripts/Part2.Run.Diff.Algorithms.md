@@ -53,6 +53,7 @@ example of input.config.txt:
 ```
 
 #### Detailed Code Used:
+<!---
 For **Heterozygous Simple** events
 ######SVelter
 ```
@@ -470,4 +471,4 @@ pindel2vcf -P homo.RD40.sorted.bam.pindel -r /mnt/EXT/Mills-scratch/datasets/Sim
 pindel2vcf -P homo.RD50.sorted.bam.pindel -r /mnt/EXT/Mills-scratch/datasets/Simulation.Xuefang/reference/human_g1k_v37.fasta -R human_g1k_v37 -d 20150515 -v /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.comp/comp.homo/pbs/Pindel/Pindel.homo.RD.10.vcf
 pindel2vcf -P homo.RD50.sorted.bam.pindel -r /mnt/EXT/Mills-scratch/datasets/Simulation.Xuefang/reference/human_g1k_v37.fasta -R human_g1k_v37 -d 20150515 -v /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.comp/comp.homo/pbs/Pindel/Pindel.homo.RD.10.vcf
 ```
-
+-->
