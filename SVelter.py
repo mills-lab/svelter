@@ -333,10 +333,10 @@ else:
             print 'Required Parameters:'
             print '--workdir, writable working directory.'
             print '--reference, absolute path of reference genome. eg: .../SVelter/reference/genome.fa'
-            print '--exclude, absolute path of bed file indicating regions to be excluded from analysis. If not provided, no mappable regions will be excluded.'
-            print '--copyneutral,absolute, path of bed file indicating copy neutural regions based on which null statistical models would be built. If not provided, genome would be randomly sampled for null model.'
             print '--svelter-path, folder which contains all SVelter scripts.'
             print 'Optional Parameters:'
+            print '--exclude, absolute path of bed file indicating regions to be excluded from analysis. If not provided, no mappable regions will be excluded.'
+            print '--copyneutral,absolute, path of bed file indicating copy neutural regions based on which null statistical models would be built. If not provided, genome would be randomly sampled for null model.'
             print '--ref-index, folders containin pre-indexed files, if applicable. For certain versions of human genome, the indexed files are availabel from https://github.com/mills-lab/svelter.'
         else:
             if not '--workdir' in dict_opts.keys():
@@ -373,7 +373,10 @@ else:
                                 if os.path.isdir(dict_opts['--ref-index']):
                                     ref_index_path=path_modify(dict_opts['--ref-index'])
                                     for ref_index_file in os.listdir(ref_index_path):
-                                        os.system(r'''ln -s %s %s'''%(ref_index_path+ref_index_file,ref_path))  
+                                        if ref_index_file.split('.')[-1]=='GC_Content':
+                                            os.system(r'''ln -s %s %s'''%(ref_index_path+ref_index_file,ref_path+'genome.GC_Content'))
+                                        if ref_index_file.split('.')[-1]=='bed' and ref_index_file.split('.')[-2]=='Mappable':
+                                            os.system(r'''ln -s %s %s'''%(ref_index_path+ref_index_file,ref_path+'genome.Mappable.bed'))
                             if '--copyneutral' in dict_opts.keys():
                                 os.system(r'''ln -s %s %s'''%(dict_opts['--copyneutral'],ref_path+'CN2.bed'))
                             if '--exclude' in dict_opts.keys():
@@ -443,13 +446,13 @@ else:
                                 fout.close()
                                 fout2.close()
                             fout=open(fout_Name)
-                            total_out={}
-                            for line in fout:
-                                pout=line.strip().split()
-                                if not pout[0] in total_out:
-                                    total_out[pout[0]]=[]
-                                total_out[pout[0]].append(pout[1:3])
-                            fout.close()
+                            #total_out={}
+                            #for line in fout:
+                            #    pout=line.strip().split()
+                            #    if not pout[0] in total_out:
+                            #        total_out[pout[0]]=[]
+                            #    total_out[pout[0]].append(pout[1:3])
+                            #fout.close()
                         time2=time.time()
                         print 'Reference Genome Indexed !'
                         print 'Time Consuming:'+str(time2-time1)
