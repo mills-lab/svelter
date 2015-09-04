@@ -19,7 +19,7 @@ chmod +x SVelter.py
 ```
 Index Reference genome
 ``` 
-SVelter.py Index --reference reference.fa --workdir /working/directory --exclude exclude.ref.bed --copyneutral CN2.ref.bed --svelter-path SVelter/ 
+SVelter.py Setup --reference reference.fa --workdir /working/directory --exclude exclude.ref.bed --copyneutral CN2.ref.bed --ref-index indexed-ref/ --svelter-path SVelter/ 
 ```
 Run SVelter with its default setting:
 ```
@@ -99,7 +99,6 @@ SVelter.py  [options]  [parameters]
 > reference file should have been indexed by calling samtools first:  `samtools faidx ref.fasta`
 
 > working directory is required to be writable for temporal files 
-
 
 
 
