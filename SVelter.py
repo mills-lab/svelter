@@ -249,7 +249,7 @@ else:
                 fgap.close()
             for x in chromos:
                 if not x in Gap_Hash_Ref1.keys():
-                    Gap_Hash_Ref1[x]=['0','0']
+                    Gap_Hash_Ref1[x]=[['0','0','0']]
             return Gap_Hash_Ref1
         def write_ExcludeBed(ExcludeBed):
             if not os.path.isfile(ExcludeBed):
