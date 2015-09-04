@@ -53,7 +53,7 @@ example of input.config.txt:
 ```
 
 #### Detailed Code Used:
-#####For **Heterozygous Simple** events
+For **Heterozygous Simple** events
 ######SVelter
 ```
 SVelter.py Setup --workdir /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.het/ --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --exclude /mnt/EXT/Mills-scratch2/Xuefang/svelter/Support/Exclude.GRCh37.bed --copyneutral /mnt/EXT/Mills-scratch2/Xuefang/svelter/Support/CN2.GRCh37.bed --svelter-path /mnt/EXT/Mills-scratch2/Xuefang/svelter --ref-index /mnt/EXT/Mills-scratch2/reference/SVelter.Index/GRCh37/reference
@@ -158,9 +158,7 @@ pindel2vcf -P het.RD50.sorted.bam.pindel -r /mnt/EXT/Mills-scratch/datasets/Simu
 
 ```
 
-
-
-#####For **Homozygous Simple** events
+For **Homozygous Simple** events
 ######SVelter
 ```
 SVelter.py Setup --workdir /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.homo/ --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --exclude /mnt/EXT/Mills-scratch2/Xuefang/svelter/Support/Exclude.GRCh37.bed --copyneutral /mnt/EXT/Mills-scratch2/Xuefang/svelter/Support/CN2.GRCh37.bed --svelter-path /mnt/EXT/Mills-scratch2/Xuefang/svelter --ref-index /mnt/EXT/Mills-scratch2/reference/SVelter.Index/GRCh37/reference
@@ -265,8 +263,7 @@ pindel2vcf -P homo.RD50.sorted.bam.pindel -r /mnt/EXT/Mills-scratch/datasets/Sim
 
 ```
 
-#### Detailed Code Used:
-#####For **Heterozygous Complex** events
+For **Heterozygous Complex** events
 ######SVelter
 ```
 SVelter.py Setup --workdir /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.comp/comp.het/ --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --exclude /mnt/EXT/Mills-scratch2/Xuefang/svelter/Support/Exclude.GRCh37.bed --copyneutral /mnt/EXT/Mills-scratch2/Xuefang/svelter/Support/CN2.GRCh37.bed --svelter-path /mnt/EXT/Mills-scratch2/Xuefang/svelter --ref-index /mnt/EXT/Mills-scratch2/reference/SVelter.Index/GRCh37/reference
@@ -370,7 +367,7 @@ pindel2vcf -P het.RD50.sorted.bam.pindel -r /mnt/EXT/Mills-scratch/datasets/Simu
 pindel2vcf -P het.RD50.sorted.bam.pindel -r /mnt/EXT/Mills-scratch/datasets/Simulation.Xuefang/reference/human_g1k_v37.fasta -R human_g1k_v37 -d 20150515 -v /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.comp/comp.het/pbs/Pindel/Pindel.het.RD.10.vcf
 ```
 
-#####For **Homozygous Complex** events
+For **Homozygous Complex** events
 ######SVelter
 ```
 SVelter.py Setup --workdir /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.comp/comp.homo/ --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --exclude /mnt/EXT/Mills-scratch2/Xuefang/svelter/Support/Exclude.GRCh37.bed --copyneutral /mnt/EXT/Mills-scratch2/Xuefang/svelter/Support/CN2.GRCh37.bed --svelter-path /mnt/EXT/Mills-scratch2/Xuefang/svelter --ref-index /mnt/EXT/Mills-scratch2/reference/SVelter.Index/GRCh37/reference
