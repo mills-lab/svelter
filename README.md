@@ -10,9 +10,6 @@ python:   https://www.python.org/
 samtools: http://samtools.sourceforge.net/
 ```
 
-##Supportive files  
-see *Supportive* folder for more details.
-
 ## Quick Start
 Download and Install
 ```
@@ -28,6 +25,17 @@ Run SVelter with its default setting:
 ```
 SVelter.py --sample /absolute/path/of/sample.bam --workdir /working/directory
 ```
+
+##Supportive files  
+`exclude.ref.bed` and `CN2.ref.bed` are available from the folder *Support* for some versions of reference genome. Users could replace with their custom version as long as both are in bed format. For more details, please see *Support*. 
+
+Pre-indexed files of certain reference genomes have been produced and kept under folder *index-ref*. For specific reference, if not pre-indexed files provided, the optional parameter '--ref-index' could be omit and the indexed files would be produced through the setup step. 
+
+
+##Attention:
+reference file should have been indexed by calling samtools first:  `samtools faidx ref.fasta`
+
+working directory is required to be writable for temporal files 
 
 ##Output
 *SVelter* integrates predicted SVs in both vcf4.1 format and SVelter format. Examples of both could be found under folder *Example*
