@@ -1290,9 +1290,9 @@ else:
                                         SplitNullfigure2=SplitNullfigure2.replace('.jpg','.na')
                                     os.system('''Rscript %s %s %s %s %s'''%(RFigureDRSplit,SplitNullTemp,SplitNullfigure1,BoxPlotColor,SplitNullfigure2))
                                     if model_comp=='C':
-                                        RFigureDRSplit2=Script_Path+'SVelter1.NullModel.Figure.d.r'	
+                                        RFigureDRSplit2=Script_Path+'SVelter1.NullModel.Figure.b.r'	
                                     else:
-                                        RFigureDRSplit2=Script_Path+'SVelter1.NullModel.Figure.d2.r'    
+                                        RFigureDRSplit2=Script_Path+'SVelter1.NullModel.Figure.c.r'    
                                     RDNullTemp=NullPath+'RDNull.'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.temp'
                                     fRD=open(RDNullTemp,'w')
                                     for rd in RD_Af_Adj.keys():
@@ -9011,7 +9011,7 @@ else:
                     outdup3.sort()
                     outdup4=[outdup3[0]]
                     for i in range(len(outdup3)-1):
-                        if outdup3[i+1][-1]==outdup3[i][-1] and ord(outdup3[i+1][0][0])-ord(outdup3[i][0][-1])==1:
+                        if outdup3[i+1][-1]==outdup3[i][-1] and ord(outdup3[i+1][0][0])-ord(outdup3[i][0][-1])==1 and temp2.count(outdup3[i][0]+outdup3[i+1][0])+temp2.count(outdup3[i][0]+outdup3[i+1][0]+'^')>1:
                             outdup4[-1][0]+=outdup3[i+1][0]
                         else:
                             outdup4.append(outdup3[i+1])
@@ -9146,15 +9146,36 @@ else:
             else:
                 k1x=k1.split('/')[1]
                 k2x=k2.split('/')[1]
+            k1x_temp=[]
+            for x_temp in k2x:
+                if not x_temp=='^':
+                    k1x_temp.append(x_temp)
+                else:
+                    k1x_temp[-1]+=x_temp
+            k2x_temp=[[]]
+            for x_temp in k1x_temp:
+                if k2x_temp[-1]==[]:
+                    k2x_temp[-1].append(x_temp)
+                else:
+                    if not '^' in x_temp and not '^' in k2x_temp[-1][-1] and ord(x_temp[0])-ord(k2x_temp[-1][-1][0])==1:
+                            k2x_temp[-1].append(x_temp)
+                    elif '^' in x_temp and '^' in k2x_temp[-1][-1] and ord(x_temp[0])-ord(k2x_temp[-1][-1][0])==1:
+                            k2x_temp[-1].append(x_temp)
+                    else:
+                        k2x_temp.append([x_temp])
+            k3x_temp=[''.join(x_temp) for x_temp in k2x_temp]
             out=[]     
             for x in dup_let:
                 out.append([])
                 for y in x:
-                    pos_index=[z for z in range(len(k2x)) if k2x[z]==y[0]]
+                    pos_index=[z for z in range(len(k3x_temp)) if y[0] in k3x_temp[z]]
                     inter_index=[pos_index[z+1]-pos_index[z] for z in range(len(pos_index)-1)]
-                    if 1 in inter_index:
-                        out[-1].append('Tandem')
-                        inter_index.remove(1)
+                    while True:
+                        if 1 in inter_index:
+                            out[-1].append('Tandem')
+                            inter_index.remove(1)
+                        else:
+                            break
                     if not inter_index==[]:
                         out[-1].append('Disperse')
             return out
@@ -10674,11 +10695,11 @@ else:
             if not os.path.isfile(Code0_file):
                 flag+=1
                 out.append(Code0_file)
-            Code0_file=Code_path+'SVelter1.NullModel.Figure.d.r'
+            Code0_file=Code_path+'SVelter1.NullModel.Figure.b.r'
             if not os.path.isfile(Code0_file):
                 flag+=1
                 out.append(Code0_file)
-            Code0_file=Code_path+'SVelter1.NullModel.Figure.d2.r'
+            Code0_file=Code_path+'SVelter1.NullModel.Figure.c.r'
             if not os.path.isfile(Code0_file):
                 flag+=1
                 out.append(Code0_file)
@@ -10768,8 +10789,8 @@ else:
             Code5_Function='SVIntegrate'
             RCode_Path=workdir+'reference/'
             Code1a_file=RCode_Path+'SVelter1.NullModel.Figure.a.r'
-            Code1d_file=RCode_Path+'SVelter1.NullModel.Figure.d.r'
-            Code1d2_file=RCode_Path+'SVelter1.NullModel.Figure.d2.r'
+            Code1d_file=RCode_Path+'SVelter1.NullModel.Figure.b.r'
+            Code1d2_file=RCode_Path+'SVelter1.NullModel.Figure.c.r'
         opts,args=getopt.getopt(sys.argv[1:],'o:h:S:',['help=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
