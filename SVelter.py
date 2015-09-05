@@ -2357,6 +2357,7 @@ else:
                                 time1=time.time()
                                 Null_Stats_Readin_One(NullPath,bamF,NullSplitLen_perc)
                                 for chrF in chromos:
+                                    print chrF
                                     bamF_Name=bamF.split('/')[-1].replace('.bam','')
                                     floc_Name=BPPath+bamF_Name+'.'+chrF
                                     Refloc_name='.'.join(ref_file.split('.')[:-1])+'.Mappable.bed'
@@ -3316,9 +3317,9 @@ else:
                                             time2=time.time()
                                             os.system(r'''cat %s >> %s'''%(BPOutputd,BPOutpute))
                                             os.system(r'''rm %s'''%(BPOutputd))
+                                    print 'BPSearch Complete for '+bamF
+                                    print 'Time Consuming: '+str(time2-time1)
                                 time2=time.time()
-                                print 'BPSearch Complete for '+bamF
-                                print 'Time Consuming: '+str(time2-time1)
     if function_name=='BPIntegrate':
         def clusterSupVis2(dataRound, dataLeft, dataRight):
             flag1=0
@@ -9146,39 +9147,46 @@ else:
             else:
                 k1x=k1.split('/')[1]
                 k2x=k2.split('/')[1]
-            k1x_temp=[]
-            for x_temp in k2x:
-                if not x_temp=='^':
-                    k1x_temp.append(x_temp)
-                else:
-                    k1x_temp[-1]+=x_temp
-            k2x_temp=[[]]
-            for x_temp in k1x_temp:
-                if k2x_temp[-1]==[]:
-                    k2x_temp[-1].append(x_temp)
-                else:
-                    if not '^' in x_temp and not '^' in k2x_temp[-1][-1] and ord(x_temp[0])-ord(k2x_temp[-1][-1][0])==1:
-                            k2x_temp[-1].append(x_temp)
-                    elif '^' in x_temp and '^' in k2x_temp[-1][-1] and ord(x_temp[0])-ord(k2x_temp[-1][-1][0])==1:
-                            k2x_temp[-1].append(x_temp)
+            if not k2x=='':
+                k1x_temp=[]
+                for x_temp in k2x:
+                    if not x_temp=='^':
+                        k1x_temp.append(x_temp)
                     else:
-                        k2x_temp.append([x_temp])
-            k3x_temp=[''.join(x_temp) for x_temp in k2x_temp]
-            out=[]     
-            for x in dup_let:
-                out.append([])
-                for y in x:
-                    pos_index=[z for z in range(len(k3x_temp)) if y[0] in k3x_temp[z]]
-                    inter_index=[pos_index[z+1]-pos_index[z] for z in range(len(pos_index)-1)]
-                    while True:
-                        if 1 in inter_index:
-                            out[-1].append('Tandem')
-                            inter_index.remove(1)
+                        k1x_temp[-1]+=x_temp
+                k2x_temp=[[]]
+                for x_temp in k1x_temp:
+                    if k2x_temp[-1]==[]:
+                        k2x_temp[-1].append(x_temp)
+                    else:
+                        if not '^' in x_temp and not '^' in k2x_temp[-1][-1] and ord(x_temp[0])-ord(k2x_temp[-1][-1][0])==1:
+                                k2x_temp[-1].append(x_temp)
+                        elif '^' in x_temp and '^' in k2x_temp[-1][-1] and ord(x_temp[0])-ord(k2x_temp[-1][-1][0])==-1:
+                                k2x_temp[-1].append(x_temp)
                         else:
-                            break
-                    if not inter_index==[]:
-                        out[-1].append('Disperse')
-            return out
+                            k2x_temp.append([x_temp])
+                k3x_temp=[]
+                for x in k2x_temp:
+                    if not '^' in x[0]:
+                        k3x_temp.append(x)
+                    else:
+                        k3x_temp.append([y[0] for y in x[::-1]]+['^'])
+                k3x_temp=[''.join(x_temp) for x_temp in k3x_temp]
+                out=[]     
+                for x in dup_let:
+                    out.append([])
+                    for y in x:
+                        pos_index=[z for z in range(len(k3x_temp)) if y[0] in k3x_temp[z]]
+                        inter_index=[pos_index[z+1]-pos_index[z] for z in range(len(pos_index)-1)]
+                        while True:
+                            if 1 in inter_index:
+                                out[-1].append('Tandem')
+                                inter_index.remove(1)
+                            else:
+                                break
+                        if not inter_index==[]:
+                            out[-1].append('Disperse')
+                return out
         def add_csv_info(csv1,flag_sex,k1,k2):
             if flag_sex==1:
                 del_let=[csv1[0],[]]
