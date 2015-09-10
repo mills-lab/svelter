@@ -2478,11 +2478,11 @@ else:
                                             else:
                                                 loc_rec[ploc[0]].append([int(ploc2) for ploc2 in ploc[1:]])
                                         floc.close()
-                                        if not loc_rec=={}:
+                                        if not loc_rec=={} and chrF in loc_rec.keys():
                                             test_mul_RP=[]
                                             test_mul_SP=[]
                                             chrom=chrF
-                                            mini_fout_Name=BPPath+bamF_Name+'.mini.'+loc_rec.keys()[0]+'.sam'
+                                            mini_fout_Name=BPPath+bamF_Name+'.mini.'+chrom+'.sam'
                                             mini_fout_N2=BPPath+bamF_Name+'.mini.'+chrom+'.bam'
                                             mini_fout_N3=BPPath+bamF_Name+'.mini.'+chrom+'.sorted'
                                             mini_fout_N4=BPPath+bamF_Name+'.mini.'+chrom+'.sorted.bam'
@@ -3314,9 +3314,9 @@ else:
                                             for i in sorted(temp_IL_Rec.keys()):
                                                 print >>fout, ' '.join([str(i),str(sum(temp_IL_Rec[i][0][:2]))])    
                                             fout.close()
-                                            time2=time.time()
                                             os.system(r'''cat %s >> %s'''%(BPOutputd,BPOutpute))
                                             os.system(r'''rm %s'''%(BPOutputd))
+                                    time2=time.time()
                                     print 'BPSearch Complete for '+bamF
                                     print 'Time Consuming: '+str(time2-time1)
                                 time2=time.time()
@@ -5120,7 +5120,7 @@ else:
         def letter_RD_ReadIn(chr_letter_bp):
             test_flag=0
             for k1 in chr_letter_bp.keys():
-                filein=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+k1+'.RD.index'
+                filein=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+k1+'.RD.index'
                 if not os.path.isfile(filein):
                     test_flag+=1
             if test_flag==0:
@@ -5135,7 +5135,7 @@ else:
                         block_range[i]+=chr_letter_bp[i][j]
                     block_range[i]=[min(block_range[i]),max(block_range[i])]
                 for k1 in chr_letter_bp.keys():
-                    filein=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+k1+'.RD.index'
+                    filein=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+k1+'.RD.index'
                     fin=open(filein)
                     while True:
                         pin=fin.readline().strip().split()
@@ -5600,7 +5600,7 @@ else:
             return Coverage_af_Adj
         def GC_RD_Correction(chrbam):
             ref_index=ref_prefix+'GC_Content'
-            cov_index=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+chrbam+'.RD.index'
+            cov_index=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+chrbam+'.RD.index'
             fref=open(ref_index)
             fcov=open(cov_index)
             GC=[]
@@ -7947,10 +7947,10 @@ else:
                             time1=time.time()
                             BamN=dict_opts['--sample'].split('/')[-1].replace('.bam','')
                             Input_File=dict_opts['--bp-file']
-                            Insert_Len_Stat=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/ILNull.'+BamN+'.'+genome_name+'.Bimodal'
+                            Insert_Len_Stat=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/ILNull.'+BamN+'.'+genome_name+'.Bimodal'
                             if not os.path.isfile(Insert_Len_Stat):
                                 print 'wrong workdir defined'
-                            ReadLenFin=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/'+BamN+'.'+genome_name+'.Stats'
+                            ReadLenFin=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/'+BamN+'.'+genome_name+'.Stats'
                             if not os.path.isfile(ReadLenFin):
                                 print 'wrong workdir defined'
                             else:
@@ -8018,7 +8018,7 @@ else:
                                     for i in bps2:
                                         if len(i)<3:
                                             i.append(str(int(i[-1])+Window_Size))
-                            GC_Stat_Path=dict_opts['--workdir']+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat'
+                            GC_Stat_Path=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat'
                             Affix_GC_Stat='_MP'+str(QCAlign)+'_GC_Coverage_ReadLength'
                             GC_Stat=GC_Stat_ReadIn(BamN,GC_Stat_Path,Affix_GC_Stat)
                             GC_Content_Coverage=GC_Stat[0]
