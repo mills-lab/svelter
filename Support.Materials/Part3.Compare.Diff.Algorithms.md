@@ -74,6 +74,7 @@ Produce.Pseudo.ROC.stats.py --path_ref folder/contains/simulatd.sv.bed --path_in
 ```
 ###Step7. Visualize
 ```
+Rscript Produce.Barplot.For.Simple.Sinu.R Input.Stats
 ```
 
 
