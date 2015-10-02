@@ -1,7 +1,7 @@
 #SVelter
 
 ##Description
-This software is designed to identify both simple and complex rearrangements from paired-end sequencing data. Users could ran it easily by just alling *SVelter.py* with proper parameters. It's also possible to ran it on multiple cores by calling different sub-functions separately.
+This software is designed to identify both simple and complex rearrangements from paired-end sequencing data. It is used by calling *SVelter.py* with listed parameters. It's also possible to run it on multiple cores by calling different sub-functions separately.
 
 ##Required third-party resources
 ```
