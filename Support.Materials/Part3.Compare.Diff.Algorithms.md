@@ -4,12 +4,12 @@ Four different algortihms: *SVelter*, *Delly*, *Lumpy* and *Pindel* were applied
 we used several **shell**, **python** and **R** commands to accomplish the whole process. 
 
 ##scripts used:
-`SV.Output.Process.py `
-
+`SV.Simple.Output.Process.py`
+`SV.Complex.Output.Process.py`
 `Produce.Barplot.For.Simple.Simu.R`
 
 ###Usage 
-SV.Output.Process.py  [options] [parameter]
+SV.Simple.Output.Process.py  [options] [parameter]
 ####Options:
 ```
 vcf-to-bed:  extract simple SVs from vcf files and output in separate bed files
@@ -75,6 +75,53 @@ Produce.Pseudo.ROC.stats.py --path_ref folder/contains/simulatd.sv.bed --path_in
 ###Step7. Visualize
 ```
 ```
+
+
+
+###Usage 
+SV.Complex.Output.Process.py [options] [parameter]
+####Options:
+```
+SVelter: process CSVs called by SVelter 
+Delly: process CSVs called by Delly 
+Lumpy: process CSVs called by Lumpy 
+Pindel: process CSVs called by Pindel 
+report2stat
+comparison
+```
+####Required Parameters:
+######Parameters for SVelter/Delly/Lumpy/Pindel:
+```
+--reference: reference genome
+--input-path: path where outputs were kept
+--ref-sv: pre set complex SVs to compare to
+``` 
+######Parameters for report2stat:
+```
+--reference: reference genome
+--report: .report files
+```
+######Parameters for comparison:
+```
+--path: folder contains all .report files
+```
+######Parameters for stat-integrate:
+```
+--stat: .stat file
+```
+
+
+##Example Workflow:
+```
+Examples:
+SV.Complex.Output.Process.py SVelter --reference genome.fa --input-path /path/to/SVelter/output --ref-sv comp_het.SV.rec
+SV.Complex.Output.Process.py Delly --reference genome.fa --input-path /path/to/Delly/output --ref-sv comp_het.SV.rec
+SV.Complex.Output.Process.py Lumpy --reference genome.fa --input-path /path/to/Lumpy/output --ref-sv comp_het.SV.rec
+SV.Complex.Output.Process.py Pindel --reference genome.fa --input-path /path/to/Pindel/output --ref-sv comp_het.SV.rec
+SV.Complex.Output.Process.py report2stat --reference genome.fa  --report input.report
+SV.Complex.Output.Process.py comparison --path /folder/contains/all/report/files
+```
+
 
 
 ###Detailed Code Used:
