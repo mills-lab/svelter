@@ -3,7 +3,8 @@
 we provided here the scripts we used to to apply each algorithm and interprete the results:
 
 ####Apply Lumpy :
-```samtools view /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/alignment/chr22_insilico_Normal.sorted.bam | /nfs/remills-data/apps/lumpy-sv/scripts/split_unmapped_to_fasta.pl -b 20 > /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Lumpy/chr22_insilico_Normal.sorted.um.fq
+```
+samtools view /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/alignment/chr22_insilico_Normal.sorted.bam | /nfs/remills-data/apps/lumpy-sv/scripts/split_unmapped_to_fasta.pl -b 20 > /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Lumpy/chr22_insilico_Normal.sorted.um.fq
 bwa bwasw -H -t 20 /scratch/remills_flux/xuefzhao/reference/hg19/hg19.fa /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Lumpy/chr22_insilico_Normal.sorted.um.fq | samtools view -Sb ->/scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Lumpy/chr22_insilico_Normal.sorted.um.bam
 samtools sort /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Lumpy/chr22_insilico_Normal.sorted.um.bam /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Lumpy/chr22_insilico_Normal.sorted.um.sorted
 samtools index /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Lumpy/chr22_insilico_Normal.sorted.um.sorted.bam
