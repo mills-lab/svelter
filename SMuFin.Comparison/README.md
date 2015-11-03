@@ -5,6 +5,19 @@ In the first batch comparison, we run *SVelter*, *Delly*, *Lumpy*, *Pindel* and 
 
 we provided here the scripts we used to to apply each algorithm and interprete the results:
 
+
+####apply Delly:
+```
+delly -t DEL -s 5 -x /scratch/remills_flux/xuefzhao/reference/Delly.reference/human.hg19.excl.tsv -o /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Delly/chr22_insilico_Normal.DEL.vcf -g /scratch/remills_flux/xuefzhao/reference/hg19/hg19.fa /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/chr22_insilico_Normal.sorted.bam
+delly -t DUP -s 5 -x /scratch/remills_flux/xuefzhao/reference/Delly.reference/human.hg19.excl.tsv -o /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Delly/chr22_insilico_Normal.DEL.vcf -g /scratch/remills_flux/xuefzhao/reference/hg19/hg19.fa /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/chr22_insilico_Normal.sorted.bam
+delly -t INV -s 5 -x /scratch/remills_flux/xuefzhao/reference/Delly.reference/human.hg19.excl.tsv -o /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Delly/chr22_insilico_Normal.DEL.vcf -g /scratch/remills_flux/xuefzhao/reference/hg19/hg19.fa /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/chr22_insilico_Normal.sorted.bam
+delly -t TRA -s 5 -x /scratch/remills_flux/xuefzhao/reference/Delly.reference/human.hg19.excl.tsv -o /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Delly/chr22_insilico_Normal.DEL.vcf -g /scratch/remills_flux/xuefzhao/reference/hg19/hg19.fa /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/chr22_insilico_Normal.sorted.bam
+delly -t DEL -s 5 -x /scratch/remills_flux/xuefzhao/reference/Delly.reference/human.hg19.excl.tsv -o /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Delly/chr22_insilico_Tumor.DEL.vcf -g /scratch/remills_flux/xuefzhao/reference/hg19/hg19.fa /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/chr22_insilico_Tumor.sorted.bam
+delly -t DUP -s 5 -x /scratch/remills_flux/xuefzhao/reference/Delly.reference/human.hg19.excl.tsv -o /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Delly/chr22_insilico_Tumor.DEL.vcf -g /scratch/remills_flux/xuefzhao/reference/hg19/hg19.fa /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/chr22_insilico_Tumor.sorted.bam
+delly -t INV -s 5 -x /scratch/remills_flux/xuefzhao/reference/Delly.reference/human.hg19.excl.tsv -o /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Delly/chr22_insilico_Tumor.DEL.vcf -g /scratch/remills_flux/xuefzhao/reference/hg19/hg19.fa /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/chr22_insilico_Tumor.sorted.bam
+delly -t TRA -s 5 -x /scratch/remills_flux/xuefzhao/reference/Delly.reference/human.hg19.excl.tsv -o /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Delly/chr22_insilico_Tumor.DEL.vcf -g /scratch/remills_flux/xuefzhao/reference/hg19/hg19.fa /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/chr22_insilico_Tumor.sorted.bam
+```
+
 ####Apply Lumpy :
 ```
 samtools view /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/alignment/chr22_insilico_Normal.sorted.bam | /nfs/remills-data/apps/lumpy-sv/scripts/split_unmapped_to_fasta.pl -b 20 > /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Lumpy/chr22_insilico_Normal.sorted.um.fq
