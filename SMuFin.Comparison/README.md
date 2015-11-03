@@ -55,7 +55,10 @@ pindel -f hg19.fa -i ../chr22_insilico_Tumor.sorted.bam.config.txt -c ALL -o chr
 pindel2vcf -P chr22_insilico_Tumor.sorted.bam.pindel -r hg19.fa -R hg19 -d 20151102 -v ../Pindel/chr22_insilico_Tumor.sorted.bam.vcf
 ```
 
-
+####Apply SMuFin
+```
+mpirun --np 16 ./SMuFin --ref ref_genome/hg19.fa --normal_fastq_1 normal_fastqs_1.txt --normal_fastq_2 normal_fastqs_2.txt --tumor_fastq_1 tumor_fastqs_1.txt --tumor_fastq_2 tumor_fastqs_2.txt --patient_id chr22_insilico --cpus_per_node 16
+```
 
 
 
