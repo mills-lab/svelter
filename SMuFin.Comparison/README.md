@@ -29,24 +29,24 @@ delly -t TRA -s 5 -x human.hg19.excl.tsv -o ../Delly/chr22_insilico_Tumor.DEL.vc
 
 ####Apply Lumpy :
 ```
-samtools view ../alignment/chr22_insilico_Normal.sorted.bam | ../Lumpy-sv/scripts/split_unmapped_to_fasta.pl -b 20 > ../Lumpy/chr22_insilico_Normal.sorted.um.fq
+samtools view chr22_insilico_Normal.sorted.bam | ../Lumpy-sv/scripts/split_unmapped_to_fasta.pl -b 20 > ../Lumpy/chr22_insilico_Normal.sorted.um.fq
 bwa bwasw -H -t 20 hg19.fa ../Lumpy/chr22_insilico_Normal.sorted.um.fq | samtools view -Sb ->../Lumpy/chr22_insilico_Normal.sorted.um.bam
 samtools sort ../Lumpy/chr22_insilico_Normal.sorted.um.bam ../Lumpy/chr22_insilico_Normal.sorted.um.sorted
 samtools index ../Lumpy/chr22_insilico_Normal.sorted.um.sorted.bam
-samtools view ../alignment/chr22_insilico_Normal.sorted.bam | tail -n+100000 | ../Lumpy-sv/scripts/pairend_distro.py -r 101 -X 4 -N 10000 -o ../Lumpy/chr22_insilico_Normal.sorted.histo
+samtools view chr22_insilico_Normal.sorted.bam | tail -n+100000 | ../Lumpy-sv/scripts/pairend_distro.py -r 101 -X 4 -N 10000 -o ../Lumpy/chr22_insilico_Normal.sorted.histo
 #mean:499.2397	stdev:23.990148893
-lumpy -mw 4 -tt 0.0 -x Exclude.hg19.bed -pe bam_file:../alignment/chr22_insilico_Normal.sorted.bam,histo_file:../Lumpy/chr22_insilico_Normal.sorted.histo,mean:499.2397,stdev:23.990148893,read_length:80,min_non_overlap:80,discordant_z:4,back_distance:20,weight:1,id:bwa,min_mapping_threshold:20 -sr bam_file:../Lumpy/chr22_insilico_Normal.sorted.um.sorted.bam,back_distance:20,weight:1,id:bwa,min_mapping_threshold:20 > ../Lumpy/chr22_insilico_Normal.sorted.bedpe
+lumpy -mw 4 -tt 0.0 -x Exclude.hg19.bed -pe bam_file:chr22_insilico_Normal.sorted.bam,histo_file:../Lumpy/chr22_insilico_Normal.sorted.histo,mean:499.2397,stdev:23.990148893,read_length:80,min_non_overlap:80,discordant_z:4,back_distance:20,weight:1,id:bwa,min_mapping_threshold:20 -sr bam_file:../Lumpy/chr22_insilico_Normal.sorted.um.sorted.bam,back_distance:20,weight:1,id:bwa,min_mapping_threshold:20 > ../Lumpy/chr22_insilico_Normal.sorted.bedpe
 
-samtools view ../alignment/chr22_insilico_Tumor.sorted.bam | ../Lumpy-sv/scripts/split_unmapped_to_fasta.pl -b 20 > ../Lumpy/chr22_insilico_Tumor.sorted.um.fq
+samtools view chr22_insilico_Tumor.sorted.bam | ../Lumpy-sv/scripts/split_unmapped_to_fasta.pl -b 20 > ../Lumpy/chr22_insilico_Tumor.sorted.um.fq
 bwa bwasw -H -t 20 hg19.fa ../Lumpy/chr22_insilico_Tumor.sorted.um.fq | samtools view -Sb ->../Lumpy/chr22_insilico_Tumor.sorted.um.bam
 samtools sort ../Lumpy/chr22_insilico_Tumor.sorted.um.bam ../Lumpy/chr22_insilico_Tumor.sorted.um.sorted
 samtools index ../Lumpy/chr22_insilico_Tumor.sorted.um.sorted.bam
-samtools view ../alignment/chr22_insilico_Tumor.sorted.bam | tail -n+100000 | ../Lumpy-sv/scripts/pairend_distro.py -r 101 -X 4 -N 10000 -o ../Lumpy/chr22_insilico_Tumor.sorted.histo
+samtools view chr22_insilico_Tumor.sorted.bam | tail -n+100000 | ../Lumpy-sv/scripts/pairend_distro.py -r 101 -X 4 -N 10000 -o ../Lumpy/chr22_insilico_Tumor.sorted.histo
 #mean:499.2397	stdev:23.990148893
-lumpy -mw 4 -tt 0.0 -x Exclude.hg19.bed -pe bam_file:../alignment/chr22_insilico_Tumor.sorted.bam,histo_file:../Lumpy/chr22_insilico_Tumor.sorted.histo,mean:499.5817,stdev:21.3189241077,read_length:80,min_non_overlap:80,discordant_z:4,back_distance:20,weight:1,id:bwa,min_mapping_threshold:20 -sr bam_file:../Lumpy/chr22_insilico_Tumor.sorted.um.sorted.bam,back_distance:20,weight:1,id:bwa,min_mapping_threshold:20 > ../Lumpy/chr22_insilico_Tumor.sorted.bedpe
+lumpy -mw 4 -tt 0.0 -x Exclude.hg19.bed -pe bam_file:chr22_insilico_Tumor.sorted.bam,histo_file:../Lumpy/chr22_insilico_Tumor.sorted.histo,mean:499.5817,stdev:21.3189241077,read_length:80,min_non_overlap:80,discordant_z:4,back_distance:20,weight:1,id:bwa,min_mapping_threshold:20 -sr bam_file:../Lumpy/chr22_insilico_Tumor.sorted.um.sorted.bam,back_distance:20,weight:1,id:bwa,min_mapping_threshold:20 > ../Lumpy/chr22_insilico_Tumor.sorted.bedpe
 ```
 
-#Apply Pindel
+####Apply Pindel
 ```
 pindel -f hg19.fa -i ../chr22_insilico_Normal.sorted.bam.config.txt -c ALL -o chr22_insilico_Normal.sorted.bam.pindel
 pindel2vcf -P chr22_insilico_Normal.sorted.bam -r hg19.fa -R hg19 -d 20151102 -v ../chr22_insilico_Normal.sorted.bam.vcf
@@ -54,6 +54,9 @@ pindel2vcf -P chr22_insilico_Normal.sorted.bam -r hg19.fa -R hg19 -d 20151102 -v
 pindel -f hg19.fa -i ../chr22_insilico_Tumor.sorted.bam.config.txt -c ALL -o chr22_insilico_Tumor.sorted.bam.pindel
 pindel2vcf -P chr22_insilico_Tumor.sorted.bam.pindel -r hg19.fa -R hg19 -d 20151102 -v ../Pindel/chr22_insilico_Tumor.sorted.bam.vcf
 ```
+
+
+
 
 
 ###Detailed Code Used:
