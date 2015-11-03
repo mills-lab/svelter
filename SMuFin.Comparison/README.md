@@ -1,4 +1,5 @@
-#we compared *SVelter*, *Delly*, *Lumpy*, *Pindel* and *SMuFin* based on the somatic events SMuFin have implemented in their paper (`Moncunill V, Gonzalez S, Beà S, et al. Comprehensive characterization of complex structural variations in cancer by directly comparing genome sequence reads[J]. Nature biotechnology, 2014, 32(11): 1106-1112.`)
+##we compared *SVelter*, *Delly*, *Lumpy*, *Pindel* and *SMuFin* based on the somatic events SMuFin have implemented in their paper
+(`Moncunill V, Gonzalez S, Beà S, et al. Comprehensive characterization of complex structural variations in cancer by directly comparing genome sequence reads[J]. Nature biotechnology, 2014, 32(11): 1106-1112.`)
 
 In the first batch comparison, we run *SVelter*, *Delly*, *Lumpy*, *Pindel* and *SMuFin* on simulated events on Chr22 at Read Depth 30, as provided by *SMuFin*. 
 
