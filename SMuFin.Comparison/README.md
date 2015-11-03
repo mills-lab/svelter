@@ -6,7 +6,7 @@ In the first batch comparison, we run *SVelter*, *Delly*, *Lumpy*, *Pindel* and 
 we provided here the scripts we used to to apply each algorithm and interprete the results:
 
 
-####apply Delly:
+####Apply Delly:
 ```
 delly -t DEL -s 5 -x /scratch/remills_flux/xuefzhao/reference/Delly.reference/human.hg19.excl.tsv -o /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Delly/chr22_insilico_Normal.DEL.vcf -g /scratch/remills_flux/xuefzhao/reference/hg19/hg19.fa /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/chr22_insilico_Normal.sorted.bam
 delly -t DUP -s 5 -x /scratch/remills_flux/xuefzhao/reference/Delly.reference/human.hg19.excl.tsv -o /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/Delly/chr22_insilico_Normal.DEL.vcf -g /scratch/remills_flux/xuefzhao/reference/hg19/hg19.fa /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Smufin/dataset/bam_file/chr22_insilico_Normal.sorted.bam
