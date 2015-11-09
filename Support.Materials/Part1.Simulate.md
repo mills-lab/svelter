@@ -2,7 +2,7 @@
 We used our own script to produce altered reference genome with pre-set simple and complex structural variants:
 
 ##Usage:
-Produce.Simulated.FussyJuncs.py [options] <parameters>
+Produce.Simulated.Ref.FussyJuncs.py [options] <parameters>
  
 ####Options:
 ```
@@ -21,10 +21,10 @@ complex:		simulate complex SVs
 
 ####Examples:
 ```
-Produce.Simulated.FussyJuncs.py heterozygous --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --input-sim /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/het.sim --output-prefix /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/simple_het
-Produce.Simulated.FussyJuncs.py homozygous --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --input-sim /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/homo.sim --output-prefix /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/simple_homo
-Produce.Simulated.FussyJuncs.py complex --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --input-sim /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_het.sim --input-rec /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_het.rec --output-prefix /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_het
-Produce.Simulated.FussyJuncs.py complex --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --input-sim /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_homo.sim --input-rec /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_homo.rec --output-prefix /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_homo
+Produce.Simulated.Ref.FussyJuncs.py heterozygous --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --input-sim /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/het.sim --output-prefix /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/simple_het
+Produce.Simulated.Ref.FussyJuncs.py homozygous --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --input-sim /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/homo.sim --output-prefix /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/simple_homo
+Produce.Simulated.Ref.FussyJuncs.py complex --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --input-sim /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_het.sim --input-rec /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_het.rec --output-prefix /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_het
+Produce.Simulated.Ref.FussyJuncs.py complex --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --input-sim /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_homo.sim --input-rec /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_homo.rec --output-prefix /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_homo
 ```
 
 Example files in Supp1 folder
@@ -48,10 +48,10 @@ samtools input.sorted.bam
 <!---
 ####Step1: Simulate SVs according to pre-defined sizes and numbers to form altered reference genome
 ```
-Produce.Simulated.FussyJuncs.py heterozygous --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta --input-sim /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/het.sim --output-prefix /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/simple_het
-Produce.Simulated.FussyJuncs.py homozygous --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta --input-sim /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/homo.sim --output-prefix /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/simple_homo
-Produce.Simulated.FussyJuncs.py complex --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta --input-sim /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/comp_het.sim --input-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/comp_het.rec --output-prefix /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/comp_het
-Produce.Simulated.FussyJuncs.py complex --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta --input-sim /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/comp_homo.sim --input-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/comp_homo.rec --output-prefix /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/comp_homo
+Produce.Simulated.Ref.FussyJuncs.py heterozygous --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta --input-sim /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/het.sim --output-prefix /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/simple_het
+Produce.Simulated.Ref.FussyJuncs.py homozygous --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta --input-sim /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/homo.sim --output-prefix /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/simple_homo
+Produce.Simulated.Ref.FussyJuncs.py complex --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta --input-sim /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/comp_het.sim --input-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/comp_het.rec --output-prefix /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/comp_het
+Produce.Simulated.Ref.FussyJuncs.py complex --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta --input-sim /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/comp_homo.sim --input-rec /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/comp_homo.rec --output-prefix /scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.rerun.test.20150901/comp_homo
 ```
 
 ####Step2: Simulate each altered genome up to different read depth(10X-50X)
