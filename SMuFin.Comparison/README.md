@@ -8,9 +8,7 @@ we provided here the scripts we used to to apply each algorithm and interprete t
 ####Apply SVelter:
 ```
 SVelter.py Setup --reference hg19.fa --exclude Exclude.hg19.bed --copyneutral CN2.hg19.bed --svelter-path /scratch/remills_flux/xuefzhao/svelter/ --ref-index /scratch/remills_flux/xuefzhao/svelter/Index.Reference/hg19/
-
 SVelter.py --sample chr22_insilico_Normal.sorted.bam --workdir / --null-model C
-
 SVelter.py --sample chr22_insilico_Tumor.sorted.bam --workdir / --null-model C
 ```
 
@@ -50,7 +48,6 @@ lumpy -mw 4 -tt 0.0 -x Exclude.hg19.bed -pe bam_file:chr22_insilico_Tumor.sorted
 ```
 pindel -f hg19.fa -i ../chr22_insilico_Normal.sorted.bam.config.txt -c ALL -o chr22_insilico_Normal.sorted.bam.pindel
 pindel2vcf -P chr22_insilico_Normal.sorted.bam -r hg19.fa -R hg19 -d 20151102 -v ../chr22_insilico_Normal.sorted.bam.vcf
-
 pindel -f hg19.fa -i ../chr22_insilico_Tumor.sorted.bam.config.txt -c ALL -o chr22_insilico_Tumor.sorted.bam.pindel
 pindel2vcf -P chr22_insilico_Tumor.sorted.bam.pindel -r hg19.fa -R hg19 -d 20151102 -v ../Pindel/chr22_insilico_Tumor.sorted.bam.vcf
 ```
