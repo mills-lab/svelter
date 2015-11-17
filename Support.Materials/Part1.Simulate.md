@@ -1,7 +1,10 @@
 #Simulated Simple SVs
-We used our own script to produce altered reference genome with pre-set simple and complex structural variants:
+We used our own script *Produce.Simulated.FussyJuncs.py* to modify the germline reference genome with pre-designed simple and complex SVs in both homozygous and heterozygous status. Output files includes altered reference genomes in fasta format, and detailed record of implemented SVs. 
 
-##Usage:
+We also adopted the simulated cancer and matched normal references reported by Moncunill et al to evaluate performance of SVelter on somatic events. Those references are publicly available from [SMuFin!](http://cg.bsc.es/smufin/)
+
+
+##Usage of *Produce.Simulated.FussyJuncs.py*:
 Produce.Simulated.Ref.FussyJuncs.py [options] <parameters>
  
 ####Options:
@@ -31,10 +34,16 @@ Example files in Supp1 folder
 
 Detailed number of simulated events were integrated in Supp.table1.
 
-Then we simulated paired end reads based on each altered genome up to different read depth (10X-50X) with wgsim[]:
+Then we simulated paired end reads based on each altered genome up to different read depth (10X-50X) with [wgsim!](https://github.com/lh3/wgsim):
 ```
 wgsim -e 0.001 -d 500 -s 100 -N num.of.reads -1 101 -2 101 -r 0.001 -R 0.1 -X 0 altered.reference.fa out1.fq out2.fq
 ```
+
+For the simulated tumor and matched normal references, we simulated paired end reads with [art_illumina!](http://www.niehs.nih.gov/research/resources/software/biostatistics/art/), adoping parameters used by [*Moncunill et al*!] (http://www.nature.com/nbt/journal/v32/n11/full/nbt.3027.html):
+```
+art_illumina -sam -i altered.reference.fa -p -l 80 -ss HS20 -f 20 -m 500 -s 20 -o output 
+```
+
 and aligned reads to GRCh37 before sort and index the aligned files in bam format:
 ```
 bwa mem human_g1k_v37.fasta out1.fq out2.fq input.sam
