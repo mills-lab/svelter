@@ -30,9 +30,7 @@ Produce.Simulated.Ref.FussyJuncs.py complex --reference /mnt/EXT/Mills-scratch2/
 Produce.Simulated.Ref.FussyJuncs.py complex --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --input-sim /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_homo.sim --input-rec /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_homo.rec --output-prefix /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/comp_homo
 ```
 
-Example files in Supp1 folder
-
-Detailed number of simulated events were integrated in Supp.table1.
+Example files in Supp1 folder; Detailed number of simulated events were integrated in Supp.table1.
 
 Then we simulated paired end reads based on each altered genome up to different read depth (10X-50X) with [wgsim](https://github.com/lh3/wgsim):
 ```
