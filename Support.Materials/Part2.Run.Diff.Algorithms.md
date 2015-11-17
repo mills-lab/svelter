@@ -1,10 +1,10 @@
 #Run different algorithms on simulated data:
-We compared SVelter to three other algorithms: Delly, Lumpy and Pindel  for evaluation with following settings:
+We compared SVelter to three other algorithms: Delly, Lumpy, Pindel and SMuFin for evaluation with following settings:
 
 ##SVelter:
 index reference genome first:
 ```
-SVelter.py Index --exclude Exclude.GRCh37.bed --reference human_g1k_v37.fasta --workdir workdir/directory --copyneutral CN2.GRCh37.bed --svelter-path ../svelter-master
+SVelter.py Setup --exclude Exclude.GRCh37.bed --reference human_g1k_v37.fasta --workdir workdir/directory --copyneutral CN2.GRCh37.bed --svelter-path ../svelter-master
 ```
 then run the main function of SVelter:
 ```
@@ -51,7 +51,10 @@ example of input.config.txt:
 ```
 /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.het/BamFiles/het.RD10.sorted.bam	500	het.RD10.sorted.bam
 ```
-
+##SMuFin
+```
+mpirun --np 30 SMuFin --ref hg19.fa --normal_fastq_1 SMuFin_Normal_1.txt --normal_fastq_2 SMuFin_Normal_2.txt --tumor_fastq_1 SMuFin_Tumor_1.txt --tumor_fastq_2 SMuFin_Tumor_2.txt --patient_id patient_id --cpus_per_node 30
+```
 #### Detailed Code Used:
 <!---
 For **Heterozygous Simple** events
