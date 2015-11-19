@@ -1,7 +1,7 @@
 #SVelter
 
 ##Description
-This software is designed to identify both simple and complex rearrangements from paired-end sequencing data. It is used by calling *SVelter.py* with listed parameters. It's also possible to run it on multiple cores by calling different sub-functions separately.
+This software is designed to identify both simple and complex rearrangements from paired-end sequencing data. Users could ran it easily by just alling *SVelter.py* with proper parameters. It's also possible to ran it on multiple cores by calling different sub-functions separately.
 
 ##Required third-party resources
 ```
@@ -16,6 +16,7 @@ Download and Install
 git clone git@github.com:mills-lab/svelter.git
 cd svelter
 chmod +x SVelter.py
+cp SVelter.py your/bin/directory/
 ```
 Index Reference genome
 ``` 
@@ -26,25 +27,23 @@ Run SVelter with its default setting:
 SVelter.py --sample /absolute/path/of/sample.bam --workdir /working/directory
 ```
 
-##Supportive files  
+###Required files:
 `exclude.ref.bed` and `CN2.ref.bed` are available from the folder *Support* for some versions of reference genome. Users could replace with their custom version as long as both are in bed format. For more details, please see *Support*. 
 
 Pre-indexed files of certain reference genomes have been produced and kept under folder *index-ref*. For specific reference, if not pre-indexed files provided, the optional parameter '--ref-index' could be omit and the indexed files would be produced through the setup step. 
 
+###Attention:
+1. reference file should have been indexed by calling samtools first:  `samtools faidx ref.fasta`
+2. working directory is required to be writable for temporal files 
+3. with large sample size (eg. >50X whole genome sequencing), it is recommended that these parameters `--null-copyneutral-perc 0.01` added to your command; with small ones (eg. <10x), `--null-copyneutral-perc 0.5` is recommended.   This parameter decides the number of CN2 regions extracted for building null model.
 
-##Attention:
-reference file should have been indexed by calling samtools first:  `samtools faidx ref.fasta`
-
-working directory is required to be writable for temporal files 
-
-##Output
-*SVelter* integrates predicted SVs in both vcf4.1 format and SVelter format. Examples of both could be found under folder *Example*
 
 ##Usage
 SVelter.py  [options]  [parameters]
 
 ###Options:
 ```
+  Setup
   NullModel
   BPSearch
   BPIntegrate
@@ -53,15 +52,28 @@ SVelter.py  [options]  [parameters]
 ```
 
 ###Parameters:
-
-####Required:
+####For `Setup`:
+#####Required Parameters:
+```
+--workdir, writable working directory.
+--reference, absolute path of reference genome. eg: .../SVelter/reference/genome.fa
+--exclude, absolute path of bed file indicating regions to be excluded from analysis. If not provided, no mappable regions will be excluded.
+--copyneutral,absolute, path of bed file indicating copy neutural regions based on which null statistical models would be built. If not provided, genome would be randomly sampled for null model.
+--svelter-path, folder which contains all SVelter scripts.
+```
+#####Optional Parameters:
+```
+--ref-index, folders containin pre-indexed files, if applicable. For certain versions of human genome, the indexed files are availabel from https://github.com/mills-lab/svelter.
+```
+####For other step:
+#####Required:
 ```
   --workdir, writable working directory.
   
   --sample, input alignment file in bam format
 ```
 
-####Optional:
+#####Optional:
 ```
 --null-model, specify which stat model to be fitted on each parameter. if --null-model==C / Complex, negative bimodal distribution will be fitted to insertlenth; else, normal will be used
 
@@ -74,10 +86,6 @@ SVelter.py  [options]  [parameters]
 --null-random-num, specify the number of random regions if --copyneutral parameter not used (default: 10000)
 
 --num-iteration, maximum number of iterations per structure will run in SV predicting step
-
---qc-map-tool, the tool extracts mappability information from a bigWig file,avaliable from: http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bigWigSummary
-
---qc-map-file, .bigWig file used to decide local genomic mappability, avaliable from: ftp://hgdownload.cse.ucsc.edu/goldenPath/currentGenomes/Homo_sapiens/encodeDCC/wgEncodeMapability/ 
 
 --qc-map-cutoff, the minimum mapping quality required for a breakpoint to be reported (default: 0.0)
 
@@ -93,13 +101,6 @@ SVelter.py  [options]  [parameters]
 
 --ploidy, limit algorithm to specific zygosity (0:heterozygous only; 1:homozygous only; 2:both; default:2)
 ```
-
-###Attention:
-
-> reference file should have been indexed by calling samtools first:  `samtools faidx ref.fasta`
-
-> working directory is required to be writable for temporal files 
-
 
 
 ###For faster processing, SVelter could run with multiple cores:
@@ -186,7 +187,7 @@ Optional Parameters:
 --qc-align, minimum alignment quality required for mapped reads in bam file (default: 20)
 ```
 
-####Step5: Write output in vcf and svelter format:
+####Step5: Write output in vcf format:
 ```
 SVelter.py SVIntegrate --workdir /working/directory --prefix output  --input-path path/of/output/from/Step4
 ```
