@@ -17,11 +17,11 @@ for(i in 2:nrow(dataNull)){
 datatotal=c(datatotal, c(rep(dataNull[i,1],dataNull[i,2])))
 }}
 
-datatotal2=c(rep(dataNull[2,1],dataNull[2,2]))
-if(nrow(dataNull)>2){
-for(i in 3:nrow(dataNull)){
-datatotal2=c(datatotal2, c(rep(dataNull[i,1],dataNull[i,2])))
-}}
+#datatotal2=c(rep(dataNull[2,1],dataNull[2,2]))
+#if(nrow(dataNull)>2){
+#for(i in 3:nrow(dataNull)){
+#datatotal2=c(datatotal2, c(rep(dataNull[i,1],dataNull[i,2])))
+#}}
 
 if(strsplit(strsplit(NullModel,'/')[[1]][length(strsplit(NullModel,'/')[[1]])],'[.]')[[1]][1]=="InsertLenNull"){
 xlabn='Number of Read Pairs with Aberrant Insert Length'
@@ -42,26 +42,26 @@ if(outputFileType=='pdf'){
 pdf(file=outputname)
 hist(datatotal,col=boxcolor,xlim=range(dataNull[,1]),xlab=xlabn,ylab=ylabn,freq=T, main='histogram')
 dev.off()
-pdf(file=outputname2)
-hist(datatotal2,col=boxcolor,xlim=range(dataNull[,1]),xlab=xlabn,ylab=ylabn,freq=T, main='histogram')
-dev.off()
+#pdf(file=outputname2)
+#hist(datatotal2,col=boxcolor,xlim=range(dataNull[,1]),xlab=xlabn,ylab=ylabn,freq=T, main='histogram')
+#dev.off()
 }
 
 if(outputFileType=='jpg'){
 jpeg(file=outputname)
 hist(datatotal,col=boxcolor,xlim=range(dataNull[,1]),xlab=xlabn,ylab=ylabn,freq=T, main='histogram')
 dev.off()
-jpeg(file=outputname2)
-hist(datatotal2,col=boxcolor,xlim=range(dataNull[,1]),xlab=xlabn,ylab=ylabn,freq=T, main='histogram')
-dev.off()
+#jpeg(file=outputname2)
+#hist(datatotal2,col=boxcolor,xlim=range(dataNull[,1]),xlab=xlabn,ylab=ylabn,freq=T, main='histogram')
+#dev.off()
 }
 
 if(outputFileType=='png'){
 png(file=outputname)
 hist(datatotal,col=boxcolor,xlim=range(dataNull[,1]),xlab=xlabn,ylab=ylabn,freq=T, main='histogram')
 dev.off()
-png(file=outputname2)
-hist(datatotal2,col=boxcolor,xlim=range(dataNull[,1]),xlab=xlabn,ylab=ylabn,freq=T, main='histogram')
-dev.off()
+#png(file=outputname2)
+#hist(datatotal2,col=boxcolor,xlim=range(dataNull[,1]),xlab=xlabn,ylab=ylabn,freq=T, main='histogram')
+#dev.off()
 }
 
