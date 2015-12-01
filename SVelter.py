@@ -258,8 +258,6 @@ else:
                 GapHash=Gap_Hash_Ref1[chrom]
                 GapHash2=calculate_interval_region(hash_Cor)
                 GapHash+=GapHash2
-                #GapHash2=calculate_interval_region(GapHash)
-                #GapHash=GapHash2+hash_Cor
                 temp_hash={}
                 for k1 in GapHash:
                     if not k1[0] in temp_hash.keys():
@@ -285,6 +283,9 @@ else:
                 return calculate_interval_region(temp3_list)
             def calculate_interval_region(temp3_list):
                 out=[] 
+                if len(temp3_list)==1:
+                    if temp3_list[0][0]==0 and temp3_list[0][1]==Chromo_Length[chrom]:
+                        return out
                 if not temp3_list[0][0]==0:
                     out.append([0,temp3_list[0][0]-1])
                 for x in temp3_list[:-1]:
@@ -312,6 +313,25 @@ else:
                 if not os.path.isfile(file_name):
                     fo=open(file_name,'w')
                     fo.close()
+            def Gap_Hash_Ref_filter(Gap_Hash_Ref1,Chromo_Length):
+                for x in Gap_Hash_Ref1.keys():
+                    if len(Gap_Hash_Ref1[x])==1:
+                        if Gap_Hash_Ref1[x][0][0]==0:
+                            if Gap_Hash_Ref1[x][0][1]==Chromo_Length[x]:
+                                del Gap_Hash_Ref1[x]
+            def hash_Cor_modify(hash_Cor):
+                out=[]
+                if hash_Cor==[[0]]:
+                    out=[[0,Chromo_Length[chrom]]]
+                for hts in hash_Cor:
+                    if len(hts)==2:
+                        if hts[1]>Chromo_Length[hash_key]:
+                                break
+                        else:
+                            out.append(hts)
+                    else:
+                        continue
+                return out
             if not '--workdir' in dict_opts.keys():
                 print 'working directory not specified'
                 print 'all temporal files would be writen under current directory'
@@ -334,9 +354,9 @@ else:
                         print 'Error: please specify path of SVelter scripts using --svelter-path'                       
                     else:
                         time1=time.time()
-                        ref_path=workdir+'reference/'
+                        ref_path=workdir+'reference_SVelter/'
                         if not ref_path=='/'.join(ref_file.split('/')[:-1])+'/':
-                            ref_path=workdir+'reference/'
+                            ref_path=workdir+'reference_SVelter/'
                             if not os.path.isdir(ref_path):
                                 os.system(r'''mkdir %s'''%(ref_path))
                             os.system(r'''ln -s %s %s'''%(dict_opts['--svelter-path']+'/SVelter*.r',ref_path))  
@@ -362,12 +382,13 @@ else:
                                 ExcludeBed=ref_path+'Exclude.bed'
                                 chromos_info_readin(ref_index)
                         write_ExcludeBed(ExcludeBed)
-                        Gap_Refs=[ExcludeBed]
-                        Gap_Hash_Ref1=Gap_Hash_Ref1_read_in(Gap_Refs)
-                        Gap_Hash_Initiate(chromos)
                         fout_Name='.'.join(ref_file.split('.')[:-1])+'.Mappable.bed'
                         fout_N2='.'.join(ref_file.split('.')[:-1])+'.GC_Content'
                         if not os.path.isfile(fout_Name):
+                            Gap_Refs=[ExcludeBed]
+                            Gap_Hash_Ref1=Gap_Hash_Ref1_read_in(Gap_Refs)
+                            Gap_Hash_Ref_filter(Gap_Hash_Ref1,Chromo_Length)
+                            Gap_Hash_Initiate(chromos)
                             file_initiate(fout_Name)
                             file_initiate(fout_N2)                        
                             for chrom in chromos:
@@ -398,8 +419,7 @@ else:
                                                 hash_Cor.append([hash_cal])
                                             elif len(hash_Cor[-1])==2:
                                                 hash_Cor.append([hash_cal])
-                                    if hash_Cor==[[0]]:
-                                        hash_Cor=[[0,Chromo_Length[chrom]]]
+                                    hash_Cor=hash_Cor_modify(hash_Cor)
                                     hash_to_Seq=''.join(Gap_Hash[hash_key])
                                     #hash_Cor=[]
                                     #hash_cal=0
@@ -436,14 +456,6 @@ else:
                                                 print >>fout2, ' '.join(GC_out)
                                 fout.close()
                                 fout2.close()
-                            #fout=open(fout_Name)
-                            #total_out={}
-                            #for line in fout:
-                            #    pout=line.strip().split()
-                            #    if not pout[0] in total_out:
-                            #        total_out[pout[0]]=[]
-                            #    total_out[pout[0]].append(pout[1:3])
-                            #fout.close()
                         time2=time.time()
                         print 'Reference Genome Indexed !'
                         print 'Time Consuming:'+str(time2-time1)
@@ -757,7 +769,7 @@ else:
                 SplitLengthPath=NullPath
                 if not os.path.isdir(SplitLengthPath):
                         os.system(r'''mkdir %s'''%(SplitLengthPath))
-                SplitLengthOutput=SplitLengthPath+'/'+bamF.split('/')[-1].replace('.bam','')+'.'+genome_name+'.SplitLength'
+                SplitLengthOutput=SplitLengthPath+'/'+bamF.split('/')[-1].replace('.'+bam_file_appdix,'')+'.'+genome_name+'.SplitLength'
                 fslo=open(SplitLengthOutput,'w')
                 print >> fslo, ' '.join(['Length_of_Split_Region', 'Time_of_Observation'])
                 Total_Split_Reads=0
@@ -783,6 +795,17 @@ else:
                 os.system('''rm  %s'''%(ILNullTemp))
                 os.system('''rm  %s'''%(TBNullTemp))
                 os.system('''rm  %s'''%(RDNullTemp))
+            def RDNullTemp_Modify(RDNullTemp):
+                data=[]
+                fin=open(RDNullTemp)
+                for line in fin:
+                    pin=line.strip().split()
+                    data.append([float(pin[0])/Window_Size,pin[1]])
+                fin.close()
+                fo=open(RDNullfigure2,'w')
+                for x in data:
+                    print >>fo, ' '.join([str(i) for i in data])
+                fo.close()
             def RDNullfigure2_Modify(RDNullfigure2):
                 fin=open(RDNullfigure2)
                 pin1=fin.readline().strip().split()
@@ -895,7 +918,8 @@ else:
             else:
                 bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
                 bam_files=[dict_opts['--sample']]
-                ref_path=workdir+'reference/'
+                bam_file_appdix=dict_opts['--sample'].split('.')[-1]
+                ref_path=workdir+'reference_SVelter/'
                 ref_file=ref_path+'genome.fa'
                 ref_index=ref_file+'.fai'
                 cn2_file=ref_path+'CN2.bed'
@@ -926,12 +950,12 @@ else:
                         NullPath=NullPath_SetUp(out_path)
                         path_BP=PathBP_SetUp(out_path)
                         print 'temp files produced under: '+workdir
-                        Script_Path=workdir+'reference/'
+                        Script_Path=workdir+'reference_SVelter/'
                         for bamF in bam_files:
                             time1=time.time()
                             if ReadLength_Flag==0:
                                 ReadLengthHash={}
-                            outputfile=NullPath+bamF.split('/')[-1].replace('.bam','')+'.'+genome_name+'.null'
+                            outputfile=NullPath+bamF.split('/')[-1].replace('.'+bam_file_appdix,'')+'.'+genome_name+'.null'
                             fo=open(outputfile,'w')
                             print >>fo, ' '.join(['position','GCContent','ReadDepth','SplitReads','AbnormalDirection','ThroughBP'])
                             fo.close()
@@ -1256,7 +1280,7 @@ else:
                                         if not b==0:
                                             print >>foIL, ' '.join([str(b), str(GC_Content[b])])
                                     foIL.close()
-                                    RFigureDRSplit=Script_Path+'SVelter1.NullModel.Figure.a.r'	
+                                    RFigureDRSplit=Script_Path+'SVelter1.NullModel.Figure.a.r'  
                                     InsertLenNullTemp=NullPath+'InsertLenNull.'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.temp'
                                     fIL=open(InsertLenNullTemp,'w')
                                     for dr in ILNullDensity.keys():
@@ -1294,7 +1318,7 @@ else:
                                         SplitNullfigure2=SplitNullfigure2.replace('.pdf','.na')
                                     os.system('''Rscript %s %s %s %s %s'''%(RFigureDRSplit,SplitNullTemp,SplitNullfigure1,BoxPlotColor,SplitNullfigure2))
                                     if model_comp=='C':
-                                        RFigureDRSplit2=Script_Path+'SVelter1.NullModel.Figure.b.r'	
+                                        RFigureDRSplit2=Script_Path+'SVelter1.NullModel.Figure.b.r' 
                                     else:
                                         RFigureDRSplit2=Script_Path+'SVelter1.NullModel.Figure.c.r'    
                                     RDNullTemp=NullPath+'RDNull.'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.temp'
@@ -1308,7 +1332,7 @@ else:
                                     RDNullfigure2='.'.join(RDNullTemp.split('.')[:-1])+'.NegativeBinomial'
                                     if KeepFigure in ['no','N','No','n']:
                                         RDNullfigure1=RDNullfigure1.replace('.pdf','.na')
-                                    os.system('''Rscript %s %s %s %s %s %s'''%(RFigureDRSplit2,RDNullTemp,RDNullfigure1,BoxPlotColor,lineColor,RDNullfigure2))
+                                    os.system('''Rscript %s %s %s %s %s %s %d'''%(RFigureDRSplit2,RDNullTemp,RDNullfigure1,BoxPlotColor,lineColor,RDNullfigure2,Window_Size))
                                     RDNullfigure2_Modify(RDNullfigure2)
                                     ILNullTemp=NullPath+'ILNull.'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.temp'
                                     fIL=open(ILNullTemp,'w')
@@ -1321,7 +1345,7 @@ else:
                                     ILNullfigure2='.'.join(ILNullTemp.split('.')[:-1])+'.Bimodal'
                                     if KeepFigure in ['no','N','No','n']:
                                         ILNullfigure1=ILNullfigure1.replace('.pdf','.na')
-                                    os.system('''Rscript %s %s %s %s %s %s'''%(RFigureDRSplit2,ILNullTemp,ILNullfigure1,BoxPlotColor,lineColor,ILNullfigure2))
+                                    os.system('''Rscript %s %s %s %s %s %s %d'''%(RFigureDRSplit2,ILNullTemp,ILNullfigure1,BoxPlotColor,lineColor,ILNullfigure2,Window_Size))
                                     TBNullTemp=NullPath+'TBNull.'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.temp'
                                     fTB=open(TBNullTemp,'w')
                                     for tb in TBNullDensity.keys():
@@ -1333,7 +1357,7 @@ else:
                                     TBNullfigure2='.'.join(TBNullTemp.split('.')[:-1])+'.Bimodal'
                                     if KeepFigure in ['no','N','No','n']:
                                         TBNullfigure1=TBNullfigure1.replace('.pdf','.na')
-                                    os.system('''Rscript %s %s %s %s %s %s'''%(RFigureDRSplit2,TBNullTemp,TBNullfigure1,BoxPlotColor,lineColor,TBNullfigure2))
+                                    os.system('''Rscript %s %s %s %s %s %s %d'''%(RFigureDRSplit2,TBNullTemp,TBNullfigure1,BoxPlotColor,lineColor,TBNullfigure2,Window_Size))
                                     clean_files()
                                     Ref_Seq_File=ref_file
                                     Mini_CN2_Region=int(cn2_length)
@@ -1361,7 +1385,7 @@ else:
                                                         os.system(r'''samtools view %s %s:%d-%d > %s'''%(bamF,str(pcn2[0]),int(pcn2[1]),int(pcn2[2]),sam_file))
                                                         Number_Of_Windows=len(Seq1)/Window_Size
                                                         GC_Content={}
-                                                        for i in range(len(Seq1)/Window_Size+1)[1:]:				
+                                                        for i in range(len(Seq1)/Window_Size+1)[1:]:                
                                                                 Seq2=Seq1[(i-1)*Window_Size:i*Window_Size]
                                                                 GC_Content[i]=GC_Content_Calculate(Seq2)
                                                         coverage=Region_Coverage_Calculate(sam_file,Number_Of_Windows,pcn2)
@@ -1373,7 +1397,7 @@ else:
                                         os.system(r'''rm %s'''%(NullPath+temp_Name+'.fa'))
                                     if os.path.isfile(NullPath+temp_Name+'.sam'):
                                         os.system(r'''rm %s'''%(NullPath+temp_Name+'.sam'))
-                                    Output_File=NullPath+'RD_Stat/'+bamF.split('/')[-1].replace('.bam','')+'.'+genome_name+'_MP'+str(QCAlign)+'_GC_Coverage_ReadLength'
+                                    Output_File=NullPath+'RD_Stat/'+bamF.split('/')[-1].replace('.'+bam_file_appdix,'')+'.'+genome_name+'_MP'+str(QCAlign)+'_GC_Coverage_ReadLength'
                                     Output_Path=NullPath+'RD_Stat/'
                                     if not os.path.isdir(Output_Path):
                                         os.system(r'''mkdir %s'''%(Output_Path))
@@ -1390,7 +1414,7 @@ else:
     if function_name=='BPSearch':
         import glob
         import getopt
-        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['help=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
+        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['help=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration=','BPSPCff=','BPLNCff='])
         dict_opts=dict(opts)
         CN2_Region={}
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
@@ -2376,7 +2400,7 @@ else:
                 fTBS.close()
                 return TBStats
             def Null_Stats_Readin_One(NullPath,bamF,NullSplitLen_perc):
-                fin=open(NullPath+bamF.split('/')[-1].replace('.bam','.')+genome_name+'.Stats')
+                fin=open(NullPath+bamF.split('/')[-1].replace('.'+bam_files_appdix,'.')+genome_name+'.Stats')
                 pin=fin.readline().strip().split()
                 pin=fin.readline().strip().split()
                 pin=fin.readline().strip().split()
@@ -2487,7 +2511,7 @@ else:
                         loc2.append([loc[0]+(slNum+1)*10**6-int(ClusterLen),loc[1]])
                 return loc2
             def letter_RD_ReadIn(info):
-                BamN=dict_opts['--sample'].split('/')[-1].replace('.bam','')
+                BamN=dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'')
                 filein=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat/'+BamN+'.'+info[0]+'.RD.index'
                 test_flag=0
                 if not os.path.isfile(filein):
@@ -2540,6 +2564,26 @@ else:
                         if not sorted([x,y]) in out2:
                             out2.append(sorted([x,y]))
                 return out2
+            def loc_rec_modify(loc_rec,chrom):
+                out=[loc_rec[chrom][0]]
+                min_cff=2000
+                for x in loc_rec[chrom][1:]:
+                    if x[0]-out[-1][-1]<min_cff:
+                        out[-1]+=x
+                    else:
+                        out.append(x)
+                out2=[]
+                for x in out:
+                    out2.append([x[0],x[-1]])
+                return out2
+            def test_chromo_in_bam_file(bamF,chrF):
+                fin=os.popen(r'''samtools view %s %s| head -10 | wc -l'''%(bamF,chrF))
+                pin=fin.readline().strip().split()
+                fin.close()
+                if int(pin[0])==10:
+                    return 'Pass'
+                else:
+                    return 'Fail'
             import numpy
             import scipy
             import math
@@ -2558,16 +2602,10 @@ else:
                 if not '--sample' in dict_opts.keys():
                     print 'Error: please specify either input file using --sample'
                 else:
-                    if '--sample' in dict_opts.keys():
-                        bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
-                        bam_files=[dict_opts['--sample']]
-                    else:
-                        bam_path=path_modify(dict_opts['--PathBam'])
-                        bam_files=[]
-                        for file1 in os.listdir(bam_path):
-                            if file1.split('.')[-1]=='bam':
-                                bam_files.append(bam_path+file1)
-                    ref_path=workdir+'reference/'
+                    bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
+                    bam_files=[dict_opts['--sample']]
+                    bam_files_appdix=dict_opts['--sample'].split('.')[-1]
+                    ref_path=workdir+'reference_SVelter/'
                     ref_file=ref_path+'genome.fa'
                     ref_index=ref_file+'.fai'
                     if not os.path.isfile(ref_index):
@@ -2593,271 +2631,290 @@ else:
                                 time1=time.time()
                                 Null_Stats_Readin_One(NullPath,bamF,NullSplitLen_perc)
                                 for chrF in chromos:
-                                    bamF_Name=bamF.split('/')[-1].replace('.bam','')
-                                    floc_Name=BPPath+bamF_Name+'.'+chrF
-                                    Refloc_name='.'.join(ref_file.split('.')[:-1])+'.Mappable.bed'
-                                    stat_file_name(bamF_Name,genome_name)
-                                    if os.path.isfile(Refloc_name):
-                                        BamInput=bamF
-                                        ILStats=ILStats_readin(ILStat)
-                                        RDStats=RDStats_readin(RDStat)
-                                        TBStats=TBStats_readin(TBStat)
-                                        SPLCff=SPLCff_Calculate(NullSplitLen_perc,SPLenStat)
-                                        fAllS=open(AllStat)
-                                        pAllS=fAllS.readline().rstrip()
-                                        ILCIs={}
-                                        pAllS1=fAllS.readline().strip().split()
-                                        pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                                ILCIs[pAllS1[i]]=pAllS2[i]
-                                        pAllS=fAllS.readline().rstrip()
-                                        RDCIs={}
-                                        pAllS1=fAllS.readline().strip().split()
-                                        pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                            RDCIs[pAllS1[i]]=pAllS2[i]
-                                        pAllS=fAllS.readline().rstrip()
-                                        TBCIs={}
-                                        pAllS1=fAllS.readline().strip().split()
-                                        pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                            TBCIs[pAllS1[i]]=pAllS2[i]
-                                        pAllS=fAllS.readline().rstrip()
-                                        InsertLen={}
-                                        pAllS1=fAllS.readline().strip().split()
-                                        pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                                InsertLen[pAllS1[i]]=pAllS2[i]
-                                        for i in range(len(pAllS1)):
-                                                if float(pAllS2[i])>ABILCutoff:
-                                                        InsertLenMin=int(pAllS1[i])-1
-                                                        break
-                                        if InsertLenMin<5:
-                                                InsertLenMin=5
-                                        pAllS=fAllS.readline().rstrip()
-                                        SplitReads={}
-                                        pAllS1=fAllS.readline().strip().split()
-                                        pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                                SplitReads[pAllS1[i]]=pAllS2[i]
-                                        for i in range(len(pAllS1)):
-                                                if float(pAllS2[i])>SplitCutoff:
-                                                        SplitMin=int(pAllS1[i])-1
-                                                        break
-                                        if SplitMin<5:
-                                                SplitMin=5
-                                        pAllS=fAllS.readline().rstrip()
-                                        AbDirection={}
-                                        pAllS1=fAllS.readline().strip().split()
-                                        pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                                AbDirection[pAllS1[i]]=pAllS2[i]
-                                        for i in range(len(pAllS1)):
-                                            if float(pAllS2[i])>DRCutoff:
-                                                DRMin=int(pAllS1[i])-1
-                                                break
-                                        if DRMin<5:
-                                                DRMin=5
-                                        fbam=os.popen('''samtools view -H %s'''%(BamInput))
-                                        if '--BPSPCff' in dict_opts.keys():
-                                            BPSPCff=int(float(dict_opts['--BPSPCff']))
-                                        else:
-                                            BPSPCff=int(round(0.8*float(TBStats['stat']['Median'])/float(10)))
-                                        if BPSPCff<3:
-                                            BPSPCff=3
-                                        if '--BPLNCff' in dict_opts.keys():
-                                            BPLNCff=int(float(dict_opts['--BPLNCff']))
-                                        else:
-                                            BPLNCff=int(round(1.2*float(TBStats['stat']['Median'])/float(10)))
-                                        if BPLNCff<3:
-                                            BPLNCff=3
-                                        SPCluMin=BPSPCff
-                                        LnCluMin=BPLNCff
-                                        if '--SPCluLen' in dict_opts.keys():
-                                            SPCluLen=int(dict_opts['--SPCluLen'])
-                                        else:
-                                            SPCluLen=5
-                                        SubLnCluMin=max([LnCluMin,SPCluMin])
-                                        LinkCluMin=min([LnCluMin,SPCluMin])
-                                        ClusterLen=ClusterLen_Calculation(ILStats,model_comp)
-                                        ClusterLen2=int(ClusterLen/Window_Size+1)*Window_Size
-                                        Min_Distinguish_Len=Window_Size
-                                        subLnClusterLen=ClusterLen/2
-                                        if not '-S' in dict_opts.keys():
-                                            dict_opts['-S']=3
-                                        ILCffs=IL_CI_Decide(ILStats,int(dict_opts['-S']),model_comp)
-                                        BPOutputa=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.SPs'
-                                        fout=open(BPOutputa,'w')
-                                        fout.close()
-                                        BPOutputb=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.LNs'
-                                        fout=open(BPOutputb,'w')
-                                        fout.close()
-                                        BPOutputd=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.chromLNs'
-                                        fout=open(BPOutputd,'w')
-                                        fout.close()
-                                        BPOutpute='/'.join(BPOutputd.split('/')[:-1])+'/'+'.'.join(BPOutputd.split('/')[-1].split('.')[:-6]+BPOutputd.split('/')[-1].split('.')[-5:])
-                                        if not os.path.isfile(BPOutpute):
-                                            fout=open(BPOutpute,'w')
-                                            fout.close()
-                                        abtLink={}
-                                        floc=open(Refloc_name)
-                                        loc_rec={}
-                                        for line in floc:
-                                            ploc=line.strip().split()
-                                            if not ploc[0] in loc_rec.keys():
-                                                loc_rec[ploc[0]]=[]
-                                                loc_rec[ploc[0]].append([int(ploc2) for ploc2 in ploc[1:]])
+                                    if test_chromo_in_bam_file(bamF,chrF)=='Pass':
+                                        bamF_Name=bamF.split('/')[-1].replace('.'+bam_files_appdix,'')
+                                        floc_Name=BPPath+bamF_Name+'.'+chrF
+                                        Refloc_name='.'.join(ref_file.split('.')[:-1])+'.Mappable.bed'
+                                        stat_file_name(bamF_Name,genome_name)
+                                        if os.path.isfile(Refloc_name):
+                                            BamInput=bamF
+                                            ILStats=ILStats_readin(ILStat)
+                                            RDStats=RDStats_readin(RDStat)
+                                            TBStats=TBStats_readin(TBStat)
+                                            SPLCff=SPLCff_Calculate(NullSplitLen_perc,SPLenStat)
+                                            fAllS=open(AllStat)
+                                            pAllS=fAllS.readline().rstrip()
+                                            ILCIs={}
+                                            pAllS1=fAllS.readline().strip().split()
+                                            pAllS2=fAllS.readline().strip().split()
+                                            for i in range(len(pAllS1)):
+                                                    ILCIs[pAllS1[i]]=pAllS2[i]
+                                            pAllS=fAllS.readline().rstrip()
+                                            RDCIs={}
+                                            pAllS1=fAllS.readline().strip().split()
+                                            pAllS2=fAllS.readline().strip().split()
+                                            for i in range(len(pAllS1)):
+                                                RDCIs[pAllS1[i]]=pAllS2[i]
+                                            pAllS=fAllS.readline().rstrip()
+                                            TBCIs={}
+                                            pAllS1=fAllS.readline().strip().split()
+                                            pAllS2=fAllS.readline().strip().split()
+                                            for i in range(len(pAllS1)):
+                                                TBCIs[pAllS1[i]]=pAllS2[i]
+                                            pAllS=fAllS.readline().rstrip()
+                                            InsertLen={}
+                                            pAllS1=fAllS.readline().strip().split()
+                                            pAllS2=fAllS.readline().strip().split()
+                                            for i in range(len(pAllS1)):
+                                                    InsertLen[pAllS1[i]]=pAllS2[i]
+                                            for i in range(len(pAllS1)):
+                                                    if float(pAllS2[i])>ABILCutoff:
+                                                            InsertLenMin=int(pAllS1[i])-1
+                                                            break
+                                            if InsertLenMin<5:
+                                                    InsertLenMin=5
+                                            pAllS=fAllS.readline().rstrip()
+                                            SplitReads={}
+                                            pAllS1=fAllS.readline().strip().split()
+                                            pAllS2=fAllS.readline().strip().split()
+                                            for i in range(len(pAllS1)):
+                                                    SplitReads[pAllS1[i]]=pAllS2[i]
+                                            for i in range(len(pAllS1)):
+                                                    if float(pAllS2[i])>SplitCutoff:
+                                                            SplitMin=int(pAllS1[i])-1
+                                                            break
+                                            if SplitMin<5:
+                                                    SplitMin=5
+                                            pAllS=fAllS.readline().rstrip()
+                                            AbDirection={}
+                                            pAllS1=fAllS.readline().strip().split()
+                                            pAllS2=fAllS.readline().strip().split()
+                                            for i in range(len(pAllS1)):
+                                                    AbDirection[pAllS1[i]]=pAllS2[i]
+                                            for i in range(len(pAllS1)):
+                                                if float(pAllS2[i])>DRCutoff:
+                                                    DRMin=int(pAllS1[i])-1
+                                                    break
+                                            if DRMin<5:
+                                                    DRMin=5
+                                            fbam=os.popen('''samtools view -H %s'''%(BamInput))
+                                            if '--BPSPCff' in dict_opts.keys():
+                                                BPSPCff=int(float(dict_opts['--BPSPCff']))
                                             else:
-                                                loc_rec[ploc[0]].append([int(ploc2) for ploc2 in ploc[1:]])
-                                        floc.close()
-                                        if not loc_rec=={} and chrF in loc_rec.keys():
-                                            test_mul_RP=[]
-                                            test_mul_SP=[]
-                                            chrom=chrF
-                                            mini_fout_Name=BPPath+bamF_Name+'.mini.'+chrom+'.sam'
-                                            mini_fout_N2=BPPath+bamF_Name+'.mini.'+chrom+'.bam'
-                                            mini_fout_N3=BPPath+bamF_Name+'.mini.'+chrom+'.sorted'
-                                            mini_fout_N4=BPPath+bamF_Name+'.mini.'+chrom+'.sorted.bam'
-                                            if not os.path.isfile(mini_fout_N4):
-                                                os.system(r''' samtools view -H %s -o %s'''%(BamInput,mini_fout_Name)) 
-                                                RD_index_Path=NullPath+'RD_Stat/'
-                                                if not os.path.isdir(RD_index_Path):
-                                                    os.system(r'''mkdir %s'''%(RD_index_Path))
-                                                RD_index_File=RD_index_Path+bamF_Name+'.'+chrF+'.RD.index'
-                                                fRDind=open(RD_index_File,'w')
-                                                fRDind.close()
-                                                for loc in loc_rec[chrom]:
-                                                    loc2=split_loc_to_subloc(loc,sub_loc_size)
-                                                    for real_region in loc2:
-                                                        fmini=open(mini_fout_Name,'a')
-                                                        fRDind=open(RD_index_File,'a')
-                                                        print >>fRDind,chrom+':'+str(real_region[0])+'-'+str(real_region[1])                
-                                                        RD_RealRegion=[0 for i in range((real_region[1]-real_region[0])/Window_Size+1)]
-                                                        fbam=os.popen('''samtools view %s %s:%d-%d'''%(BamInput,chrom,real_region[0],real_region[1]))
-                                                        while True:
-                                                            pbam1=fbam.readline().strip()
-                                                            if not pbam1: break
-                                                            pbam=pbam1.split()
-                                                            if int(pbam[1])&4>0: continue           #the read was not mapped, skip
-                                                            DRtemp=Reads_Direction_Detect(pbam[1])
-                                                            ReadLen=cigar2reaadlength(pbam[5])
-                                                            pos1=int(pbam[3])
-                                                            pos2=int(pbam[3])+ReadLen
-                                                            if pos2>real_region[0] and pos1<real_region[1]:
-                                                                if pos1<real_region[0] and pos2>real_region[0]:
-                                                                    pos1=real_region[0]
-                                                                if pos1<real_region[1] and pos2>real_region[1]:
-                                                                    pos2=real_region[1]
-                                                                block1=(pos1-real_region[0])/Window_Size
-                                                                RD_RealRegion[block1]+=ReadLen
-                                                            if int(pbam[4])>int(QCAlign):             #fail quality control, skip
-                                                                absIL=abs(int(pbam[8]))
-                                                                QCFlag=0
-                                                                link_flag=0
-                                                                if absIL<int(ILCffs[0]) or absIL>int(ILCffs[1]):
-                                                                    QCFlag+=1
-                                                                if DRtemp==['+','-'] and int(pbam[8])<0:
-                                                                    QCFlag+=1
-                                                                if DRtemp==['+','+'] or DRtemp==['-','-']:
-                                                                    QCFlag+=1
-                                                                if int(pbam[8])==0:
-                                                                   QCFlag+=1
-                                                                if not pbam[5].find('S')==-1:
-                                                                    QCFlag+=1
-                                                                if not QCFlag==0:
-                                                                    print>>fmini, pbam1
-                                                        fbam.close()
-                                                        fmini.close()
-                                                        for rfrr in range(len(RD_RealRegion[:-1])):
-                                                            RD_RealRegion[rfrr]=str(float(RD_RealRegion[rfrr])/Window_Size)
-                                                        if real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size ==0:
-                                                            del RD_RealRegion[-1]
-                                                        else:
-                                                            RD_RealRegion[-1]=str(float(RD_RealRegion[-1])/float(real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size))
-                                                        print >>fRDind, ' '.join(RD_RealRegion)
-                                                        fRDind.close()
-                                                os.system(r'''samtools view -h -Sb %s -o %s'''%(mini_fout_Name,mini_fout_N2))
-                                                os.system(r'''samtools sort %s %s'''%(mini_fout_N2,mini_fout_N3))
-                                                os.system(r'''samtools index %s '''%(mini_fout_N4))
-                                                os.system(r'''rm %s'''%(mini_fout_N2))
-                                                os.system(r'''rm %s'''%(mini_fout_Name))
-                                        temp_IL_Rec={}
-                                        Link_IL_Rec={}
-                                        for loc in loc_rec[chrom]: 
-                                            loc2=split_loc_to_loc2(loc)
-                                            for real_region in loc2:
-                                                    fbam=os.popen('''samtools view %s %s:%d-%d'''%(mini_fout_N4,chrom,real_region[0],real_region[1]))
-                                                    abInfF={}
-                                                    abInfR={}
-                                                    abLink={}
-                                                    abInf3={}
-                                                    LinkFR={}
-                                                    LinkFF={}
-                                                    LinkRR={}
-                                                    LinkRF={}
-                                                    LinkNM={}
-                                                    LinkNM['F']=[]
-                                                    LinkNM['R']=[]
-                                                    LinkSP={}
-                                                    abLinkSP={}
-                                                    test=[]
-                                                    LinkSPTemp={}
-                                                    while True:
-                                                        pbam=fbam.readline().strip().split()
-                                                        if not pbam: break
-                                                        if int(pbam[4])<int(QCAlign): continue             #fail quality control, skip
-                                                        if int(pbam[1])&4>0: continue           #the read was not mapped, skip
-                                                        DRtemp=Reads_Direction_Detect(pbam[1])
-                                                        ReadLen=cigar2reaadlength(pbam[5])
-                                                        absIL=abs(int(pbam[8]))
-                                                        signIL=0
-                                                        posF=[]
-                                                        if absIL<int(ILCffs[0]) or absIL>int(ILCffs[1]):
-                                                                signIL+=1
-                                                        if not pbam[5].find('S')==-1 or not pbam[5].find('H')==-1:
-                                                            ClippedLen=cigar2splitlen(pbam[5])
-                                                            ClippedPos=cigar2split(pbam[5])
-                                                            ClippedQual=cigar2splitqual(pbam[5],pbam[10])
-                                                            if ClippedQual>QCSplit:
-                                                                    ClipAbsPos=[]
-                                                                    for c in range(len(ClippedLen)):
-                                                                        if ClippedLen[c]>SPLCff:
-                                                                                pos1=int(pbam[3])+ClippedPos[c]
-                                                                                posF.append(pos1)
-                                                                                pos2=int(pbam[7])
-                                                                                if DRtemp[0]=='+':
-                                                                                    if not pos1 in abInfF.keys():
-                                                                                        abInfF[pos1]=[0,0,0,1]
-                                                                                    else:
-                                                                                        abInfF[pos1][3]+=1
-                                                                                elif DRtemp[0]=='-':
-                                                                                    if not pos1 in abInfR.keys():
-                                                                                        abInfR[pos1]=[0,0,0,1]
-                                                                                    else:
-                                                                                        abInfR[pos1][3]+=1
-                                                            if not pbam[0] in LinkSPTemp.keys():
-                                                                LinkSPTemp[pbam[0]]=[[]]
-                                                            else:
-                                                                LinkSPTemp[pbam[0]]+=[[]]
-                                                            for c in ClippedPos:
-                                                                pos1=int(pbam[3])+c
-                                                                LinkSPTemp[pbam[0]][-1]+=[pos1,DRtemp[0]]
-                                                            LinkSPTemp[pbam[0]].append('S')
-                                                        #else:
-                                                        if posF==[]:
-                                                            if DRtemp[0]=='+':
-                                                                pos1=int(pbam[3])+len(pbam[9])
-                                                            elif DRtemp[0]=='-':
+                                                #BPSPCff=int(round(0.8*float(TBStats['stat']['Median'])/float(10)))
+                                                BPSPCff=int(round(2*float(RDStats['Median'])/float(10)))
+                                            if BPSPCff<3:
+                                                BPSPCff=3
+                                            if '--BPLNCff' in dict_opts.keys():
+                                                BPLNCff=int(float(dict_opts['--BPLNCff']))
+                                            else:
+                                                #BPLNCff=int(round(1.2*float(TBStats['stat']['Median'])/float(10)))
+                                                BPLNCff=int(round(3*float(RDStats['Median'])/float(10)))
+                                            if BPLNCff<3:
+                                                BPLNCff=3
+                                            SPCluMin=BPSPCff
+                                            LnCluMin=BPLNCff
+                                            if '--SPCluLen' in dict_opts.keys():
+                                                SPCluLen=int(dict_opts['--SPCluLen'])
+                                            else:
+                                                SPCluLen=5
+                                            SubLnCluMin=max([LnCluMin,SPCluMin])
+                                            LinkCluMin=min([LnCluMin,SPCluMin])
+                                            ClusterLen=ClusterLen_Calculation(ILStats,model_comp)
+                                            ClusterLen2=int(ClusterLen/Window_Size+1)*Window_Size
+                                            Min_Distinguish_Len=Window_Size
+                                            subLnClusterLen=ClusterLen/2
+                                            if not '-S' in dict_opts.keys():
+                                                dict_opts['-S']=3
+                                            ILCffs=IL_CI_Decide(ILStats,int(dict_opts['-S']),model_comp)
+                                            BPOutputa=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.SPs'
+                                            fout=open(BPOutputa,'w')
+                                            fout.close()
+                                            BPOutputb=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.LNs'
+                                            fout=open(BPOutputb,'w')
+                                            fout.close()
+                                            BPOutputd=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.chromLNs'
+                                            fout=open(BPOutputd,'w')
+                                            fout.close()
+                                            BPOutpute='/'.join(BPOutputd.split('/')[:-1])+'/'+'.'.join(BPOutputd.split('/')[-1].split('.')[:-6]+BPOutputd.split('/')[-1].split('.')[-5:])
+                                            if not os.path.isfile(BPOutpute):
+                                                fout=open(BPOutpute,'w')
+                                                fout.close()
+                                            abtLink={}
+                                            floc=open(Refloc_name)
+                                            loc_rec={}
+                                            for line in floc:
+                                                ploc=line.strip().split()
+                                                if not ploc[0] in loc_rec.keys():
+                                                    loc_rec[ploc[0]]=[]
+                                                    loc_rec[ploc[0]].append([int(ploc2) for ploc2 in ploc[1:]])
+                                                else:
+                                                    loc_rec[ploc[0]].append([int(ploc2) for ploc2 in ploc[1:]])
+                                            floc.close()
+                                            if not loc_rec=={} and chrF in loc_rec.keys():
+                                                test_mul_RP=[]
+                                                test_mul_SP=[]
+                                                chrom=chrF
+                                                mini_fout_Name=BPPath+bamF_Name+'.mini.'+chrom+'.sam'
+                                                mini_fout_N2=BPPath+bamF_Name+'.mini.'+chrom+'.bam'
+                                                mini_fout_N3=BPPath+bamF_Name+'.mini.'+chrom+'.sorted'
+                                                mini_fout_N4=BPPath+bamF_Name+'.mini.'+chrom+'.sorted.bam'
+                                                if not os.path.isfile(mini_fout_N4):
+                                                    os.system(r''' samtools view -H %s -o %s'''%(BamInput,mini_fout_Name)) 
+                                                    RD_index_Path=NullPath+'RD_Stat/'
+                                                    if not os.path.isdir(RD_index_Path):
+                                                        os.system(r'''mkdir %s'''%(RD_index_Path))
+                                                    RD_index_File=RD_index_Path+bamF_Name+'.'+chrF+'.RD.index'
+                                                    fRDind=open(RD_index_File,'w')
+                                                    fRDind.close()
+                                                    for loc in loc_rec[chrom]:
+                                                        loc2=split_loc_to_subloc(loc,sub_loc_size)
+                                                        for real_region in loc2:
+                                                            fmini=open(mini_fout_Name,'a')
+                                                            fRDind=open(RD_index_File,'a')
+                                                            print >>fRDind,chrom+':'+str(real_region[0])+'-'+str(real_region[1])                
+                                                            RD_RealRegion=[0 for i in range((real_region[1]-real_region[0])/Window_Size+1)]
+                                                            fbam=os.popen('''samtools view %s %s:%d-%d'''%(BamInput,chrom,real_region[0],real_region[1]))
+                                                            while True:
+                                                                pbam1=fbam.readline().strip()
+                                                                if not pbam1: break
+                                                                pbam=pbam1.split()
+                                                                if int(pbam[1])&4>0: continue           #the read was not mapped, skip
+                                                                DRtemp=Reads_Direction_Detect(pbam[1])
+                                                                ReadLen=cigar2reaadlength(pbam[5])
                                                                 pos1=int(pbam[3])
-                                                        else:
-                                                            pos1=posF[0]
-                                                        pos2=int(pbam[7])
-                                                        if pbam[0] in LinkSPTemp.keys():
-                                                            LinkSPTemp[pbam[0]]+=[[pos1,DRtemp[0]]]
-                                                        else:
-                                                            LinkSPTemp[pbam[0]]=[[pos1,DRtemp[0]]]
-                                                        if DRtemp==['+','-'] and int(pbam[8])>0:
-                                                                if signIL>0:
+                                                                pos2=int(pbam[3])+ReadLen
+                                                                if pos2>real_region[0] and pos1<real_region[1]:
+                                                                    if pos1<real_region[0] and pos2>real_region[0]:
+                                                                        pos1=real_region[0]
+                                                                    if pos1<real_region[1] and pos2>real_region[1]:
+                                                                        pos2=real_region[1]
+                                                                    block1=(pos1-real_region[0])/Window_Size
+                                                                    RD_RealRegion[block1]+=ReadLen
+                                                                if int(pbam[4])>int(QCAlign):             #fail quality control, skip
+                                                                    absIL=abs(int(pbam[8]))
+                                                                    QCFlag=0
+                                                                    link_flag=0
+                                                                    if absIL<int(ILCffs[0]) or absIL>int(ILCffs[1]):
+                                                                        QCFlag+=1
+                                                                    if DRtemp==['+','-'] and int(pbam[8])<0:
+                                                                        QCFlag+=1
+                                                                    if DRtemp==['+','+'] or DRtemp==['-','-']:
+                                                                        QCFlag+=1
+                                                                    if int(pbam[8])==0:
+                                                                       QCFlag+=1
+                                                                    if not pbam[5].find('S')==-1:
+                                                                        QCFlag+=1
+                                                                    if not QCFlag==0:
+                                                                        print>>fmini, pbam1
+                                                            fbam.close()
+                                                            fmini.close()
+                                                            for rfrr in range(len(RD_RealRegion[:-1])):
+                                                                RD_RealRegion[rfrr]=str(float(RD_RealRegion[rfrr])/Window_Size)
+                                                            if real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size ==0:
+                                                                del RD_RealRegion[-1]
+                                                            else:
+                                                                RD_RealRegion[-1]=str(float(RD_RealRegion[-1])/float(real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size))
+                                                            print >>fRDind, ' '.join(RD_RealRegion)
+                                                            fRDind.close()
+                                                    os.system(r'''samtools view -h -Sb %s -o %s'''%(mini_fout_Name,mini_fout_N2))
+                                                    os.system(r'''samtools sort %s %s'''%(mini_fout_N2,mini_fout_N3))
+                                                    os.system(r'''samtools index %s '''%(mini_fout_N4))
+                                                    os.system(r'''rm %s'''%(mini_fout_N2))
+                                                    os.system(r'''rm %s'''%(mini_fout_Name))
+                                                temp_IL_Rec={}
+                                                Link_IL_Rec={}
+                                                loc_rec_new=loc_rec_modify(loc_rec,chrom)
+                                                for loc in loc_rec_new: 
+                                                    loc2=split_loc_to_loc2(loc)
+                                                    for real_region in loc2:
+                                                            fbam=os.popen('''samtools view %s %s:%d-%d'''%(mini_fout_N4,chrom,real_region[0],real_region[1]))
+                                                            abInfF={}
+                                                            abInfR={}
+                                                            abLink={}
+                                                            abInf3={}
+                                                            LinkFR={}
+                                                            LinkFF={}
+                                                            LinkRR={}
+                                                            LinkRF={}
+                                                            LinkNM={}
+                                                            LinkNM['F']=[]
+                                                            LinkNM['R']=[]
+                                                            LinkSP={}
+                                                            abLinkSP={}
+                                                            test=[]
+                                                            LinkSPTemp={}
+                                                            while True:
+                                                                pbam=fbam.readline().strip().split()
+                                                                if not pbam: break
+                                                                if int(pbam[4])<int(QCAlign): continue             #fail quality control, skip
+                                                                if int(pbam[1])&4>0: continue           #the read was not mapped, skip
+                                                                DRtemp=Reads_Direction_Detect(pbam[1])
+                                                                ReadLen=cigar2reaadlength(pbam[5])
+                                                                absIL=abs(int(pbam[8]))
+                                                                signIL=0
+                                                                posF=[]
+                                                                if absIL<int(ILCffs[0]) or absIL>int(ILCffs[1]):
+                                                                        signIL+=1
+                                                                if not pbam[5].find('S')==-1 or not pbam[5].find('H')==-1:
+                                                                    ClippedLen=cigar2splitlen(pbam[5])
+                                                                    ClippedPos=cigar2split(pbam[5])
+                                                                    ClippedQual=cigar2splitqual(pbam[5],pbam[10])
+                                                                    if ClippedQual>QCSplit:
+                                                                            ClipAbsPos=[]
+                                                                            for c in range(len(ClippedLen)):
+                                                                                if ClippedLen[c]>SPLCff:
+                                                                                        pos1=int(pbam[3])+ClippedPos[c]
+                                                                                        posF.append(pos1)
+                                                                                        pos2=int(pbam[7])
+                                                                                        if DRtemp[0]=='+':
+                                                                                            if not pos1 in abInfF.keys():
+                                                                                                abInfF[pos1]=[0,0,0,1]
+                                                                                            else:
+                                                                                                abInfF[pos1][3]+=1
+                                                                                        elif DRtemp[0]=='-':
+                                                                                            if not pos1 in abInfR.keys():
+                                                                                                abInfR[pos1]=[0,0,0,1]
+                                                                                            else:
+                                                                                                abInfR[pos1][3]+=1
+                                                                    if not pbam[0] in LinkSPTemp.keys():
+                                                                        LinkSPTemp[pbam[0]]=[[]]
+                                                                    else:
+                                                                        LinkSPTemp[pbam[0]]+=[[]]
+                                                                    for c in ClippedPos:
+                                                                        pos1=int(pbam[3])+c
+                                                                        LinkSPTemp[pbam[0]][-1]+=[pos1,DRtemp[0]]
+                                                                    LinkSPTemp[pbam[0]].append('S')
+                                                                #else:
+                                                                if posF==[]:
+                                                                    if DRtemp[0]=='+':
+                                                                        pos1=int(pbam[3])+len(pbam[9])
+                                                                    elif DRtemp[0]=='-':
+                                                                        pos1=int(pbam[3])
+                                                                else:
+                                                                    pos1=posF[0]
+                                                                pos2=int(pbam[7])
+                                                                if pbam[0] in LinkSPTemp.keys():
+                                                                    LinkSPTemp[pbam[0]]+=[[pos1,DRtemp[0]]]
+                                                                else:
+                                                                    LinkSPTemp[pbam[0]]=[[pos1,DRtemp[0]]]
+                                                                if DRtemp==['+','-'] and int(pbam[8])>0:
+                                                                        if signIL>0:
+                                                                                #pos1=int(pbam[3])+ReadLen
+                                                                                #pos2=int(pbam[7])
+                                                                                if not pos1 in LinkFR.keys():
+                                                                                        LinkFR[pos1]=[pos2]
+                                                                                else:
+                                                                                        LinkFR[pos1]+=[pos2]
+                                                                                if not pos1 in abInfF.keys():
+                                                                                        abInfF[pos1]=[1,0,0,0]
+                                                                                else:
+                                                                                        abInfF[pos1][0]+=1
+                                                                                if not pos2 in abInfR.keys():
+                                                                                   abInfR[pos2]=[1,0,0,0]
+                                                                                else:
+                                                                                        abInfR[pos2][0]+=1
+                                                                elif DRtemp==['+','-'] and int(pbam[8])<0:
                                                                         #pos1=int(pbam[3])+ReadLen
                                                                         #pos2=int(pbam[7])
                                                                         if not pos1 in LinkFR.keys():
@@ -2865,725 +2922,710 @@ else:
                                                                         else:
                                                                                 LinkFR[pos1]+=[pos2]
                                                                         if not pos1 in abInfF.keys():
-                                                                                abInfF[pos1]=[1,0,0,0]
+                                                                                abInfF[pos1]=[0,1,0,0]
                                                                         else:
-                                                                                abInfF[pos1][0]+=1
+                                                                                abInfF[pos1][1]+=1
                                                                         if not pos2 in abInfR.keys():
-                                                                           abInfR[pos2]=[1,0,0,0]
+                                                                           abInfR[pos2]=[0,1,0,0]
                                                                         else:
+                                                                                abInfR[pos2][1]+=1
+                                                                        if signIL>0:
+                                                                                abInfF[pos1][0]+=1
                                                                                 abInfR[pos2][0]+=1
-                                                        elif DRtemp==['+','-'] and int(pbam[8])<0:
-                                                                #pos1=int(pbam[3])+ReadLen
-                                                                #pos2=int(pbam[7])
-                                                                if not pos1 in LinkFR.keys():
-                                                                        LinkFR[pos1]=[pos2]
-                                                                else:
-                                                                        LinkFR[pos1]+=[pos2]
-                                                                if not pos1 in abInfF.keys():
-                                                                        abInfF[pos1]=[0,1,0,0]
-                                                                else:
-                                                                        abInfF[pos1][1]+=1
-                                                                if not pos2 in abInfR.keys():
-                                                                   abInfR[pos2]=[0,1,0,0]
-                                                                else:
-                                                                        abInfR[pos2][1]+=1
-                                                                if signIL>0:
-                                                                        abInfF[pos1][0]+=1
-                                                                        abInfR[pos2][0]+=1
-                                                        elif DRtemp==['+','+'] and not int(pbam[8])==0:
-                                                                #pos1=int(pbam[3])+ReadLen
-                                                                if not pos1 in abInfF.keys():
-                                                                        abInfF[pos1]=[0,1,0,0]
-                                                                else:
-                                                                        abInfF[pos1][1]+=1
-                                                                if signIL>0:
-                                                                        abInfF[pos1][0]+=1
-                                                                if not pbam[0] in abtLink.keys():
-                                                                        abtLink[pbam[0]]=[pos1]
-                                                                elif pbam[0] in abtLink.keys():
-                                                                        abtLink[pbam[0]].append(pos1)
-                                                                        if not min(abtLink[pbam[0]]) in LinkFF.keys():
-                                                                                LinkFF[min(abtLink[pbam[0]])]=[max(abtLink[pbam[0]])]
+                                                                elif DRtemp==['+','+'] and not int(pbam[8])==0:
+                                                                        #pos1=int(pbam[3])+ReadLen
+                                                                        if not pos1 in abInfF.keys():
+                                                                                abInfF[pos1]=[0,1,0,0]
                                                                         else:
-                                                                                LinkFF[min(abtLink[pbam[0]])]+=[max(abtLink[pbam[0]])]
-                                                                        del abtLink[pbam[0]]
-                                                        elif DRtemp==['-','-'] and int(pbam[8])>0:
-                                                                #pos1=int(pbam[3])
-                                                                #pos2=int(pbam[7])
-                                                                if not min(pos1,pos2) in LinkRR.keys():
-                                                                        LinkRR[min(pos1,pos2)]=[max(pos1,pos2)]
+                                                                                abInfF[pos1][1]+=1
+                                                                        if signIL>0:
+                                                                                abInfF[pos1][0]+=1
+                                                                        if not pbam[0] in abtLink.keys():
+                                                                                abtLink[pbam[0]]=[pos1]
+                                                                        elif pbam[0] in abtLink.keys():
+                                                                                abtLink[pbam[0]].append(pos1)
+                                                                                if not min(abtLink[pbam[0]]) in LinkFF.keys():
+                                                                                        LinkFF[min(abtLink[pbam[0]])]=[max(abtLink[pbam[0]])]
+                                                                                else:
+                                                                                        LinkFF[min(abtLink[pbam[0]])]+=[max(abtLink[pbam[0]])]
+                                                                                del abtLink[pbam[0]]
+                                                                elif DRtemp==['-','-'] and int(pbam[8])>0:
+                                                                        #pos1=int(pbam[3])
+                                                                        #pos2=int(pbam[7])
+                                                                        if not min(pos1,pos2) in LinkRR.keys():
+                                                                                LinkRR[min(pos1,pos2)]=[max(pos1,pos2)]
+                                                                        else:
+                                                                                LinkRR[min(pos1,pos2)]+=[max(pos1,pos2)]
+                                                                        if not pos1 in abInfR.keys():
+                                                                                abInfR[pos1]=[0,1,0,0]
+                                                                        else:
+                                                                                abInfR[pos1][1]+=1                                    
+                                                                        if not pos2 in abInfR.keys():
+                                                                                abInfR[pos2]=[0,1,0,0]
+                                                                        else:
+                                                                                abInfR[pos2][1]+=1
+                                                                        if signIL>0:
+                                                                                abInfR[pos1][0]+=1
+                                                                                abInfR[pos2][0]+=1
+                                                                elif int(pbam[8])==0:
+                                                                        if int(pbam[1])&8>0:
+                                                                                if DRtemp[0]=='+':
+                                                                                        #pos1=int(pbam[3])+ReadLen
+                                                                                        LinkNM['F'].append(pos1)
+                                                                                        if pos1>real_region[0] and pos1<real_region[1]:
+                                                                                                if not pos1 in abInfF.keys():
+                                                                                                        abInfF[pos1]=[0,0,1,0]
+                                                                                                else:
+                                                                                                        abInfF[pos1][2]+=1
+                                                                                elif DRtemp[0]=='-':
+                                                                                        #pos1=int(pbam[3])
+                                                                                        LinkNM['R'].append(pos1)
+                                                                                        if pos1>real_region[0] and pos1<real_region[1]:
+                                                                                                if not pos1 in abInfR.keys():
+                                                                                                        abInfR[pos1]=[0,0,1,0]
+                                                                                                else:
+                                                                                                        abInfR[pos1][2]+=1
+                                                                        if not pbam[6]=='=':
+                                                                                if DRtemp[0]=='+':
+                                                                                        #pos1=int(pbam[3])+ReadLen
+                                                                                        if pos1>real_region[0] and pos1<real_region[1]:
+                                                                                                if not pos1 in abLink.keys():
+                                                                                                        abLink[pos1]=['f',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
+                                                                                                else:
+                                                                                                        abLink[pos1]+=['f',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
+                                                                                                if not pos1 in abInfF.keys():
+                                                                                                        abInfF[pos1]=[0,0,1,0]
+                                                                                                else:
+                                                                                                        abInfF[pos1][2]+=1
+                                                                                elif DRtemp[0]=='-':
+                                                                                        #pos1=int(pbam[3])
+                                                                                        if pos1>real_region[0] and pos1<real_region[1]:
+                                                                                                if not pos1 in abLink.keys():
+                                                                                                        abLink[pos1]=['r',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
+                                                                                                else:
+                                                                                                        abLink[pos1]+=['r',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
+                                                                                                if not pos1 in abInfR.keys():
+                                                                                                        abInfR[pos1]=[0,0,1,0]
+                                                                                                else:
+                                                                                                        abInfR[pos1][2]+=1
+                                                            for k1 in LinkSPTemp.keys():
+                                                                if not 'S' in LinkSPTemp[k1]:
+                                                                    del LinkSPTemp[k1]
                                                                 else:
-                                                                        LinkRR[min(pos1,pos2)]+=[max(pos1,pos2)]
-                                                                if not pos1 in abInfR.keys():
-                                                                        abInfR[pos1]=[0,1,0,0]
-                                                                else:
-                                                                        abInfR[pos1][1]+=1                                    
-                                                                if not pos2 in abInfR.keys():
-                                                                        abInfR[pos2]=[0,1,0,0]
-                                                                else:
-                                                                        abInfR[pos2][1]+=1
-                                                                if signIL>0:
-                                                                        abInfR[pos1][0]+=1
-                                                                        abInfR[pos2][0]+=1
-                                                        elif int(pbam[8])==0:
-                                                                if int(pbam[1])&8>0:
-                                                                        if DRtemp[0]=='+':
-                                                                                #pos1=int(pbam[3])+ReadLen
-                                                                                LinkNM['F'].append(pos1)
-                                                                                if pos1>real_region[0] and pos1<real_region[1]:
-                                                                                        if not pos1 in abInfF.keys():
-                                                                                                abInfF[pos1]=[0,0,1,0]
-                                                                                        else:
-                                                                                                abInfF[pos1][2]+=1
-                                                                        elif DRtemp[0]=='-':
-                                                                                #pos1=int(pbam[3])
-                                                                                LinkNM['R'].append(pos1)
-                                                                                if pos1>real_region[0] and pos1<real_region[1]:
-                                                                                        if not pos1 in abInfR.keys():
-                                                                                                abInfR[pos1]=[0,0,1,0]
-                                                                                        else:
-                                                                                                abInfR[pos1][2]+=1
-                                                                if not pbam[6]=='=':
-                                                                        if DRtemp[0]=='+':
-                                                                                #pos1=int(pbam[3])+ReadLen
-                                                                                if pos1>real_region[0] and pos1<real_region[1]:
-                                                                                        if not pos1 in abLink.keys():
-                                                                                                abLink[pos1]=['f',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
-                                                                                        else:
-                                                                                                abLink[pos1]+=['f',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
-                                                                                        if not pos1 in abInfF.keys():
-                                                                                                abInfF[pos1]=[0,0,1,0]
-                                                                                        else:
-                                                                                                abInfF[pos1][2]+=1
-                                                                        elif DRtemp[0]=='-':
-                                                                                #pos1=int(pbam[3])
-                                                                                if pos1>real_region[0] and pos1<real_region[1]:
-                                                                                        if not pos1 in abLink.keys():
-                                                                                                abLink[pos1]=['r',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
-                                                                                        else:
-                                                                                                abLink[pos1]+=['r',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
-                                                                                        if not pos1 in abInfR.keys():
-                                                                                                abInfR[pos1]=[0,0,1,0]
-                                                                                        else:
-                                                                                                abInfR[pos1][2]+=1
-                                                    for k1 in LinkSPTemp.keys():
-                                                        if not 'S' in LinkSPTemp[k1]:
-                                                            del LinkSPTemp[k1]
-                                                        else:
-                                                            if len(LinkSPTemp[k1])==2:
-                                                                del LinkSPTemp[k1]
-                                                    for k1 in LinkSPTemp.keys():
-                                                        tempk1=[]
-                                                        for k2 in LinkSPTemp[k1]:
-                                                            if not k2=='S':
-                                                                tempk1+=[k2]
-                                                        for k2 in range(len(tempk1[0])/2):
-                                                            for k3 in range(len(tempk1[1])/2):
-                                                                if tempk1[0][2*k2]<tempk1[1][2*k3]:
-                                                                    tempk2=[tempk1[0][2*k2],tempk1[0][2*k2+1],tempk1[1][2*k3],tempk1[1][2*k3+1]]
-                                                                    if [tempk2[1],tempk2[3]]==['+','-']:
-                                                                        if not tempk2[0] in LinkFR.keys():
-                                                                            LinkFR[tempk2[0]]=[]
-                                                                        LinkFR[tempk2[0]].append(tempk2[2])
-                                                                    if [tempk2[1],tempk2[3]]==['+','+']:
-                                                                        if not tempk2[0] in LinkFF.keys():
-                                                                            LinkFF[tempk2[0]]=[]
-                                                                        LinkFF[tempk2[0]].append(tempk2[2])
-                                                                    if [tempk2[1],tempk2[3]]==['-','-']:
-                                                                        if not tempk2[0] in LinkRR.keys():
-                                                                            LinkRR[tempk2[0]]=[]
-                                                                        LinkRR[tempk2[0]].append(tempk2[2])
-                                                                    if [tempk2[1],tempk2[3]]==['-','+']:
-                                                                        if not tempk2[0] in LinkRF.keys():
-                                                                            LinkRF[tempk2[0]]=[]
-                                                                        LinkRF[tempk2[0]].append(tempk2[2])
-                                                    for k1 in abInfF.keys():
-                                                            if not abInfF[k1][-1]==0:
-                                                                    if not k1 in LinkSP.keys():
-                                                                            LinkSP[k1]=0
-                                                                    LinkSP[k1]+=abInfF[k1][-1]
-                                                    for k1 in abInfR.keys():
-                                                            if not abInfR[k1][-1]==0:
-                                                                    if not k1 in LinkSP.keys():
-                                                                            LinkSP[k1]=0
-                                                                    LinkSP[k1]+=abInfR[k1][-1]                            
-                                                    for k1 in LinkFR.keys():
-                                                            for k2 in LinkFR[k1]:
-                                                                    if not k2 in LinkRF.keys():
-                                                                            LinkRF[k2]=[]
-                                                                    LinkRF[k2].append(k1)
-                                                    out_pair_bp=[]
-                                                    out_single_bp=[]
-                                                    SP4S=[]
-                                                    if not LinkSP=={}:
-                                                        SP2S=[]
-                                                        linkSP_First=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'f')
-                                                        for k1 in range(len(linkSP_First[0])):
-                                                                if linkSP_First[1][k1]==1:
-                                                                        if linkSP_First[0][k1] in abInfF.keys():
-                                                                                if abInfF[linkSP_First[0][k1]]==[0,0,0,1]:
-                                                                                        del abInfF[linkSP_First[0][k1]]
-                                                                        if linkSP_First[0][k1] in abInfR.keys():
-                                                                                if abInfR[linkSP_First[0][k1]]==[0,0,0,1]:
-                                                                                        del abInfR[linkSP_First[0][k1]]
-                                                        linkSPF=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'f')[0]
-                                                        linkSPR=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'r')[0]
-                                                        linkSPFR=clusterSupVis2(sorted(LinkSP.keys()),sorted(linkSPR),sorted(linkSPF),'left')
-                                                        for k1 in linkSPFR.keys():
-                                                                qual_num=0
-                                                                qual_rec=[]
-                                                                for k2 in linkSPFR[k1]:
-                                                                        qual_num+=LinkSP[k2]
-                                                                        qual_rec.append(LinkSP[k2])
-                                                                if qual_num<SPCluMin:
-                                                                        del linkSPFR[k1]
-                                                                else:
-                                                                        SP2S.append(linkSPFR[k1][qual_rec.index(max(qual_rec))])
-                                                        if not SP2S==[]:
-                                                                SP3S=[]
-                                                                key=[]
-                                                                if align_QCflag==1:
-                                                                    for key1 in SP2S:
-                                                                        QCLNSP_flag=0
-                                                                        for aqb in [key1]:
-                                                                            if aqb>BPAlignQCFlank:
-                                                                                LNSPFR_aqb=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,aqb-BPAlignQCFlank,aqb+BPAlignQCFlank))
-                                                                                LNSPFR_score=float(LNSPFR_aqb.read().strip())  
-                                                                                if LNSPFR_score<float(BPAlignQC):
-                                                                                        QCLNSP_flag+=1
-                                                                        if not QCLNSP_flag==0:
-                                                                                SP3S.append(key1)
-                                                                SP4S=[]
-                                                                for k1 in SP2S:
-                                                                        if not k1 in SP3S:
-                                                                                SP4S.append(k1)
-                                                                SP4S.sort()
-                                                                for i in range(len(SP4S)-1):
-                                                                        if SP4S[i+1]-SP4S[i]<10:
-                                                                                SP4S[i]=SP4S[i+1]
-                                                                SP5S=[]
-                                                                for i in SP4S:
-                                                                        if not i in SP5S:
-                                                                                SP5S.append(i)
-                                                                SP4S=SP5S
-                                                                #SP5SF=clusterNums(sorted(SP4S), Window_Size, 'f')[0]
-                                                                #SP5SR=clusterNums(sorted(SP4S), Window_Size, 'r')[0]
-                                                                #SP5FR=clusterSupVis2(sorted(SP4S),sorted(SP5SR),sorted(SP5SF),'left')
-                                                                #SP6S=[]
-                                                                #for k1 in sorted(SP5FR.keys()):
-                                                                #        temp=[]
-                                                                #        for k2 in SP5FR[k1]:
-                                                                #                temp.append(LinkSP[k2])
-                                                                #        SP6S.append(SP5FR[k1][temp.index(max(temp))])
-                                                                #SP4S=SP6S
-                                                                if not SP4S==[]:
-                                                                        LinkSPF2=clusterSupVis2(sorted(abInfF.keys()), [i-ClusterLen for i in sorted(SP4S)], [i+10 for i in sorted(SP4S)],'right')
-                                                                        for k1x in LinkSPF2.keys():
-                                                                            key1=k1x-10
-                                                                            LinkSPF2[key1]=[i for i in LinkSPF2[k1x]]
-                                                                            del LinkSPF2[k1x]
-                                                                        for k1x in LinkSPF2.keys():
-                                                                            test1=bp_subgroup(LinkSPF2[k1x],Min_Distinguish_Len)
-                                                                            if len(test1)>1:
-                                                                                for k2x in test1[:-1]:
-                                                                                    new_core_ele=0
-                                                                                    for k3x in k2x:
-                                                                                        if k3x in abInfF.keys():
-                                                                                            new_core_ele+=numpy.sum(abInfF[k3x])
-                                                                                    if new_core_ele>BPLNCff:
-                                                                                        #new_core.append(max(k2x))
-                                                                                        if not max(k2x) in LinkSPF2.keys():
-                                                                                            LinkSPF2[max(k2x)]=k2x
-                                                                                        else:
-                                                                                            LinkSPF2[max(k2x)]+=k2x
-                                                                                        if not max(k2x) in SP4S:
-                                                                                            SP4S.append(max(k2x))
-                                                                        LinkSPR2=clusterSupVis2(sorted(abInfR.keys()), [i-10 for i in sorted(SP4S)], [i+ClusterLen for i in sorted(SP4S)],'left')
-                                                                        for k1x in LinkSPR2.keys():
-                                                                            key1=k1x+10
-                                                                            LinkSPR2[key1]=[i for i in LinkSPR2[k1x]]
-                                                                            del LinkSPR2[k1x]
-                                                                        for k1x in LinkSPR2.keys():
-                                                                            test1=bp_subgroup(LinkSPR2[k1x],Min_Distinguish_Len)
-                                                                            if len(test1)>1:
-                                                                                for k2x in test1[1:]:
-                                                                                    new_core_ele=0
-                                                                                    for k3x in k2x:
-                                                                                        if k3x in abInfR.keys():
-                                                                                            new_core_ele+=numpy.sum(abInfR[k3x])
-                                                                                    if new_core_ele>BPLNCff:
-                                                                                        #new_core.append(min(k2x))
-                                                                                        if not min(k2x) in LinkSPR2.keys():
-                                                                                            LinkSPR2[min(k2x)]=k2x
-                                                                                        else:
-                                                                                            LinkSPR2[min(k2x)]+=k2x
-                                                                                        if not min(k2x) in SP4S:
-                                                                                            SP4S.append(min(k2x))
-                                                                        for k1x in LinkSPF2.keys():
-                                                                            temp_rec=LinkSPF2[k1x]
-                                                                            LinkSPF2[k1x]=[LinkSPF2[k1x],[]]
-                                                                            for k2 in temp_rec:
-                                                                                if k2 in LinkFR.keys():
-                                                                                    LinkSPF2[k1x][1]+=LinkFR[k2]
-                                                                                if k2 in LinkFF.keys():
-                                                                                    LinkSPF2[k1x][1]+=LinkFF[k2]
-                                                                        for k1x in LinkSPR2.keys():
-                                                                            temp_rec=LinkSPR2[k1x]
-                                                                            LinkSPR2[k1x]=[LinkSPR2[k1x],[]]
-                                                                            for k2 in temp_rec:
-                                                                                if k2 in LinkRR.keys():
-                                                                                    LinkSPR2[k1x][1]+=LinkRR[k2]
-                                                                                if k2 in LinkRF.keys():
-                                                                                    LinkSPR2[k1x][1]+=LinkRF[k2]
-                                                                        LinkSP_To_Link={}
-                                                                        for k1x in SP4S:
-                                                                            if k1x in LinkSPF2.keys():
-                                                                                LinkSP_To_Link[k1x]=[[],[]]
-                                                                                LinkSP_To_Link[k1x][0]+=LinkSPF2[k1x][0]
-                                                                                LinkSP_To_Link[k1x][1]+=LinkSPF2[k1x][1]
-                                                                            if k1x in LinkSPR2.keys():
-                                                                                if not k1x in LinkSP_To_Link.keys():
-                                                                                    LinkSP_To_Link[k1x]=[[],[]]
-                                                                                LinkSP_To_Link[k1x][0]+=LinkSPR2[k1x][0]
-                                                                                LinkSP_To_Link[k1x][1]+=LinkSPR2[k1x][1]
-                                                                            if k1x in LinkSP_To_Link.keys():
-                                                                                LinkSP_To_Link[k1x][0].sort()
-                                                                                LinkSP_To_Link[k1x][1].sort()
-                                                                        for k1x in sorted(LinkSP_To_Link.keys()):
-                                                                            for k2 in LinkSP_To_Link[k1x][1]:
-                                                                                if k2 in LinkSP_To_Link.keys():
-                                                                                    if not sorted([k1x,k2]) in out_pair_bp and not k1x==k2:
-                                                                                        out_pair_bp.append(sorted([k1x,k2]))
-                                                                                    elif k1x==k2:
-                                                                                        if not k1x in out_single_bp:
-                                                                                            out_single_bp.append(k1x)
-                                                                        for k1x in sorted(LinkSP_To_Link.keys()):
-                                                                            if not LinkSP_To_Link[k1x][1]==[]:
-                                                                                for k2 in sorted(LinkSP_To_Link.keys())[sorted(LinkSP_To_Link.keys()).index(k1x):]:
-                                                                                    if not LinkSP_To_Link[k2][1]==[]:
-                                                                                        if k2==k1x: 
-                                                                                            if not k1x in out_single_bp:
-                                                                                                out_single_bp.append(k1x)
-                                                                                        else:
-                                                                                            overlap_rec=[overlap_calcu(LinkSP_To_Link[k1x][1],LinkSP_To_Link[k2][0]),overlap_calcu(LinkSP_To_Link[k1x][0],LinkSP_To_Link[k2][1])]
-                                                                                            if overlap_rec[0]+overlap_rec[1]>0:
-                                                                                                if not sorted([k1x,k2]) in out_pair_bp and not k1x==k2:
-                                                                                                    out_pair_bp.append(sorted([k1x,k2]))
-                                                                                                elif k1x==k2:
+                                                                    if len(LinkSPTemp[k1])==2:
+                                                                        del LinkSPTemp[k1]
+                                                            for k1 in LinkSPTemp.keys():
+                                                                tempk1=[]
+                                                                for k2 in LinkSPTemp[k1]:
+                                                                    if not k2=='S':
+                                                                        tempk1+=[k2]
+                                                                for k2 in range(len(tempk1[0])/2):
+                                                                    for k3 in range(len(tempk1[1])/2):
+                                                                        if tempk1[0][2*k2]<tempk1[1][2*k3]:
+                                                                            tempk2=[tempk1[0][2*k2],tempk1[0][2*k2+1],tempk1[1][2*k3],tempk1[1][2*k3+1]]
+                                                                            if [tempk2[1],tempk2[3]]==['+','-']:
+                                                                                if not tempk2[0] in LinkFR.keys():
+                                                                                    LinkFR[tempk2[0]]=[]
+                                                                                LinkFR[tempk2[0]].append(tempk2[2])
+                                                                            if [tempk2[1],tempk2[3]]==['+','+']:
+                                                                                if not tempk2[0] in LinkFF.keys():
+                                                                                    LinkFF[tempk2[0]]=[]
+                                                                                LinkFF[tempk2[0]].append(tempk2[2])
+                                                                            if [tempk2[1],tempk2[3]]==['-','-']:
+                                                                                if not tempk2[0] in LinkRR.keys():
+                                                                                    LinkRR[tempk2[0]]=[]
+                                                                                LinkRR[tempk2[0]].append(tempk2[2])
+                                                                            if [tempk2[1],tempk2[3]]==['-','+']:
+                                                                                if not tempk2[0] in LinkRF.keys():
+                                                                                    LinkRF[tempk2[0]]=[]
+                                                                                LinkRF[tempk2[0]].append(tempk2[2])
+                                                            for k1 in abInfF.keys():
+                                                                    if not abInfF[k1][-1]==0:
+                                                                            if not k1 in LinkSP.keys():
+                                                                                    LinkSP[k1]=0
+                                                                            LinkSP[k1]+=abInfF[k1][-1]
+                                                            for k1 in abInfR.keys():
+                                                                    if not abInfR[k1][-1]==0:
+                                                                            if not k1 in LinkSP.keys():
+                                                                                    LinkSP[k1]=0
+                                                                            LinkSP[k1]+=abInfR[k1][-1]                            
+                                                            for k1 in LinkFR.keys():
+                                                                    for k2 in LinkFR[k1]:
+                                                                            if not k2 in LinkRF.keys():
+                                                                                    LinkRF[k2]=[]
+                                                                            LinkRF[k2].append(k1)
+                                                            out_pair_bp=[]
+                                                            out_single_bp=[]
+                                                            SP4S=[]
+                                                            if not LinkSP=={}:
+                                                                SP2S=[]
+                                                                linkSP_First=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'f')
+                                                                for k1 in range(len(linkSP_First[0])):
+                                                                        if linkSP_First[1][k1]==1:
+                                                                                if linkSP_First[0][k1] in abInfF.keys():
+                                                                                        if abInfF[linkSP_First[0][k1]]==[0,0,0,1]:
+                                                                                                del abInfF[linkSP_First[0][k1]]
+                                                                                if linkSP_First[0][k1] in abInfR.keys():
+                                                                                        if abInfR[linkSP_First[0][k1]]==[0,0,0,1]:
+                                                                                                del abInfR[linkSP_First[0][k1]]
+                                                                linkSPF=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'f')[0]
+                                                                linkSPR=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'r')[0]
+                                                                linkSPFR=clusterSupVis2(sorted(LinkSP.keys()),sorted(linkSPR),sorted(linkSPF),'left')
+                                                                for k1 in linkSPFR.keys():
+                                                                        qual_num=0
+                                                                        qual_rec=[]
+                                                                        for k2 in linkSPFR[k1]:
+                                                                                qual_num+=LinkSP[k2]
+                                                                                qual_rec.append(LinkSP[k2])
+                                                                        if qual_num<SPCluMin:
+                                                                                del linkSPFR[k1]
+                                                                        else:
+                                                                                SP2S.append(linkSPFR[k1][qual_rec.index(max(qual_rec))])
+                                                                if not SP2S==[]:
+                                                                        SP3S=[]
+                                                                        key=[]
+                                                                        if align_QCflag==1:
+                                                                            for key1 in SP2S:
+                                                                                QCLNSP_flag=0
+                                                                                for aqb in [key1]:
+                                                                                    if aqb>BPAlignQCFlank:
+                                                                                        LNSPFR_aqb=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,aqb-BPAlignQCFlank,aqb+BPAlignQCFlank))
+                                                                                        LNSPFR_score=float(LNSPFR_aqb.read().strip())  
+                                                                                        if LNSPFR_score<float(BPAlignQC):
+                                                                                                QCLNSP_flag+=1
+                                                                                if not QCLNSP_flag==0:
+                                                                                        SP3S.append(key1)
+                                                                        SP4S=[]
+                                                                        for k1 in SP2S:
+                                                                                if not k1 in SP3S:
+                                                                                        SP4S.append(k1)
+                                                                        SP4S.sort()
+                                                                        for i in range(len(SP4S)-1):
+                                                                                if SP4S[i+1]-SP4S[i]<10:
+                                                                                        SP4S[i]=SP4S[i+1]
+                                                                        SP5S=[]
+                                                                        for i in SP4S:
+                                                                                if not i in SP5S:
+                                                                                        SP5S.append(i)
+                                                                        SP4S=SP5S
+                                                                        #SP5SF=clusterNums(sorted(SP4S), Window_Size, 'f')[0]
+                                                                        #SP5SR=clusterNums(sorted(SP4S), Window_Size, 'r')[0]
+                                                                        #SP5FR=clusterSupVis2(sorted(SP4S),sorted(SP5SR),sorted(SP5SF),'left')
+                                                                        #SP6S=[]
+                                                                        #for k1 in sorted(SP5FR.keys()):
+                                                                        #        temp=[]
+                                                                        #        for k2 in SP5FR[k1]:
+                                                                        #                temp.append(LinkSP[k2])
+                                                                        #        SP6S.append(SP5FR[k1][temp.index(max(temp))])
+                                                                        #SP4S=SP6S
+                                                                        if not SP4S==[]:
+                                                                                LinkSPF2=clusterSupVis2(sorted(abInfF.keys()), [i-ClusterLen for i in sorted(SP4S)], [i+10 for i in sorted(SP4S)],'right')
+                                                                                for k1x in LinkSPF2.keys():
+                                                                                    key1=k1x-10
+                                                                                    LinkSPF2[key1]=[i for i in LinkSPF2[k1x]]
+                                                                                    del LinkSPF2[k1x]
+                                                                                for k1x in LinkSPF2.keys():
+                                                                                    test1=bp_subgroup(LinkSPF2[k1x],Min_Distinguish_Len)
+                                                                                    if len(test1)>1:
+                                                                                        for k2x in test1[:-1]:
+                                                                                            new_core_ele=0
+                                                                                            for k3x in k2x:
+                                                                                                if k3x in abInfF.keys():
+                                                                                                    new_core_ele+=numpy.sum(abInfF[k3x])
+                                                                                            if new_core_ele>BPLNCff:
+                                                                                                #new_core.append(max(k2x))
+                                                                                                if not max(k2x) in LinkSPF2.keys():
+                                                                                                    LinkSPF2[max(k2x)]=k2x
+                                                                                                else:
+                                                                                                    LinkSPF2[max(k2x)]+=k2x
+                                                                                                if not max(k2x) in SP4S:
+                                                                                                    SP4S.append(max(k2x))
+                                                                                LinkSPR2=clusterSupVis2(sorted(abInfR.keys()), [i-10 for i in sorted(SP4S)], [i+ClusterLen for i in sorted(SP4S)],'left')
+                                                                                for k1x in LinkSPR2.keys():
+                                                                                    key1=k1x+10
+                                                                                    LinkSPR2[key1]=[i for i in LinkSPR2[k1x]]
+                                                                                    del LinkSPR2[k1x]
+                                                                                for k1x in LinkSPR2.keys():
+                                                                                    test1=bp_subgroup(LinkSPR2[k1x],Min_Distinguish_Len)
+                                                                                    if len(test1)>1:
+                                                                                        for k2x in test1[1:]:
+                                                                                            new_core_ele=0
+                                                                                            for k3x in k2x:
+                                                                                                if k3x in abInfR.keys():
+                                                                                                    new_core_ele+=numpy.sum(abInfR[k3x])
+                                                                                            if new_core_ele>BPLNCff:
+                                                                                                #new_core.append(min(k2x))
+                                                                                                if not min(k2x) in LinkSPR2.keys():
+                                                                                                    LinkSPR2[min(k2x)]=k2x
+                                                                                                else:
+                                                                                                    LinkSPR2[min(k2x)]+=k2x
+                                                                                                if not min(k2x) in SP4S:
+                                                                                                    SP4S.append(min(k2x))
+                                                                                for k1x in LinkSPF2.keys():
+                                                                                    temp_rec=LinkSPF2[k1x]
+                                                                                    LinkSPF2[k1x]=[LinkSPF2[k1x],[]]
+                                                                                    for k2 in temp_rec:
+                                                                                        if k2 in LinkFR.keys():
+                                                                                            LinkSPF2[k1x][1]+=LinkFR[k2]
+                                                                                        if k2 in LinkFF.keys():
+                                                                                            LinkSPF2[k1x][1]+=LinkFF[k2]
+                                                                                for k1x in LinkSPR2.keys():
+                                                                                    temp_rec=LinkSPR2[k1x]
+                                                                                    LinkSPR2[k1x]=[LinkSPR2[k1x],[]]
+                                                                                    for k2 in temp_rec:
+                                                                                        if k2 in LinkRR.keys():
+                                                                                            LinkSPR2[k1x][1]+=LinkRR[k2]
+                                                                                        if k2 in LinkRF.keys():
+                                                                                            LinkSPR2[k1x][1]+=LinkRF[k2]
+                                                                                LinkSP_To_Link={}
+                                                                                for k1x in SP4S:
+                                                                                    if k1x in LinkSPF2.keys():
+                                                                                        LinkSP_To_Link[k1x]=[[],[]]
+                                                                                        LinkSP_To_Link[k1x][0]+=LinkSPF2[k1x][0]
+                                                                                        LinkSP_To_Link[k1x][1]+=LinkSPF2[k1x][1]
+                                                                                    if k1x in LinkSPR2.keys():
+                                                                                        if not k1x in LinkSP_To_Link.keys():
+                                                                                            LinkSP_To_Link[k1x]=[[],[]]
+                                                                                        LinkSP_To_Link[k1x][0]+=LinkSPR2[k1x][0]
+                                                                                        LinkSP_To_Link[k1x][1]+=LinkSPR2[k1x][1]
+                                                                                    if k1x in LinkSP_To_Link.keys():
+                                                                                        LinkSP_To_Link[k1x][0].sort()
+                                                                                        LinkSP_To_Link[k1x][1].sort()
+                                                                                for k1x in sorted(LinkSP_To_Link.keys()):
+                                                                                    for k2 in LinkSP_To_Link[k1x][1]:
+                                                                                        if k2 in LinkSP_To_Link.keys():
+                                                                                            if not sorted([k1x,k2]) in out_pair_bp and not k1x==k2:
+                                                                                                out_pair_bp.append(sorted([k1x,k2]))
+                                                                                            elif k1x==k2:
+                                                                                                if not k1x in out_single_bp:
                                                                                                     out_single_bp.append(k1x)
-                                                                        for k1x in sorted(LinkSP_To_Link.keys()):
-                                                                            if LinkSP_To_Link[k1x][1]==[]:
-                                                                                out_single_bp.append(k1x)
-                                                                                del LinkSP_To_Link[k1x]
-                                                                        for k1x in out_pair_bp:
-                                                                            for k2 in k1x:
-                                                                                if k2 in out_single_bp:
-                                                                                    del out_single_bp[out_single_bp.index(k2)]
-                                                                                if k2 in LinkSP_To_Link.keys():
-                                                                                    del LinkSP_To_Link[k2]
-                                                                        for k1x in out_single_bp:
-                                                                            if k1x in LinkSP_To_Link.keys():
-                                                                                del LinkSP_To_Link[k1x]
-                                                                SP4S.sort()
-                                                    LinkSP_To_Link={}
-                                                    tempIL={}
-                                                    if not abInfF=={}:
-                                                            clu_a_F=clusterNums(abInfF.keys(), ClusterLen, 'f')[0]
-                                                            if not clu_a_F==[]:
-                                                                    clu_b_F=clusterNums(abInfF.keys(), ClusterLen, 'r')[0]
-                                                                    clu_c_F=clusterSupVis2(sorted(abInfF.keys()), clu_b_F, [caf+10 for caf in clu_a_F],'right')
-                                                                    if not clu_c_F=={}:
-                                                                            for key2 in clu_c_F.keys():
-                                                                                    key2b=key2-10
-                                                                                    record=0
-                                                                                    record2=0
-                                                                                    for key3 in clu_c_F[key2]:
-                                                                                            if not key3 >key2b:
-                                                                                                    record+=sum(abInfF[key3][:3])
-                                                                                            if abs(key2b-key3)<SPCluLen:
-                                                                                                    record2+=abInfF[key3][3]
-                                                                                    if not record+record2<LinkCluMin:
-                                                                                            tempIL[key2b]=[[record,record2,'f'],clu_c_F[key2]]
-                                                                                    del clu_c_F[key2]
-                                                    if not abInfR=={}:
-                                                            clu_a_R=clusterNums(abInfR.keys(), ClusterLen, 'r')[0]
-                                                            if not clu_a_R==[]:
-                                                                    clu_b_R=clusterNums(abInfR.keys(), ClusterLen, 'f')[0]
-                                                                    clu_c_R=clusterSupVis2(sorted(abInfR.keys()), [car-10 for car in clu_a_R], clu_b_R,'left')
-                                                                    if not clu_c_R=={}:
-                                                                            for key2 in clu_c_R.keys():  
-                                                                                    key2b=key2+10
-                                                                                    record=0
-                                                                                    record2=0
-                                                                                    for key3 in clu_c_R[key2]:
-                                                                                            if not key3<key2b:
-                                                                                                    record+= sum(abInfR[key3][:3])   
-                                                                                            if abs(key3-key2b)<SPCluLen:
-                                                                                                    record2+=abInfR[key3][3]
-                                                                                    if not record+record2<LinkCluMin:
-                                                                                            tempIL[key2b]=[[record,record2,'r'],clu_c_R[key2]]
-                                                                                    del clu_c_R[key2]
-                                                    if not tempIL=={}:
-                                                        for aqb in tempIL.keys():
-                                                            if aqb<BPAlignQCFlank:
-                                                                del tempIL[aqb]
-                                                                continue
-                                                            if align_QCflag==1:
-                                                                LNSPFR_aqb=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,aqb-BPAlignQCFlank,aqb+BPAlignQCFlank))
-                                                                tPairF_b=float(LNSPFR_aqb.read().strip()) 
-                                                                if tPairF_b<float(BPAlignQC):
-                                                                    del tempIL[aqb]
-                                                    LinkIL={}
-                                                    for k1 in tempIL.keys():
-                                                        temp_mate_F={}
-                                                        temp_mate_R={}
-                                                        info_mate=0
-                                                        if tempIL[k1][0][2]=='f':
-                                                            for k2 in tempIL[k1][1]:
-                                                                if k2 in LinkFF.keys():
-                                                                    for k3 in LinkFF[k2]:
-                                                                        if k3 in abInfF.keys():
-                                                                            temp_mate_F[k3]=sum(abInfF[k3])
-                                                                            #info_mate+=sum(abInfF[k3])
-                                                                if k2 in LinkFR.keys():
-                                                                    for k3 in LinkFR[k2]:
-                                                                        if k3 in abInfR.keys():
-                                                                            temp_mate_R[k3]=sum(abInfR[k3])
-                                                                            #info_mate+=sum(abInfR[k3])
-                                                        elif tempIL[k1][0][2]=='r':
-                                                            for k2 in tempIL[k1][1]:
-                                                                if k2 in LinkRF.keys():
-                                                                    for k3 in LinkRF[k2]:
-                                                                        if k3 in abInfF.keys():
-                                                                            temp_mate_F[k3]=sum(abInfF[k3])
-                                                                            #info_mate+=sum(abInfF[k3])
-                                                                if k2 in LinkRR.keys():
-                                                                    for k3 in LinkRR[k2]:
-                                                                        if k3 in abInfR.keys():
-                                                                            temp_mate_R[k3]=sum(abInfR[k3])
-                                                                            #info_mate+=sum(abInfR[k3])
-                                                        for k1x in temp_mate_F.keys():
-                                                            info_mate+=temp_mate_F[k1x]
-                                                        for k1x in temp_mate_R.keys():
-                                                            info_mate+=temp_mate_R[k1x]
-                                                        if not info_mate<LinkCluMin:
-                                                            LinkIL[k1]=[[],[]]
-                                                            if not temp_mate_F=={}:
-                                                                LinkIL[k1][0]=clusterQC(clusterNums4(temp_mate_F, ClusterLen, 'f'),LinkCluMin)
-                                                            if not temp_mate_R=={}:
-                                                                LinkIL[k1][1]=clusterQC(clusterNums4(temp_mate_R, ClusterLen, 'r'),LinkCluMin)
-                                                            else:continue
-                                                    for k1 in LinkIL.keys():
-                                                            for k2 in LinkIL[k1]:
-                                                                    for k3 in k2:
-                                                                        if k3>BPAlignQCFlank:
-                                                                            if align_QCflag==1:
-                                                                                tPairF_QC=0
-                                                                                tPairF_a=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,k3-BPAlignQCFlank,k3+BPAlignQCFlank))
-                                                                                tPairF_b=float(tPairF_a.read().strip())  
-                                                                                if not tPairF_b<float(BPAlignQC):
-                                                                                        if not [min([k3,k1]),max([k3,k1])] in out_pair_bp and not k1==k3:
-                                                                                            out_pair_bp.append([min([k3,k1]),max([k3,k1])])
-                                                                                        elif k1==k3:
-                                                                                            out_single_bp.append(k1)
+                                                                                for k1x in sorted(LinkSP_To_Link.keys()):
+                                                                                    if not LinkSP_To_Link[k1x][1]==[]:
+                                                                                        for k2 in sorted(LinkSP_To_Link.keys())[sorted(LinkSP_To_Link.keys()).index(k1x):]:
+                                                                                            if not LinkSP_To_Link[k2][1]==[]:
+                                                                                                if k2==k1x: 
+                                                                                                    if not k1x in out_single_bp:
+                                                                                                        out_single_bp.append(k1x)
+                                                                                                else:
+                                                                                                    overlap_rec=[overlap_calcu(LinkSP_To_Link[k1x][1],LinkSP_To_Link[k2][0]),overlap_calcu(LinkSP_To_Link[k1x][0],LinkSP_To_Link[k2][1])]
+                                                                                                    if overlap_rec[0]+overlap_rec[1]>0:
+                                                                                                        if not sorted([k1x,k2]) in out_pair_bp and not k1x==k2:
+                                                                                                            out_pair_bp.append(sorted([k1x,k2]))
+                                                                                                        elif k1x==k2:
+                                                                                                            out_single_bp.append(k1x)
+                                                                                for k1x in sorted(LinkSP_To_Link.keys()):
+                                                                                    if LinkSP_To_Link[k1x][1]==[]:
+                                                                                        out_single_bp.append(k1x)
+                                                                                        del LinkSP_To_Link[k1x]
+                                                                                for k1x in out_pair_bp:
+                                                                                    for k2 in k1x:
+                                                                                        if k2 in out_single_bp:
+                                                                                            del out_single_bp[out_single_bp.index(k2)]
+                                                                                        if k2 in LinkSP_To_Link.keys():
+                                                                                            del LinkSP_To_Link[k2]
+                                                                                for k1x in out_single_bp:
+                                                                                    if k1x in LinkSP_To_Link.keys():
+                                                                                        del LinkSP_To_Link[k1x]
+                                                                        SP4S.sort()
+                                                            LinkSP_To_Link={}
+                                                            tempIL={}
+                                                            if not abInfF=={}:
+                                                                    clu_a_F=clusterNums(abInfF.keys(), ClusterLen, 'f')[0]
+                                                                    if not clu_a_F==[]:
+                                                                            clu_b_F=clusterNums(abInfF.keys(), ClusterLen, 'r')[0]
+                                                                            clu_c_F=clusterSupVis2(sorted(abInfF.keys()), clu_b_F, [caf+10 for caf in clu_a_F],'right')
+                                                                            if not clu_c_F=={}:
+                                                                                    for key2 in clu_c_F.keys():
+                                                                                            key2b=key2-10
+                                                                                            record=0
+                                                                                            record2=0
+                                                                                            for key3 in clu_c_F[key2]:
+                                                                                                    if not key3 >key2b:
+                                                                                                            record+=sum(abInfF[key3][:3])
+                                                                                                    if abs(key2b-key3)<SPCluLen:
+                                                                                                            record2+=abInfF[key3][3]
+                                                                                            if not record+record2<LinkCluMin:
+                                                                                                    tempIL[key2b]=[[record,record2,'f'],clu_c_F[key2]]
+                                                                                            del clu_c_F[key2]
+                                                            if not abInfR=={}:
+                                                                    clu_a_R=clusterNums(abInfR.keys(), ClusterLen, 'r')[0]
+                                                                    if not clu_a_R==[]:
+                                                                            clu_b_R=clusterNums(abInfR.keys(), ClusterLen, 'f')[0]
+                                                                            clu_c_R=clusterSupVis2(sorted(abInfR.keys()), [car-10 for car in clu_a_R], clu_b_R,'left')
+                                                                            if not clu_c_R=={}:
+                                                                                    for key2 in clu_c_R.keys():  
+                                                                                            key2b=key2+10
+                                                                                            record=0
+                                                                                            record2=0
+                                                                                            for key3 in clu_c_R[key2]:
+                                                                                                    if not key3<key2b:
+                                                                                                            record+= sum(abInfR[key3][:3])   
+                                                                                                    if abs(key3-key2b)<SPCluLen:
+                                                                                                            record2+=abInfR[key3][3]
+                                                                                            if not record+record2<LinkCluMin:
+                                                                                                    tempIL[key2b]=[[record,record2,'r'],clu_c_R[key2]]
+                                                                                            del clu_c_R[key2]
+                                                            if not tempIL=={}:
+                                                                for aqb in tempIL.keys():
+                                                                    if aqb<BPAlignQCFlank:
+                                                                        del tempIL[aqb]
+                                                                        continue
+                                                                    if align_QCflag==1:
+                                                                        LNSPFR_aqb=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,aqb-BPAlignQCFlank,aqb+BPAlignQCFlank))
+                                                                        tPairF_b=float(LNSPFR_aqb.read().strip()) 
+                                                                        if tPairF_b<float(BPAlignQC):
+                                                                            del tempIL[aqb]
+                                                            LinkIL={}
+                                                            for k1 in tempIL.keys():
+                                                                temp_mate_F={}
+                                                                temp_mate_R={}
+                                                                info_mate=0
+                                                                if tempIL[k1][0][2]=='f':
+                                                                    for k2 in tempIL[k1][1]:
+                                                                        if k2 in LinkFF.keys():
+                                                                            for k3 in LinkFF[k2]:
+                                                                                if k3 in abInfF.keys():
+                                                                                    temp_mate_F[k3]=sum(abInfF[k3])
+                                                                                    #info_mate+=sum(abInfF[k3])
+                                                                        if k2 in LinkFR.keys():
+                                                                            for k3 in LinkFR[k2]:
+                                                                                if k3 in abInfR.keys():
+                                                                                    temp_mate_R[k3]=sum(abInfR[k3])
+                                                                                    #info_mate+=sum(abInfR[k3])
+                                                                elif tempIL[k1][0][2]=='r':
+                                                                    for k2 in tempIL[k1][1]:
+                                                                        if k2 in LinkRF.keys():
+                                                                            for k3 in LinkRF[k2]:
+                                                                                if k3 in abInfF.keys():
+                                                                                    temp_mate_F[k3]=sum(abInfF[k3])
+                                                                                    #info_mate+=sum(abInfF[k3])
+                                                                        if k2 in LinkRR.keys():
+                                                                            for k3 in LinkRR[k2]:
+                                                                                if k3 in abInfR.keys():
+                                                                                    temp_mate_R[k3]=sum(abInfR[k3])
+                                                                                    #info_mate+=sum(abInfR[k3])
+                                                                for k1x in temp_mate_F.keys():
+                                                                    info_mate+=temp_mate_F[k1x]
+                                                                for k1x in temp_mate_R.keys():
+                                                                    info_mate+=temp_mate_R[k1x]
+                                                                if not info_mate<LinkCluMin:
+                                                                    LinkIL[k1]=[[],[]]
+                                                                    if not temp_mate_F=={}:
+                                                                        LinkIL[k1][0]=clusterQC(clusterNums4(temp_mate_F, ClusterLen, 'f'),LinkCluMin)
+                                                                    if not temp_mate_R=={}:
+                                                                        LinkIL[k1][1]=clusterQC(clusterNums4(temp_mate_R, ClusterLen, 'r'),LinkCluMin)
+                                                                    else:continue
+                                                            for k1 in LinkIL.keys():
+                                                                    for k2 in LinkIL[k1]:
+                                                                            for k3 in k2:
+                                                                                if k3>BPAlignQCFlank:
+                                                                                    if align_QCflag==1:
+                                                                                        tPairF_QC=0
+                                                                                        tPairF_a=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,k3-BPAlignQCFlank,k3+BPAlignQCFlank))
+                                                                                        tPairF_b=float(tPairF_a.read().strip())  
+                                                                                        if not tPairF_b<float(BPAlignQC):
+                                                                                                if not [min([k3,k1]),max([k3,k1])] in out_pair_bp and not k1==k3:
+                                                                                                    out_pair_bp.append([min([k3,k1]),max([k3,k1])])
+                                                                                                elif k1==k3:
+                                                                                                    out_single_bp.append(k1)
+                                                                                    else:
+                                                                                                if not [min([k3,k1]),max([k3,k1])] in out_pair_bp and not k1==k3:
+                                                                                                        out_pair_bp.append([min([k3,k1]),max([k3,k1])])        
+                                                                                                elif  k1==k3:     
+                                                                                                    out_single_bp.append(k1)                                  
+                                                            if not out_pair_bp==[]:
+                                                                out_pair_bp_temp=out_pair_bp_check(out_pair_bp,3)
+                                                                out_pair_bp=out_pair_bp_temp
+                                                                temp_out_pair_bp=[]
+                                                                out_BPmodify={}
+                                                                for k1 in out_pair_bp:
+                                                                    for k2 in k1:
+                                                                        out_BPmodify[k2]=[]
+                                                                if not SP4S==[]:
+                                                                    LBSP_tempIL=clusterSupVis3(sorted(SP4S),sorted(out_BPmodify.keys()))
+                                                                    for k1 in out_pair_bp:
+                                                                        temp_k1=[]
+                                                                        for k2 in k1:
+                                                                            k3=LBSP_tempIL[k2]
+                                                                            if abs(k2-k3)<ClusterLen:
+                                                                                temp_k1.append(k3)
                                                                             else:
-                                                                                        if not [min([k3,k1]),max([k3,k1])] in out_pair_bp and not k1==k3:
-                                                                                                out_pair_bp.append([min([k3,k1]),max([k3,k1])])        
-                                                                                        elif  k1==k3:     
-                                                                                            out_single_bp.append(k1)                                  
-                                                    if not out_pair_bp==[]:
-                                                        out_pair_bp_temp=out_pair_bp_check(out_pair_bp,3)
-                                                        out_pair_bp=out_pair_bp_temp
-                                                        temp_out_pair_bp=[]
-                                                        out_BPmodify={}
+                                                                                temp_k1.append(k2)
+                                                                        temp_out_pair_bp.append(temp_k1)
+                                                                out_pair_bp=temp_out_pair_bp
+                                                                for k1 in out_pair_bp:
+                                                                    for k2 in k1:
+                                                                        if k2 in SP4S:
+                                                                            del SP4S[SP4S.index(k2)]
+                                                                out_pair_modify={}
+                                                                for i in out_pair_bp:
+                                                                    if not i[0] in out_pair_modify.keys():
+                                                                        out_pair_modify[i[0]]=[]
+                                                                    if not i[1] in out_pair_modify[i[0]]:
+                                                                        out_pair_modify[i[0]].append(i[1])
+                                                                if len(out_pair_modify)>1:
+                                                                    while True: 
+                                                                        if len(out_pair_modify)==1: break
+                                                                        out_pair_qc=[]
+                                                                        for i in range(len(sorted(out_pair_modify.keys()))-1):
+                                                                            out_pair_qc.append(sorted(out_pair_modify.keys())[i+1]-sorted(out_pair_modify.keys())[i])
+                                                                        if min(out_pair_qc)>50:break
+                                                                        else:
+                                                                            out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))+1]]+=out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
+                                                                            del out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
+                                                                for k1 in out_pair_modify.keys():
+                                                                    while True:
+                                                                        if len(out_pair_modify[k1])==1: break
+                                                                        out_pair_modify[k1].sort()
+                                                                        out_pair_qc=[]
+                                                                        for i in range(len(out_pair_modify[k1])-1):
+                                                                            out_pair_qc.append(out_pair_modify[k1][i+1]-out_pair_modify[k1][i])
+                                                                        if min(out_pair_qc)>50:break
+                                                                        else:
+                                                                            out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))+1]=out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))]
+                                                                        for i in out_pair_modify[k1]:
+                                                                            if out_pair_modify[k1].count(i)>1:
+                                                                                for j in range(out_pair_modify[k1].count(i)-1):
+                                                                                    del out_pair_modify[k1][out_pair_modify[k1].index(i)]
+                                                                out_pair_numrec={}
+                                                                for k1 in out_pair_modify.keys():
+                                                                    out_pair_numrec[k1]=[]
+                                                                    for k2 in [k1]+out_pair_modify[k1]:
+                                                                        if k2 in tempIL.keys() and not k2 in LinkSP.keys():
+                                                                            out_pair_numrec[k1].append(len(tempIL[k2][1]))
+                                                                        elif k2 in LinkSP.keys() and not k2 in tempIL.keys():
+                                                                            out_pair_numrec[k1].append(LinkSP[k2])
+                                                                        elif k2 in LinkSP.keys() and k2 in tempIL.keys():
+                                                                            out_pair_numrec[k1].append(LinkSP[k2]+len(tempIL[k2][1]))
+                                                                        else:
+                                                                            out_pair_numrec[k1].append(0)
+                                                                fout=open(BPOutputb,'a')
+                                                                out_pair_modify_check(out_pair_modify,3)
+                                                                for i in sorted(out_pair_modify.keys()):
+                                                                    for j in out_pair_modify[i]:                            
+                                                                        print >>fout, ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
+                                                                        #print ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
+                                                                        if i in tempIL.keys():
+                                                                            del tempIL[i]
+                                                                        if j in tempIL.keys():
+                                                                            del tempIL[j]
+                                                                fout.close()
+                                                                fout=open(BPOutputa,'a')
+                                                                for i in sorted(out_single_bp+LinkSP_To_Link.keys()):
+                                                                    num=0
+                                                                    if i in abInfF.keys():
+                                                                        num+=sum(abInfF[i])
+                                                                    if i in abInfR.keys():
+                                                                        num+=sum(abInfR[i])
+                                                                    print >>fout, ' '.join([str(j) for j in [i,num]])
+                                                                    #print ' '.join([str(j) for j in [i,num]])
+                                                                fout.close()
+                                                            for i in tempIL.keys():
+                                                                temp_IL_Rec[i]=tempIL[i]
+                                                                temp_mate_F=[]
+                                                                temp_mate_R=[]
+                                                                for k2 in tempIL[i][1]:
+                                                                    if k2 in LinkFF.keys():
+                                                                            temp_mate_F+=LinkFF[k2]
+                                                                    if k2 in LinkFR.keys():
+                                                                            temp_mate_R+=LinkFR[k2]
+                                                                temp_IL_Rec[i].append(temp_mate_F) 
+                                                                temp_IL_Rec[i].append(temp_mate_R) 
+                                                            tempLNF=[]
+                                                            tempLNR=[]
+                                                            for key in abLink.keys():
+                                                                    for key2 in range(len(abLink[key])/3):
+                                                                            if abLink[key][3*key2]=='f':
+                                                                                    tempLNF.append(key)
+                                                                            else:
+                                                                                    tempLNR.append(key)
+                                                            for key in abLinkSP.keys():
+                                                                    for key2 in range(len(abLinkSP[key])/3):
+                                                                            if abLinkSP[key][3*key2]=='f':
+                                                                                    tempLNF.append(key)
+                                                                            else:
+                                                                                    tempLNR.append(key)
+                                                            FtLNFR=clusterNums(tempLNF+tempLNR,ClusterLen,'f')[0]
+                                                            RtLNFR=clusterNums(tempLNF+tempLNR,ClusterLen,'r')[0]
+                                                            FRtLNFR=clusterSupVis2(sorted(tempLNF+tempLNR),RtLNFR,FtLNFR,'left')
+                                                            for key1 in FRtLNFR.keys():
+                                                                    t_LNFR=[]
+                                                                    for key2 in FRtLNFR[key1]:
+                                                                            if key2 in abLink.keys():
+                                                                                    t_LNFR+=abLink[key2]
+                                                                            else:
+                                                                                    if abs(key2-key1)<SPCluLen or abs(key2-max(FRtLNFR[key1]))<SPCluLen:
+                                                                                            t_LNFR+=abLinkSP[key2]
+                                                                    if len(t_LNFR)/3<LinkCluMin:
+                                                                            del FRtLNFR[key1]
+                                                                    else:
+                                                                        if not t_LNFR in FRtLNFR[key1]:
+                                                                            FRtLNFR[key1].append(t_LNFR)
+                                                            FRtLNFRb=[]
+                                                            for key1 in FRtLNFR.keys():
+                                                                t1_LN=[]
+                                                                t2_LN=[] 
+                                                                t3_LN={}
+                                                                t4out=[]
+                                                                for key2 in FRtLNFR[key1][:-1]:
+                                                                        if key2 in abLink.keys():
+                                                                            if not key2 in t1_LN:
+                                                                                for key3 in range(len(abLink[key2])/3):
+                                                                                    if not abLink[key2][3*key3:3*(key3+1)] in t2_LN:
+                                                                                        t2_LN.append(abLink[key2][3*key3:3*(key3+1)])
+                                                                                        t1_LN.append(key2)
+                                                                for key2 in t2_LN:
+                                                                        if not key2[-1].split('_')[0] in t3_LN.keys():
+                                                                                t3_LN[key2[-1].split('_')[0]]={}
+                                                                                t3_LN[key2[-1].split('_')[0]]['a']=[]
+                                                                                t3_LN[key2[-1].split('_')[0]]['b']=[]
+                                                                                t3_LN[key2[-1].split('_')[0]]['c']=[]
+                                                                                t3_LN[key2[-1].split('_')[0]]['d']=[]
+                                                                        t3_LN[key2[-1].split('_')[0]]['a'].append(key2[0])
+                                                                        t3_LN[key2[-1].split('_')[0]]['b'].append(key2[1])
+                                                                        t3_LN[key2[-1].split('_')[0]]['c'].append(key2[-1].split('_')[1])
+                                                                        t3_LN[key2[-1].split('_')[0]]['d'].append(key2)                    
+                                                                for key2 in t3_LN.keys():
+                                                                    if clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'f'), LinkCluMin)==[]:
+                                                                            del t3_LN[key2]
+                                                                    else:
+                                                                            t4LN=clusterSupVis2(t3_LN[key2]['b'],clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'r'), LinkCluMin),clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'f'), LinkCluMin), 'left')                               
+                                                                            for key5 in t4LN.keys():
+                                                                                    t4LNa=[]
+                                                                                    t4LNb=[]
+                                                                                    t4LNc=[]
+                                                                                    t4LNd=[]
+                                                                                    t4out=[]
+                                                                                    for key6 in t4LN[key5]:
+                                                                                            t4LNa.append(t3_LN[key2]['a'][t3_LN[key2]['b'].index(key6)])
+                                                                                            t4LNc.append(t3_LN[key2]['c'][t3_LN[key2]['b'].index(key6)])
+                                                                                            t4LNd.append(key6)
+                                                                                            t4LNb.append(t1_LN[t2_LN.index(t3_LN[key2]['d'][t3_LN[key2]['b'].index(key6)])])
+                                                                                    if not 'f' in t4LNa or float(t4LNa.count('r'))/float(t4LNa.count('f'))>5:
+                                                                                            t4out+=[chrom,'r',min(t4LNb)]
+                                                                                    elif not 'r' in t4LNa or float(t4LNa.count('f'))/float(t4LNa.count('r'))>5:
+                                                                                            t4out+=[chrom,'f',max(t4LNb)]
+                                                                                    else:
+                                                                                            t4out+=[chrom,min(t4LNb),max(t4LNb)]
+                                                                                    if not '+' in t4LNc or float(t4LNc.count('-'))/float(t4LNc.count('+'))>5:
+                                                                                            t4out+=[key2,'-',min(t4LNd)]
+                                                                                    elif not '-' in t4LNc or float(t4LNc.count('+'))/float(t4LNc.count('-'))>5:
+                                                                                            t4out+=[key2,'+',max(t4LNd)]
+                                                                                    else:
+                                                                                            t4out+=[key2,min(t4LNd),max(t4LNd)]
+                                                                if not t4out==[] and not t4out in FRtLNFRb:
+                                                                        FRtLNFRb.append(t4out)             
+                                                            if not FRtLNFRb==[]:
+                                                                    fout=open(BPOutputd,'a')
+                                                                    for keyfrt in FRtLNFRb:
+                                                                            print >>fout, ' '.join([str(keyfr2) for keyfr2 in keyfrt])
+                                                                    fout.close()
+                                                Link_IL_Rec={}
+                                                for k1 in temp_IL_Rec.keys():
+                                                    temp_mate_F=temp_IL_Rec[k1][2]
+                                                    temp_mate_R=temp_IL_Rec[k1][3]
+                                                    if not len(temp_IL_Rec[k1][1])+len(temp_IL_Rec[k1][2])+len(temp_IL_Rec[k1][3])<LnCluMin:
+                                                        Link_IL_Rec[k1]=[clusterQC(clusterNums(temp_mate_F, ClusterLen, 'f'),LinkCluMin),
+                                                                        clusterQC(clusterNums(temp_mate_R, ClusterLen, 'r'),LinkCluMin)]
+                                                        #del temp_IL_Rec[k1]
+                                                    else:continue
+                                                for k1 in Link_IL_Rec.keys():
+                                                    for k2 in Link_IL_Rec[k1]:
+                                                            for k3 in k2:
+                                                                if k3>BPAlignQCFlank:
+                                                                    if align_QCflag==1:
+                                                                        tPairF_QC=0
+                                                                        tPairF_a=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,k3-BPAlignQCFlank,k3+BPAlignQCFlank))
+                                                                        tPairF_b=float(tPairF_a.read().strip())  
+                                                                        if not tPairF_b<float(BPAlignQC):
+                                                                                if not [min([k3,k1]),max([k3,k1])] in out_pair_bp:
+                                                                                        out_pair_bp.append([min([k3,k1]),max([k3,k1])])
+                                                                    else:
+                                                                                if not [min([k3,k1]),max([k3,k1])] in out_pair_bp:
+                                                                                        out_pair_bp.append([min([k3,k1]),max([k3,k1])])
+                                                if not out_pair_bp==[]:
+                                                    temp_out_pair_bp=[]
+                                                    out_BPmodify={}
+                                                    for k1 in out_pair_bp:
+                                                        for k2 in k1:
+                                                            out_BPmodify[k2]=[]
+                                                    if not SP4S==[]:
+                                                        LBSP_tempIL=clusterSupVis3(sorted(SP4S),sorted(out_BPmodify.keys()))
                                                         for k1 in out_pair_bp:
+                                                            temp_k1=[]
                                                             for k2 in k1:
-                                                                out_BPmodify[k2]=[]
-                                                        if not SP4S==[]:
-                                                            LBSP_tempIL=clusterSupVis3(sorted(SP4S),sorted(out_BPmodify.keys()))
-                                                            for k1 in out_pair_bp:
-                                                                temp_k1=[]
-                                                                for k2 in k1:
-                                                                    k3=LBSP_tempIL[k2]
-                                                                    if abs(k2-k3)<ClusterLen:
-                                                                        temp_k1.append(k3)
-                                                                    else:
-                                                                        temp_k1.append(k2)
-                                                                temp_out_pair_bp.append(temp_k1)
-                                                        out_pair_bp=temp_out_pair_bp
-                                                        for k1 in out_pair_bp:
-                                                            for k2 in k1:
-                                                                if k2 in SP4S:
-                                                                    del SP4S[SP4S.index(k2)]
-                                                        out_pair_modify={}
-                                                        for i in out_pair_bp:
-                                                            if not i[0] in out_pair_modify.keys():
-                                                                out_pair_modify[i[0]]=[]
-                                                            if not i[1] in out_pair_modify[i[0]]:
-                                                                out_pair_modify[i[0]].append(i[1])
-                                                        if len(out_pair_modify)>1:
-                                                            while True: 
-                                                                if len(out_pair_modify)==1: break
-                                                                out_pair_qc=[]
-                                                                for i in range(len(sorted(out_pair_modify.keys()))-1):
-                                                                    out_pair_qc.append(sorted(out_pair_modify.keys())[i+1]-sorted(out_pair_modify.keys())[i])
-                                                                if min(out_pair_qc)>50:break
+                                                                k3=LBSP_tempIL[k2]
+                                                                if abs(k2-k3)<ClusterLen:
+                                                                    temp_k1.append(k3)
                                                                 else:
-                                                                    out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))+1]]+=out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
-                                                                    del out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
-                                                        for k1 in out_pair_modify.keys():
-                                                            while True:
-                                                                if len(out_pair_modify[k1])==1: break
-                                                                out_pair_modify[k1].sort()
-                                                                out_pair_qc=[]
-                                                                for i in range(len(out_pair_modify[k1])-1):
-                                                                    out_pair_qc.append(out_pair_modify[k1][i+1]-out_pair_modify[k1][i])
-                                                                if min(out_pair_qc)>50:break
-                                                                else:
-                                                                    out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))+1]=out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))]
-                                                                for i in out_pair_modify[k1]:
-                                                                    if out_pair_modify[k1].count(i)>1:
-                                                                        for j in range(out_pair_modify[k1].count(i)-1):
-                                                                            del out_pair_modify[k1][out_pair_modify[k1].index(i)]
-                                                        out_pair_numrec={}
-                                                        for k1 in out_pair_modify.keys():
-                                                            out_pair_numrec[k1]=[]
-                                                            for k2 in [k1]+out_pair_modify[k1]:
-                                                                if k2 in tempIL.keys() and not k2 in LinkSP.keys():
-                                                                    out_pair_numrec[k1].append(len(tempIL[k2][1]))
-                                                                elif k2 in LinkSP.keys() and not k2 in tempIL.keys():
-                                                                    out_pair_numrec[k1].append(LinkSP[k2])
-                                                                elif k2 in LinkSP.keys() and k2 in tempIL.keys():
-                                                                    out_pair_numrec[k1].append(LinkSP[k2]+len(tempIL[k2][1]))
-                                                                else:
-                                                                    out_pair_numrec[k1].append(0)
-                                                        fout=open(BPOutputb,'a')
-                                                        out_pair_modify_check(out_pair_modify,3)
-                                                        for i in sorted(out_pair_modify.keys()):
-                                                            for j in out_pair_modify[i]:                            
-                                                                print >>fout, ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
-                                                                #print ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
-                                                                if i in tempIL.keys():
-                                                                    del tempIL[i]
-                                                                if j in tempIL.keys():
-                                                                    del tempIL[j]
-                                                        fout.close()
-                                                        fout=open(BPOutputa,'a')
-                                                        for i in sorted(out_single_bp+LinkSP_To_Link.keys()):
-                                                            num=0
-                                                            if i in abInfF.keys():
-                                                                num+=sum(abInfF[i])
-                                                            if i in abInfR.keys():
-                                                                num+=sum(abInfR[i])
-                                                            print >>fout, ' '.join([str(j) for j in [i,num]])
-                                                            #print ' '.join([str(j) for j in [i,num]])
-                                                        fout.close()
-                                                    for i in tempIL.keys():
-                                                        temp_IL_Rec[i]=tempIL[i]
-                                                        temp_mate_F=[]
-                                                        temp_mate_R=[]
-                                                        for k2 in tempIL[i][1]:
-                                                            if k2 in LinkFF.keys():
-                                                                    temp_mate_F+=LinkFF[k2]
-                                                            if k2 in LinkFR.keys():
-                                                                    temp_mate_R+=LinkFR[k2]
-                                                        temp_IL_Rec[i].append(temp_mate_F) 
-                                                        temp_IL_Rec[i].append(temp_mate_R) 
-                                                    tempLNF=[]
-                                                    tempLNR=[]
-                                                    for key in abLink.keys():
-                                                            for key2 in range(len(abLink[key])/3):
-                                                                    if abLink[key][3*key2]=='f':
-                                                                            tempLNF.append(key)
-                                                                    else:
-                                                                            tempLNR.append(key)
-                                                    for key in abLinkSP.keys():
-                                                            for key2 in range(len(abLinkSP[key])/3):
-                                                                    if abLinkSP[key][3*key2]=='f':
-                                                                            tempLNF.append(key)
-                                                                    else:
-                                                                            tempLNR.append(key)
-                                                    FtLNFR=clusterNums(tempLNF+tempLNR,ClusterLen,'f')[0]
-                                                    RtLNFR=clusterNums(tempLNF+tempLNR,ClusterLen,'r')[0]
-                                                    FRtLNFR=clusterSupVis2(sorted(tempLNF+tempLNR),RtLNFR,FtLNFR,'left')
-                                                    for key1 in FRtLNFR.keys():
-                                                            t_LNFR=[]
-                                                            for key2 in FRtLNFR[key1]:
-                                                                    if key2 in abLink.keys():
-                                                                            t_LNFR+=abLink[key2]
-                                                                    else:
-                                                                            if abs(key2-key1)<SPCluLen or abs(key2-max(FRtLNFR[key1]))<SPCluLen:
-                                                                                    t_LNFR+=abLinkSP[key2]
-                                                            if len(t_LNFR)/3<LinkCluMin:
-                                                                    del FRtLNFR[key1]
+                                                                    temp_k1.append(k2)
+                                                            temp_out_pair_bp.append(temp_k1)
+                                                    out_pair_bp=temp_out_pair_bp
+                                                    for k1 in out_pair_bp:
+                                                        for k2 in k1:
+                                                            if k2 in SP4S:
+                                                                del SP4S[SP4S.index(k2)]
+                                                    out_pair_modify={}
+                                                    for i in out_pair_bp:
+                                                        if not i[0] in out_pair_modify.keys():
+                                                            out_pair_modify[i[0]]=[]
+                                                        if not i[1] in out_pair_modify[i[0]]:
+                                                            out_pair_modify[i[0]].append(i[1])
+                                                    if len(out_pair_modify)>1:
+                                                        while True: 
+                                                            if len(out_pair_modify)==1: break
+                                                            out_pair_qc=[]
+                                                            for i in range(len(sorted(out_pair_modify.keys()))-1):
+                                                                out_pair_qc.append(sorted(out_pair_modify.keys())[i+1]-sorted(out_pair_modify.keys())[i])
+                                                            if min(out_pair_qc)>50:break
                                                             else:
-                                                                if not t_LNFR in FRtLNFR[key1]:
-                                                                    FRtLNFR[key1].append(t_LNFR)
-                                                    FRtLNFRb=[]
-                                                    for key1 in FRtLNFR.keys():
-                                                        t1_LN=[]
-                                                        t2_LN=[] 
-                                                        t3_LN={}
-                                                        t4out=[]
-                                                        for key2 in FRtLNFR[key1][:-1]:
-                                                                if key2 in abLink.keys():
-                                                                    if not key2 in t1_LN:
-                                                                        for key3 in range(len(abLink[key2])/3):
-                                                                            if not abLink[key2][3*key3:3*(key3+1)] in t2_LN:
-                                                                                t2_LN.append(abLink[key2][3*key3:3*(key3+1)])
-                                                                                t1_LN.append(key2)
-                                                        for key2 in t2_LN:
-                                                                if not key2[-1].split('_')[0] in t3_LN.keys():
-                                                                        t3_LN[key2[-1].split('_')[0]]={}
-                                                                        t3_LN[key2[-1].split('_')[0]]['a']=[]
-                                                                        t3_LN[key2[-1].split('_')[0]]['b']=[]
-                                                                        t3_LN[key2[-1].split('_')[0]]['c']=[]
-                                                                        t3_LN[key2[-1].split('_')[0]]['d']=[]
-                                                                t3_LN[key2[-1].split('_')[0]]['a'].append(key2[0])
-                                                                t3_LN[key2[-1].split('_')[0]]['b'].append(key2[1])
-                                                                t3_LN[key2[-1].split('_')[0]]['c'].append(key2[-1].split('_')[1])
-                                                                t3_LN[key2[-1].split('_')[0]]['d'].append(key2)                    
-                                                        for key2 in t3_LN.keys():
-                                                            if clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'f'), LinkCluMin)==[]:
-                                                                    del t3_LN[key2]
+                                                                out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))+1]]+=out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
+                                                                del out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
+                                                    for k1 in out_pair_modify.keys():
+                                                        while True:
+                                                            if len(out_pair_modify[k1])==1: break
+                                                            out_pair_modify[k1].sort()
+                                                            out_pair_qc=[]
+                                                            for i in range(len(out_pair_modify[k1])-1):
+                                                                out_pair_qc.append(out_pair_modify[k1][i+1]-out_pair_modify[k1][i])
+                                                            if min(out_pair_qc)>50:break
                                                             else:
-                                                                    t4LN=clusterSupVis2(t3_LN[key2]['b'],clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'r'), LinkCluMin),clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'f'), LinkCluMin), 'left')                               
-                                                                    for key5 in t4LN.keys():
-                                                                            t4LNa=[]
-                                                                            t4LNb=[]
-                                                                            t4LNc=[]
-                                                                            t4LNd=[]
-                                                                            t4out=[]
-                                                                            for key6 in t4LN[key5]:
-                                                                                    t4LNa.append(t3_LN[key2]['a'][t3_LN[key2]['b'].index(key6)])
-                                                                                    t4LNc.append(t3_LN[key2]['c'][t3_LN[key2]['b'].index(key6)])
-                                                                                    t4LNd.append(key6)
-                                                                                    t4LNb.append(t1_LN[t2_LN.index(t3_LN[key2]['d'][t3_LN[key2]['b'].index(key6)])])
-                                                                            if not 'f' in t4LNa or float(t4LNa.count('r'))/float(t4LNa.count('f'))>5:
-                                                                                    t4out+=[chrom,'r',min(t4LNb)]
-                                                                            elif not 'r' in t4LNa or float(t4LNa.count('f'))/float(t4LNa.count('r'))>5:
-                                                                                    t4out+=[chrom,'f',max(t4LNb)]
-                                                                            else:
-                                                                                    t4out+=[chrom,min(t4LNb),max(t4LNb)]
-                                                                            if not '+' in t4LNc or float(t4LNc.count('-'))/float(t4LNc.count('+'))>5:
-                                                                                    t4out+=[key2,'-',min(t4LNd)]
-                                                                            elif not '-' in t4LNc or float(t4LNc.count('+'))/float(t4LNc.count('-'))>5:
-                                                                                    t4out+=[key2,'+',max(t4LNd)]
-                                                                            else:
-                                                                                    t4out+=[key2,min(t4LNd),max(t4LNd)]
-                                                        if not t4out==[] and not t4out in FRtLNFRb:
-                                                                FRtLNFRb.append(t4out)             
-                                                    if not FRtLNFRb==[]:
-                                                            fout=open(BPOutputd,'a')
-                                                            for keyfrt in FRtLNFRb:
-                                                                    print >>fout, ' '.join([str(keyfr2) for keyfr2 in keyfrt])
-                                                            fout.close()
-                                        Link_IL_Rec={}
-                                        for k1 in temp_IL_Rec.keys():
-                                            temp_mate_F=temp_IL_Rec[k1][2]
-                                            temp_mate_R=temp_IL_Rec[k1][3]
-                                            if not len(temp_IL_Rec[k1][1])+len(temp_IL_Rec[k1][2])+len(temp_IL_Rec[k1][3])<LnCluMin:
-                                                Link_IL_Rec[k1]=[clusterQC(clusterNums(temp_mate_F, ClusterLen, 'f'),LinkCluMin),
-                                                                clusterQC(clusterNums(temp_mate_R, ClusterLen, 'r'),LinkCluMin)]
-                                                del temp_IL_Rec[k1]
-                                            else:continue
-                                        for k1 in Link_IL_Rec.keys():
-                                            for k2 in Link_IL_Rec[k1]:
-                                                    for k3 in k2:
-                                                        if k3>BPAlignQCFlank:
-                                                            if align_QCflag==1:
-                                                                tPairF_QC=0
-                                                                tPairF_a=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,k3-BPAlignQCFlank,k3+BPAlignQCFlank))
-                                                                tPairF_b=float(tPairF_a.read().strip())  
-                                                                if not tPairF_b<float(BPAlignQC):
-                                                                        if not [min([k3,k1]),max([k3,k1])] in out_pair_bp:
-                                                                                out_pair_bp.append([min([k3,k1]),max([k3,k1])])
+                                                                out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))+1]=out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))]
+                                                            for i in out_pair_modify[k1]:
+                                                                if out_pair_modify[k1].count(i)>1:
+                                                                    for j in range(out_pair_modify[k1].count(i)-1):
+                                                                        del out_pair_modify[k1][out_pair_modify[k1].index(i)]
+                                                    out_pair_numrec={}
+                                                    for k1 in out_pair_modify.keys():
+                                                        out_pair_numrec[k1]=[]
+                                                        for k2 in [k1]+out_pair_modify[k1]:
+                                                            if k2 in tempIL.keys() and not k2 in LinkSP.keys():
+                                                                out_pair_numrec[k1].append(len(tempIL[k2][1]))
+                                                            elif k2 in LinkSP.keys() and not k2 in tempIL.keys():
+                                                                out_pair_numrec[k1].append(LinkSP[k2])
+                                                            elif k2 in LinkSP.keys() and k2 in tempIL.keys():
+                                                                out_pair_numrec[k1].append(LinkSP[k2]+len(tempIL[k2][1]))
                                                             else:
-                                                                        if not [min([k3,k1]),max([k3,k1])] in out_pair_bp:
-                                                                                out_pair_bp.append([min([k3,k1]),max([k3,k1])])
-                                        if not out_pair_bp==[]:
-                                            temp_out_pair_bp=[]
-                                            out_BPmodify={}
-                                            for k1 in out_pair_bp:
-                                                for k2 in k1:
-                                                    out_BPmodify[k2]=[]
-                                            if not SP4S==[]:
-                                                LBSP_tempIL=clusterSupVis3(sorted(SP4S),sorted(out_BPmodify.keys()))
-                                                for k1 in out_pair_bp:
-                                                    temp_k1=[]
-                                                    for k2 in k1:
-                                                        k3=LBSP_tempIL[k2]
-                                                        if abs(k2-k3)<ClusterLen:
-                                                            temp_k1.append(k3)
-                                                        else:
-                                                            temp_k1.append(k2)
-                                                    temp_out_pair_bp.append(temp_k1)
-                                            out_pair_bp=temp_out_pair_bp
-                                            for k1 in out_pair_bp:
-                                                for k2 in k1:
-                                                    if k2 in SP4S:
-                                                        del SP4S[SP4S.index(k2)]
-                                            out_pair_modify={}
-                                            for i in out_pair_bp:
-                                                if not i[0] in out_pair_modify.keys():
-                                                    out_pair_modify[i[0]]=[]
-                                                if not i[1] in out_pair_modify[i[0]]:
-                                                    out_pair_modify[i[0]].append(i[1])
-                                            if len(out_pair_modify)>1:
-                                                while True: 
-                                                    if len(out_pair_modify)==1: break
-                                                    out_pair_qc=[]
-                                                    for i in range(len(sorted(out_pair_modify.keys()))-1):
-                                                        out_pair_qc.append(sorted(out_pair_modify.keys())[i+1]-sorted(out_pair_modify.keys())[i])
-                                                    if min(out_pair_qc)>50:break
-                                                    else:
-                                                        out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))+1]]+=out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
-                                                        del out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
-                                            for k1 in out_pair_modify.keys():
-                                                while True:
-                                                    if len(out_pair_modify[k1])==1: break
-                                                    out_pair_modify[k1].sort()
-                                                    out_pair_qc=[]
-                                                    for i in range(len(out_pair_modify[k1])-1):
-                                                        out_pair_qc.append(out_pair_modify[k1][i+1]-out_pair_modify[k1][i])
-                                                    if min(out_pair_qc)>50:break
-                                                    else:
-                                                        out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))+1]=out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))]
-                                                    for i in out_pair_modify[k1]:
-                                                        if out_pair_modify[k1].count(i)>1:
-                                                            for j in range(out_pair_modify[k1].count(i)-1):
-                                                                del out_pair_modify[k1][out_pair_modify[k1].index(i)]
-                                            out_pair_numrec={}
-                                            for k1 in out_pair_modify.keys():
-                                                out_pair_numrec[k1]=[]
-                                                for k2 in [k1]+out_pair_modify[k1]:
-                                                    if k2 in tempIL.keys() and not k2 in LinkSP.keys():
-                                                        out_pair_numrec[k1].append(len(tempIL[k2][1]))
-                                                    elif k2 in LinkSP.keys() and not k2 in tempIL.keys():
-                                                        out_pair_numrec[k1].append(LinkSP[k2])
-                                                    elif k2 in LinkSP.keys() and k2 in tempIL.keys():
-                                                        out_pair_numrec[k1].append(LinkSP[k2]+len(tempIL[k2][1]))
-                                                    else:
-                                                        out_pair_numrec[k1].append(0)
-                                            fout=open(BPOutputb,'a')
-                                            for i in sorted(out_pair_modify.keys()):
-                                                for j in out_pair_modify[i]:                            
-                                                    print >>fout, ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
-                                                    #print ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
-                                                    if i in tempIL.keys():
-                                                        del tempIL[i]
-                                                    if j in tempIL.keys():
-                                                        del tempIL[j]
-                                            fout.close()
-                                        fout=open(BPOutputa,'a')
-                                        for i in sorted(temp_IL_Rec.keys()):
-                                            print >>fout, ' '.join([str(i),str(sum(temp_IL_Rec[i][0][:2]))])    
-                                        fout.close()
-                                        time2=time.time()
-                                        os.system(r'''cat %s >> %s'''%(BPOutputd,BPOutpute))
-                                        os.system(r'''rm %s'''%(BPOutputd))
-                                        print 'BPSearch Complete for '+bamF+'.'+chrF
-                                        print 'Time Consuming: '+str(time2-time1)
+                                                                out_pair_numrec[k1].append(0)
+                                                    fout=open(BPOutputb,'a')
+                                                    for i in sorted(out_pair_modify.keys()):
+                                                        for j in out_pair_modify[i]:                            
+                                                            print >>fout, ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
+                                                            #print ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
+                                                            if i in tempIL.keys():
+                                                                del tempIL[i]
+                                                            if j in tempIL.keys():
+                                                                del tempIL[j]
+                                                    fout.close()
+                                                fout=open(BPOutputa,'a')
+                                                for i in sorted(temp_IL_Rec.keys()):
+                                                    print >>fout, ' '.join([str(i),str(sum(temp_IL_Rec[i][0][:2]))])    
+                                                fout.close()
+                                                time2=time.time()
+                                                os.system(r'''cat %s >> %s'''%(BPOutputd,BPOutpute))
+                                                os.system(r'''rm %s'''%(BPOutputd))
+                                                print 'BPSearch Complete for '+bamF+'.'+chrF
+                                            print 'Time Consuming: '+str(time2-time1)
     if function_name=='BPIntegrate':
         import glob
         import getopt
@@ -4097,6 +4139,8 @@ else:
                         else:
                             out.append(temp2)
                             temp2=temp[flag1]
+                    if not temp2 in out:
+                        out.append(temp2)
                 Cff2=5*(10**6)
                 out3=[]
                 if not out2==[]:
@@ -4164,7 +4208,7 @@ else:
                     Left_SP=SP_assign[1]
                     Paired_SP=SP_assign[0]
                     if not Left_SP==[]:
-                        SingletonPair=Left_SP_Cluster(Left_SP,5000)
+                        SingletonPair=Left_SP_Cluster(Left_SP,1000)
                         singletons[k1]=SingletonPair[1]
                         for k2 in Paired_SP.keys():
                             if SP_Link1[k1][SP_Link1[k1].index(Paired_SP[k2])/2*2] in SP_links[k1].keys():
@@ -4584,6 +4628,41 @@ else:
                     chromos.append(pin[0])
                 fin.close()
                 return chromos
+            def SP_Links_Info_Comple(SP_links,SP_link4):
+                for x in SP_links.keys():
+                    temp=[]
+                    temp2=[]
+                    for k2 in sorted(SP_links[x].keys()):
+                        for k3 in sorted(SP_links[x][k2]):
+                            if not k3==k2:
+                                temp.append([k2,k3])
+                    rec1=0
+                    rec2=0
+                    while True:
+                        if rec1==len(temp): break
+                        if rec2==len(SP_link4[x]): break
+                        if SP_link4[x][rec2][-1]<temp[rec1][0]:
+                            rec2+=1
+                        elif SP_link4[x][rec2][0]>temp[rec1][1]:
+                            rec1+=1
+                        else:
+                            if temp[rec1]==SP_link4[x][rec2]:
+                                rec1+=1
+                            else:
+                                flag_temp=0
+                                for x1 in temp[rec1]:
+                                    if x1 in SP_link4[x][rec2]:
+                                        flag_temp+=1
+                                if flag_temp<2:
+                                    if temp[rec1][1]-temp[rec1][0]>50:
+                                        temp2.append(temp[rec1])
+                                else:
+                                    if len(SP_link4[x][rec2])>5:
+                                        if SP_link4[x][rec2].index(temp[rec1][1])-SP_link4[x][rec2].index(temp[rec1][0])>2:
+                                            if temp[rec1][1]-temp[rec1][0]>50:
+                                                temp2.append(temp[rec1])
+                                rec1+=1
+                    SP_link4[x]+=temp2
             import numpy
             import scipy
             import math
@@ -4605,21 +4684,11 @@ else:
                 if not '--sample' in dict_opts.keys():
                     print 'Error: please specify either input file using --sample'
                 else:
-                    if '--sample' in dict_opts.keys():
-                        bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
-                        bam_files=[dict_opts['--sample']]
-                        bam_names=[dict_opts['--sample'].split('/')[-1].replace('.bam','')]
-                    else:
-                        bam_path=dict_opts['--PathBam']
-                        if not bam_path[-1]=='/':
-                            bam_path+='/'
-                        bam_files=[]
-                        bam_names=[]
-                        for file in os.listdir(bam_path):
-                            if file.split('.')[-1]=='bam':
-                                bam_files.append(bam_path+file)
-                                bam_names.append(file.replace('.bam',''))
-                    ref_path=workdir+'reference/'
+                    bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
+                    bam_files=[dict_opts['--sample']]
+                    bam_files_appdix=dict_opts['--sample'].split('.')[-1]
+                    bam_names=[dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'')]
+                    ref_path=workdir+'reference_SVelter/'
                     ref_file=ref_path+'genome.fa'
                     ref_index=ref_file+'.fai'
                     if not os.path.isfile(ref_index):
@@ -4680,6 +4749,7 @@ else:
                                     bps_list_chop(SP_link4)
                                     missed_pairs=link_SP_link3(missed_pairs[1])
                                     devide_start=10**6
+                                    SP_Links_Info_Comple(SP_links,SP_link4)
                                     if not '--batch' in dict_opts.keys():
                                         write_bp_3(SP_link4,missed_pairs)
                                     else:
@@ -4883,6 +4953,15 @@ else:
                         for key_2 in GC_Content:
                                 CN2_Region[key_1][int(key_2)]=f_GC_stat.readline().strip().split()
                 f_GC_stat.close()
+                for k1 in CN2_Region.keys():
+                    for k2 in CN2_Region[k1].keys():
+                        if CN2_Region[k1][k2][0]=='@:':
+                            del CN2_Region[k1][k2]
+                        else:
+                            if sum([float(i) for i in CN2_Region[k1][k2][0].split(':')[1].split(',')])==0.0:
+                                del CN2_Region[k1][k2]
+                    if CN2_Region[k1]=={}:
+                        del CN2_Region[k1]
                 return [CN2_Region,Chromos,GC_Content]
             def Reads_Direction_Detect(flag):
                 #flag is the number on the second position of each read in bam file
@@ -5504,15 +5583,16 @@ else:
                             else:
                                 if block_bps_chr[j][0]-1<i and block_bps_chr[j][1]>i:
                                     read_pos.append(j)
-            def block_Info_ReadIn(chr_letter_bp,blocks_read_in):
+            def block_Info_ReadIn(chr_letter_bp,blocks_read_in,Multi_Dup):
                 block_bps={}
                 block_rds={}
                 for k1 in chr_letter_bp.keys():
                     block_bps[k1]={}
                     block_rds[k1]={}
                     for k2 in chr_letter_bp[k1].keys():
-                        block_bps[k1][k2]=[min(chr_letter_bp[k1][k2]),max(chr_letter_bp[k1][k2])]
-                        block_rds[k1][k2]=0
+                        if not k2 in Multi_Dup:
+                            block_bps[k1][k2]=[min(chr_letter_bp[k1][k2]),max(chr_letter_bp[k1][k2])]
+                            block_rds[k1][k2]=0
                 Pair_ThroughBP={}
                 Double_Read_ThroughBP={}
                 Single_Read_ThroughBP={}
@@ -5524,122 +5604,124 @@ else:
                     Single_Read_ThroughBP[k1]=[]
                     rd_low_qual[k1]={}
                     for k2 in blocks_read_in[k1]:
-                        k2a=[]
-                        k2b=[]
-                        for k3 in k2:
-                            if type(k3)==type(1):
-                                k2a.append(k3)
-                            else:
-                                k2b.append(k3)
-                        fbam=os.popen(r'''samtools view %s %s:%d-%d'''%(Initial_Bam,k1,min(k2a)-flank,max(k2a)+flank))
-                        blackList=[]
-                        temp_rec={} 
-                        temp_rec_LowQual={}     
-                        while True:
-                            pbam=fbam.readline().strip().split()
-                            if not pbam: break
-                            if int(pbam[1])&4>0: continue
-                            if int(pbam[1])&1024>0:continue
-                            if int(pbam[1])&512>0:
-                                blackList.append(pbam[0])
-                                continue
-                            #if not int(pbam[4])>QCAlign:continue
-                            if pbam[0] in blackList: continue
-                            if not int(pbam[4])>QCAlign:
-                                if not pbam[0] in temp_rec_LowQual.keys():
-                                    temp_rec_LowQual[pbam[0]]=[]
-                                if not pbam[1:9] in temp_rec_LowQual[pbam[0]]:
-                                    temp_rec_LowQual[pbam[0]]+=[pbam[1:9]]
-                            else:
-                                if not pbam[0] in temp_rec.keys():
-                                    temp_rec[pbam[0]]=[]
-                                if not pbam[1:9] in temp_rec[pbam[0]]:
-                                    temp_rec[pbam[0]]+=[pbam[1:9]]
-                        fbam.close()
-                        flank_region=[]
-                        for k3 in k2b:
-                            flank_region+=block_bps[k1][k3]
-                        flank_region=[min(flank_region),max(flank_region)]
-                        for k3 in temp_rec_LowQual.keys():
-                            for k4 in temp_rec_LowQual[k3]:
-                                read_pos=[int(k4[2]),int(k4[2])+cigar2reaadlength(k4[4])]
-                                pos_block_assign(block_bps[k1],read_pos)
-                                if read_pos[-1]==read_pos[-2]:
-                                    if not read_pos[-1] in rd_low_qual[k1].keys():
-                                        rd_low_qual[k1][read_pos[-1]]=0
-                                    rd_low_qual[k1][read_pos[-1]]+=(read_pos[1]-read_pos[0])
+                        multi_dup_flag=multi_dup_check(k2,Multi_Dup)
+                        if multi_dup_flag==0:
+                            k2a=[]
+                            k2b=[]
+                            for k3 in k2:
+                                if type(k3)==type(1):
+                                    k2a.append(k3)
                                 else:
-                                    if not read_pos[-2] in rd_low_qual[k1].keys():
-                                        rd_low_qual[k1][read_pos[-2]]=0
-                                    if not read_pos[-1] in rd_low_qual[k1].keys():
-                                        rd_low_qual[k1][read_pos[-1]]=0
-                                    rd_low_qual[k1][read_pos[-2]]+=block_bps[k1][read_pos[-2]][1]-read_pos[0]
-                                    rd_low_qual[k1][read_pos[-1]]+=-block_bps[k1][read_pos[-1]][0]+read_pos[1]
-                        for k3 in temp_rec.keys():
-                            if len(temp_rec[k3])>2:
-                                test_rec=[int(temp_rec[k3][0][7])]
-                                test_rec2=[temp_rec[k3][0]]
-                                test_let=0
-                                for k4 in temp_rec[k3][1:]:
-                                    delflag=0
-                                    for k5 in test_rec:
-                                        if int(k4[7])+k5==0:
-                                            test_let+=1
-                                            k6=k3+chr(96+test_let)
-                                            temp_rec[k6]=[test_rec2[test_rec.index(k5)],k4]
-                                            del test_rec2[test_rec.index(k5)]
-                                            del test_rec[test_rec.index(k5)]
-                                            delflag+=1
-                                    if delflag==0:
-                                        test_rec.append(int(k4[7]))
-                                        test_rec2.append(k4)
-                                temp_rec[k3]=test_rec2 
-                        for k3 in temp_rec.keys():
-                            if len(temp_rec[k3])==1:
-                                del_flag=0
-                                k4=temp_rec[k3][0]
-                                read_pos=[int(k4[2]),int(k4[2])+cigar2reaadlength(k4[4])]
-                                mate_pos=[int(k4[6]),int(k4[6])+ReadLength]
-                                if 'left' in k2b and mate_pos[1]<flank_region[0]:
-                                    del_flag+=1
-                                elif 'right' in k2b and mate_pos[0]>flank_region[0]:
-                                    del_flag+=1
-                                #elif not mate_pos[1]<flank_region[0] and not mate_pos[0]>flank_region[1]:
-                                #   del_flag+=1
-                                if del_flag>0:
-                                    del temp_rec[k3]
+                                    k2b.append(k3)
+                            fbam=os.popen(r'''samtools view %s %s:%d-%d'''%(Initial_Bam,k1,min(k2a)-flank,max(k2a)+flank))
+                            blackList=[]
+                            temp_rec={} 
+                            temp_rec_LowQual={}     
+                            while True:
+                                pbam=fbam.readline().strip().split()
+                                if not pbam: break
+                                if int(pbam[1])&4>0: continue
+                                if int(pbam[1])&1024>0:continue
+                                if int(pbam[1])&512>0:
+                                    blackList.append(pbam[0])
+                                    continue
+                                #if not int(pbam[4])>QCAlign:continue
+                                if pbam[0] in blackList: continue
+                                if not int(pbam[4])>QCAlign:
+                                    if not pbam[0] in temp_rec_LowQual.keys():
+                                        temp_rec_LowQual[pbam[0]]=[]
+                                    if not pbam[1:9] in temp_rec_LowQual[pbam[0]]:
+                                        temp_rec_LowQual[pbam[0]]+=[pbam[1:9]]
+                                else:
+                                    if not pbam[0] in temp_rec.keys():
+                                        temp_rec[pbam[0]]=[]
+                                    if not pbam[1:9] in temp_rec[pbam[0]]:
+                                        temp_rec[pbam[0]]+=[pbam[1:9]]
+                            fbam.close()
+                            flank_region=[]
+                            for k3 in k2b:
+                                flank_region+=block_bps[k1][k3]
+                            flank_region=[min(flank_region),max(flank_region)]
+                            for k3 in temp_rec_LowQual.keys():
+                                for k4 in temp_rec_LowQual[k3]:
+                                    read_pos=[int(k4[2]),int(k4[2])+cigar2reaadlength(k4[4])]
                                     pos_block_assign(block_bps[k1],read_pos)
                                     if read_pos[-1]==read_pos[-2]:
+                                        if not read_pos[-1] in rd_low_qual[k1].keys():
+                                            rd_low_qual[k1][read_pos[-1]]=0
+                                        rd_low_qual[k1][read_pos[-1]]+=(read_pos[1]-read_pos[0])
+                                    else:
+                                        if not read_pos[-2] in rd_low_qual[k1].keys():
+                                            rd_low_qual[k1][read_pos[-2]]=0
+                                        if not read_pos[-1] in rd_low_qual[k1].keys():
+                                            rd_low_qual[k1][read_pos[-1]]=0
+                                        rd_low_qual[k1][read_pos[-2]]+=block_bps[k1][read_pos[-2]][1]-read_pos[0]
+                                        rd_low_qual[k1][read_pos[-1]]+=-block_bps[k1][read_pos[-1]][0]+read_pos[1]
+                            for k3 in temp_rec.keys():
+                                if len(temp_rec[k3])>2:
+                                    test_rec=[int(temp_rec[k3][0][7])]
+                                    test_rec2=[temp_rec[k3][0]]
+                                    test_let=0
+                                    for k4 in temp_rec[k3][1:]:
+                                        delflag=0
+                                        for k5 in test_rec:
+                                            if int(k4[7])+k5==0:
+                                                test_let+=1
+                                                k6=k3+chr(96+test_let)
+                                                temp_rec[k6]=[test_rec2[test_rec.index(k5)],k4]
+                                                del test_rec2[test_rec.index(k5)]
+                                                del test_rec[test_rec.index(k5)]
+                                                delflag+=1
+                                        if delflag==0:
+                                            test_rec.append(int(k4[7]))
+                                            test_rec2.append(k4)
+                                    temp_rec[k3]=test_rec2 
+                            for k3 in temp_rec.keys():
+                                if len(temp_rec[k3])==1:
+                                    del_flag=0
+                                    k4=temp_rec[k3][0]
+                                    read_pos=[int(k4[2]),int(k4[2])+cigar2reaadlength(k4[4])]
+                                    mate_pos=[int(k4[6]),int(k4[6])+ReadLength]
+                                    if 'left' in k2b and mate_pos[1]<flank_region[0]:
+                                        del_flag+=1
+                                    elif 'right' in k2b and mate_pos[0]>flank_region[0]:
+                                        del_flag+=1
+                                    #elif not mate_pos[1]<flank_region[0] and not mate_pos[0]>flank_region[1]:
+                                    #   del_flag+=1
+                                    if del_flag>0:
+                                        del temp_rec[k3]
+                                        pos_block_assign(block_bps[k1],read_pos)
+                                        if read_pos[-1]==read_pos[-2]:
+                                            block_rds[k1][read_pos[-1]]+=read_pos[1]-read_pos[0]
+                                        else:
+                                            Single_Read_ThroughBP[k1].append(read_pos)
+                                    else:
+                                        if not k3 in total_rec.keys():
+                                            total_rec[k3]=[k4]
+                                        else:
+                                            total_rec[k3]+=[k4]
+                                elif len(temp_rec[k3])==2: 
+                                    if int(temp_rec[k3][0][7])==0 or int(temp_rec[k3][1][7])==0:
+                                        continue
+                                    if int(temp_rec[k3][0][7])+int(temp_rec[k3][1][7])==0 and int(temp_rec[k3][0][7])<0:
+                                        temp_rec[k3]=[temp_rec[k3][1],temp_rec[k3][0]]
+                                    read_pos=[int(temp_rec[k3][0][2]),int(temp_rec[k3][0][2])+cigar2reaadlength(temp_rec[k3][0][4]),int(temp_rec[k3][1][2]),int(temp_rec[k3][1][2])+cigar2reaadlength(temp_rec[k3][1][4])]+Reads_Direction_Detect(temp_rec[k3][0][0])
+                                    #print temp_rec[k3]
+                                    #if k3 in test2:
+                                    #   print read_pos
+                                    if read_pos[0]>read_pos[2]:
+                                        read_pos=read_pos[2:4]+read_pos[:2]+[read_pos[-1],read_pos[-2]]
+                                    pos_block_assign(block_bps[k1],read_pos)
+                                    if read_pos[6]==read_pos[7]==read_pos[8]==read_pos[9]:
                                         block_rds[k1][read_pos[-1]]+=read_pos[1]-read_pos[0]
+                                        block_rds[k1][read_pos[-1]]+=read_pos[3]-read_pos[2]
+                                    elif read_pos[8]==read_pos[9] and read_pos[6]==read_pos[7]:
+                                        Pair_ThroughBP[k1].append(read_pos[:6]+[read_pos[6],read_pos[8]])
                                     else:
-                                        Single_Read_ThroughBP[k1].append(read_pos)
-                                else:
-                                    if not k3 in total_rec.keys():
-                                        total_rec[k3]=[k4]
-                                    else:
-                                        total_rec[k3]+=[k4]
-                            elif len(temp_rec[k3])==2: 
-                                if int(temp_rec[k3][0][7])==0 or int(temp_rec[k3][1][7])==0:
-                                    continue
-                                if int(temp_rec[k3][0][7])+int(temp_rec[k3][1][7])==0 and int(temp_rec[k3][0][7])<0:
-                                    temp_rec[k3]=[temp_rec[k3][1],temp_rec[k3][0]]
-                                read_pos=[int(temp_rec[k3][0][2]),int(temp_rec[k3][0][2])+cigar2reaadlength(temp_rec[k3][0][4]),int(temp_rec[k3][1][2]),int(temp_rec[k3][1][2])+cigar2reaadlength(temp_rec[k3][1][4])]+Reads_Direction_Detect(temp_rec[k3][0][0])
-                                #print temp_rec[k3]
-                                #if k3 in test2:
-                                #   print read_pos
-                                if read_pos[0]>read_pos[2]:
-                                    read_pos=read_pos[2:4]+read_pos[:2]+[read_pos[-1],read_pos[-2]]
-                                pos_block_assign(block_bps[k1],read_pos)
-                                if read_pos[6]==read_pos[7]==read_pos[8]==read_pos[9]:
-                                    block_rds[k1][read_pos[-1]]+=read_pos[1]-read_pos[0]
-                                    block_rds[k1][read_pos[-1]]+=read_pos[3]-read_pos[2]
-                                elif read_pos[8]==read_pos[9] and read_pos[6]==read_pos[7]:
-                                    Pair_ThroughBP[k1].append(read_pos[:6]+[read_pos[6],read_pos[8]])
-                                else:
-                                    Double_Read_ThroughBP[k1].append(read_pos)
-                                del temp_rec[k3]
-                                #if k3 in test2:
-                                #   print read_pos
+                                        Double_Read_ThroughBP[k1].append(read_pos)
+                                    del temp_rec[k3]
+                                    #if k3 in test2:
+                                    #   print read_pos
                 for k3 in total_rec.keys():
                     if len(total_rec[k3])==1: 
                         del_flag=0
@@ -5718,6 +5800,7 @@ else:
                     for k2 in rd_low_qual[k1].keys():
                         block_rds[k1][k2]+=rd_low_qual[k1][k2]
                 return [block_rds,block_rd2,Pair_ThroughBP,Double_Read_ThroughBP,Single_Read_ThroughBP]
+                total_rd_calcu(letter_RD2,letter_GC,chr_letter_bp,block_rd2)
             def total_rd_calcu(letter_RD2,letter_GC,chr_letter_bp,block_rd2):
                 out={}
                 for k1 in block_rd2.keys():
@@ -5845,6 +5928,33 @@ else:
                         out[i[0]]={}
                     out[i[0]]['a']=[i[-1],i[-1]+1000]
                 return out
+            def multi_dup_check(k2,Multi_Dup):
+                #decide if k2 is a multi_dup block
+                flag=0
+                for x in k2:
+                    if x in Multi_Dup:
+                        flag+=1
+                return flag
+            def multi_dup_define(letter_RD,GC_Overall_Median_Coverage):
+                #pick out blocks with RD > 4* mean RD;
+                #such blocks are worthless to rearrange
+                Multi_Dup=[]
+                for x in letter_RD.keys():
+                    for y in letter_RD[x].keys():
+                        if letter_RD[x][y]>GC_Overall_Median_Coverage[x]*4:
+                            Multi_Dup.append(y)
+                return Multi_Dup
+            def letter_RD_test_calcu(chr_letter_bp):
+                out={}
+                for x in chr_letter_bp.keys():
+                    out[x]={}
+                    for y in chr_letter_bp[x].keys():
+                        if not y in ['left','right']:
+                            if len(chr_letter_bp[x][y])==2:
+                                out[x][y]=[chr_letter_bp[x][y][0]-500]+chr_letter_bp[x][y]+[chr_letter_bp[x][y][1]+500]
+                            else:
+                                out[x][y]=chr_letter_bp[x][y]
+                return out
             def Full_Info_of_Reads_Integrate(bps2):
                 bps2_left=[]
                 bps2_right=[]
@@ -5853,20 +5963,30 @@ else:
                     bps2_right.append([x[0],x[-1],x[-1]+5000])
                 chr_letter_bp=letter_rearrange(bps2)
                 letter_GC=letter_GC_ReadIn(chr_letter_bp)
+                letter_RD_test=letter_RD_ReadIn(letter_RD_test_calcu(chr_letter_bp))
+                if len(bps2)==1 and len(bps2[0])==3 and letter_RD_test[bps2[0][0]]['a']>GC_Overall_Median_Coverage[bps2[0][0]]*4:
+                    return [letter_RD[bps2[0][0]],letter_RD[bps2[0][0]],0,0,[],[],[],letter_GC[bps2[0][0]]]+original_bp_let_produce(chr_letter_bp,bps2)
                 letter_RD=letter_RD_ReadIn(chr_letter_bp)
+                Multi_Dup=multi_dup_define(letter_RD,GC_Overall_Median_Coverage)
                 global letter_RD_left_control
                 letter_RD_left_control=letter_RD_ReadIn(letter_rearrange(bps2_left))
                 global letter_RD_right_control
                 letter_RD_right_control=letter_RD_ReadIn(letter_rearrange(bps2_right))
                 letter_range_report(chr_letter_bp)
                 blocks_read_in=block_Read_From_Bam(chr_letter_bp)
-                read_info=block_Info_ReadIn(chr_letter_bp,blocks_read_in)
-                #print 'Read Info Read In'
+                read_info=block_Info_ReadIn(chr_letter_bp,blocks_read_in,Multi_Dup)
                 block_rds=read_info[0]
                 block_rd2=read_info[1]
                 letter_RD2={}
                 for k1 in letter_RD.keys():
                     for k2 in letter_RD[k1].keys():
+                        if k2 in Multi_Dup:
+                            letter_RD2[k2]=letter_RD[k1][k2]
+                            if not k1 in block_rd2.keys():
+                                block_rd2[k1]={}
+                            if not k2 in block_rd2[k1].keys():
+                                block_rd2[k1][k2]=0
+                        else:
                             if len(chr_letter_bp[k1][k2])==4:
                                     letter_RD2[k2]=letter_RD[k1][k2]*(chr_letter_bp[k1][k2][2]-chr_letter_bp[k1][k2][1])/(chr_letter_bp[k1][k2][3]-chr_letter_bp[k1][k2][0])
                             else:
@@ -6249,7 +6369,7 @@ else:
                 elif Mean==0:
                     return -Number
             def Prob_Norm(Number, Mean, Variance):
-                return math.log(1/sqrt(2*numpy.pi*Variance)*exp(-(Number-Mean)**2/2/Variance))
+                return -0.5*math.log(2*numpy.pi*Variance)-(Number-Mean)**2/2/Variance
             def Block_Assign_To_Letters(bp_list,letter_list,flank):
                 #Eg of bp_list:[184569179, 184569775, 184571064, 184572009, 184572016]
                 #Eg of letter_list:['a', 'b', 'c', 'd']
@@ -7031,174 +7151,11 @@ else:
                     seql.append(Insert_Seq['I'+let])
                 seql.append(Insert_Seq['right'])
                 return ''.join(seql)
-            def MP_Letter_Through_Read_Rearrange_3(Full_Info_of_Read,Af_Letter,original_bp):
-                Full_Info_of_Read=[int(i) for i in Full_Info_of_Read[:4]]+Full_Info_of_Read[4:]
-                Left_Read=Full_Info_of_Read[:2]+[Full_Info_of_Read[4],Full_Info_of_Read[6:9]]
-                Right_Read=Full_Info_of_Read[2:4]+[Full_Info_of_Read[5],Full_Info_of_Read[9:12]]
-                if numpy.max(Left_Read[:2])>numpy.max(Right_Read[:2]):
-                    Left_Read=Full_Info_of_Read[2:4]+[Full_Info_of_Read[5],Full_Info_of_Read[9:12]]
-                    Right_Read=Full_Info_of_Read[:2]+[Full_Info_of_Read[4],Full_Info_of_Read[6:9]]
-                Original_Letter=[chr(i+97) for i in range(len(original_bp)-1)]
-                Letter_Len={}
-                for i in range(len(Original_Letter)):
-                    Letter_Len[Original_Letter[i]]=original_bp[i+1]-original_bp[i]
-                bp_MP=[[0],[0]]
-                for j in range(len(Af_Letter)):
-                    for k in Af_Letter[j]:
-                        if k=='le' or k=='ri':
-                            bp_MP[j].append(bp_MP[j][-1]+Letter_Len[k])
-                        else:
-                            bp_MP[j].append(bp_MP[j][-1]+Letter_Len[k[0]])
-                Af_M_let=['left']+Af_Letter[0]+['right']
-                Af_M_bpp=[-flank]+bp_MP[0]+[bp_MP[0][-1]+flank]
-                Af_P_let=['left']+Af_Letter[1]+['right']
-                Af_P_bpp=[-flank]+bp_MP[1]+[bp_MP[1][-1]+flank]
-                LeftM_New=[]
-                RightM_New=[]
-                for i in range(len(Af_M_let)):
-                    if Left_Read[3][0]==Af_M_let[i]:
-                        LeftM_New.append([Af_M_bpp[i]+Left_Read[3][1],Af_M_bpp[i]+Left_Read[3][2],Left_Read[2]])
-                    elif Left_Read[3][0]+'^'==Af_M_let[i]:
-                        LeftM_New.append([Af_M_bpp[i+1]-Left_Read[3][2],Af_M_bpp[i+1]-Left_Read[3][1],oppo_direct(Left_Read[2])])
-                    elif Left_Read[3][0]==Af_M_let[i]+'^':
-                        LeftM_New.append([Af_M_bpp[i+1]-Left_Read[3][2],Af_M_bpp[i+1]-Left_Read[3][1],oppo_direct(Left_Read[2])])
-                    if Right_Read[3][0]==Af_M_let[i]:
-                        RightM_New.append([Af_M_bpp[i]+Right_Read[3][1],Af_M_bpp[i]+Right_Read[3][2],Right_Read[2]])
-                    elif Right_Read[3][0]+'^'==Af_M_let[i]:
-                        RightM_New.append([Af_M_bpp[i+1]-Right_Read[3][2],Af_M_bpp[i+1]-Right_Read[3][1],oppo_direct(Right_Read[2])])
-                    elif Right_Read[3][0]==Af_M_let[i]+'^':
-                        RightM_New.append([Af_M_bpp[i+1]-Right_Read[3][2],Af_M_bpp[i+1]-Right_Read[3][1],oppo_direct(Right_Read[2])])
-                LeftP_New=[]
-                RightP_New=[]
-                for i in range(len(Af_P_let)):
-                    if Left_Read[3][0]==Af_P_let[i]:
-                        LeftP_New.append([Af_P_bpp[i]+Left_Read[3][1],Af_P_bpp[i]+Left_Read[3][2],Left_Read[2]])
-                    elif Left_Read[3][0]+'^'==Af_P_let[i]:
-                        LeftP_New.append([Af_P_bpp[i+1]-Left_Read[3][2],Af_P_bpp[i+1]-Left_Read[3][1],oppo_direct(Left_Read[2])])
-                    elif Left_Read[3][0]==Af_P_let[i]+'^':
-                        LeftP_New.append([Af_P_bpp[i+1]-Left_Read[3][2],Af_P_bpp[i+1]-Left_Read[3][1],oppo_direct(Left_Read[2])])
-                    if Right_Read[3][0]==Af_P_let[i]:
-                        RightP_New.append([Af_P_bpp[i]+Right_Read[3][1],Af_P_bpp[i]+Right_Read[3][2],Right_Read[2]])
-                    elif Right_Read[3][0]+'^'==Af_P_let[i]:
-                        RightP_New.append([Af_P_bpp[i+1]-Right_Read[3][2],Af_P_bpp[i+1]-Right_Read[3][1],oppo_direct(Right_Read[2])])
-                    elif Right_Read[3][0]==Af_P_let[i]+'^':
-                        RightP_New.append([Af_P_bpp[i+1]-Right_Read[3][2],Af_P_bpp[i+1]-Right_Read[3][1],oppo_direct(Right_Read[2])])
-                IN_Read_New=[]
-                OUT_Read_New=[]
-                for l in LeftM_New:
-                    for r in RightM_New:
-                        if not numpy.max(l[:2]+r[:2])-numpy.min(l[:2]+r[:2])<Cut_Lower and not numpy.max(l[:2]+r[:2])-numpy.min(l[:2]+r[:2])>Cut_Upper and not l[2]==r[2]:
-                            IN_Read_New.append(l[:2]+r[:2]+[l[2]]+[r[2]]+['M'])
-                        else:
-                            OUT_Read_New.append(l[:2]+r[:2]+[l[2]]+[r[2]]+['M'])
-                for l in LeftP_New:
-                    for r in RightP_New:
-                        if not numpy.max(l[:2]+r[:2])-numpy.min(l[:2]+r[:2])<Cut_Lower and not numpy.max(l[:2]+r[:2])-numpy.min(l[:2]+r[:2])>Cut_Upper and not l[2]==r[2]:
-                            IN_Read_New.append(l[:2]+r[:2]+[l[2]]+[r[2]]+['P'])
-                        else:
-                            OUT_Read_New.append(l[:2]+r[:2]+[l[2]]+[r[2]]+['P'])
-                if not len(IN_Read_New)==0:
-                    return ['IN']+IN_Read_New
-                elif len(IN_Read_New)==0 and not len(OUT_Read_New)==0:
-                    return ['OUT']+OUT_Read_New
-                else:
-                    return ['NON',[-flank/2,-flank/2,-flank/2,-flank/2,'+','-','M'],[-flank/2,-flank/2,-flank/2,-flank/2,'+','-','P']]
-            def MP_Letter_Through_Read_Rearrange_4(Full_Info_of_Read,Letter_Len,Af_BP_rela,Af_Letter_rela,original_bp):
-                Full_Info_of_Read=[int(i) for i in Full_Info_of_Read[:4]]+Full_Info_of_Read[4:]
-                Left_Read=Full_Info_of_Read[:2]+[Full_Info_of_Read[4],Full_Info_of_Read[6:9]]
-                Right_Read=Full_Info_of_Read[2:4]+[Full_Info_of_Read[5],Full_Info_of_Read[9:12]]
-                if numpy.max(Left_Read[:2])>numpy.max(Right_Read[:2]):
-                    Left_Read=Full_Info_of_Read[2:4]+[Full_Info_of_Read[5],Full_Info_of_Read[9:12]]
-                    Right_Read=Full_Info_of_Read[:2]+[Full_Info_of_Read[4],Full_Info_of_Read[6:9]]
-                Left_Reads=[]
-                Right_Reads=[]
-                Left_Info=Left_Read[3]
-                Right_Info=Right_Read[3]
-                if Left_Read[3][0]=='left':
-                    Left_Reads.append(Left_Read[:3]+['M',Af_Letter_rela[0][0]])
-                    Left_Reads.append(Left_Read[:3]+['P',Af_Letter_rela[1][0]])
-                if Left_Read[3][0]=='right':
-                    Left_Reads.append([Af_BP_rela[0][-2]+j for j in Left_Read[3][1:]]+[Left_Read[2]]+['M',Af_Letter_rela[0][-1]])
-                    Left_Reads.append([Af_BP_rela[1][-2]+j for j in Left_Read[3][1:]]+[Left_Read[2]]+['P',Af_Letter_rela[1][-1]])
-                if not Left_Read[3][0] in ['left','right']:
-                    for i in range(len(Af_Letter_rela)):
-                        for j in range(len(Af_Letter_rela[i]))[1:-1]:
-                            if Af_Letter_rela[i][j].split('_')[0][0]==Left_Read[3][0]:
-                                if not Af_Letter_rela[i][j].split('_')[0][-1]=='^':
-                                    Left_Reads.append([Af_BP_rela[i][j]+k for k in Left_Read[3][1:]]+[Left_Read[2],['M','P'][i],Af_Letter_rela[i][j]])
-                                if Af_Letter_rela[i][j].split('_')[0][-1]=='^':
-                                    Left_Reads.append(sorted([Af_BP_rela[i][j+1]-k for k in Left_Read[3][1:]])+[oppo_direct(Left_Read[2]),['M','P'][i],Af_Letter_rela[i][j]])
-                if Right_Read[3][0]=='left':
-                    Right_Reads.append(Right_Read[:3]+['M',Af_Letter_rela[0][0]])
-                    Right_Reads.append(Right_Read[:3]+['P',Af_Letter_rela[1][0]])
-                if Right_Read[3][0]=='right':
-                    Right_Reads.append([Af_BP_rela[0][-2]+j for j in Right_Read[3][1:]]+[Right_Read[2]]+['M',Af_Letter_rela[0][-1]])
-                    Right_Reads.append([Af_BP_rela[1][-2]+j for j in Right_Read[3][1:]]+[Right_Read[2]]+['P',Af_Letter_rela[1][-1]])
-                if not Right_Read[3][0] in ['left','right']:
-                    for i in range(len(Af_Letter_rela)):
-                        for j in range(len(Af_Letter_rela[i]))[1:-1]:
-                            if Af_Letter_rela[i][j].split('_')[0][0]==Right_Read[3][0]:
-                                if not Af_Letter_rela[i][j].split('_')[0][-1]=='^':
-                                    Right_Reads.append([Af_BP_rela[i][j]+k for k in Right_Read[3][1:]]+[Right_Read[2],['M','P'][i],Af_Letter_rela[i][j]])
-                                if Af_Letter_rela[i][j].split('_')[0][-1]=='^':
-                                    Right_Reads.append(sorted([Af_BP_rela[i][j+1]-k for k in Right_Read[3][1:]])+[oppo_direct(Right_Read[2]),['M','P'][i],Af_Letter_rela[i][j]])
-                In_Pair_Reads=['IN']
-                Out_Pair_Reads=['OUT']
-                for m in Left_Reads:
-                    for n in Right_Reads:
-                        if m[3]==n[3]:
-                            Pair_Read=m[:2]+n[:2]+[m[2],n[2],m[3],m[4],n[4]]
-                            if (numpy.max(Pair_Read[:4])-numpy.min(Pair_Read[:4]))>Cut_Lower and (numpy.max(Pair_Read[:4])-numpy.min(Pair_Read[:4]))<Cut_Upper and not Pair_Read[4]==Pair_Read[5]:
-                                In_Pair_Reads.append(Pair_Read) 
-                            else:   
-                                Out_Pair_Reads.append(Pair_Read)    
-                output=[]
-                if not len(In_Pair_Reads)==1:
-                    for i in In_Pair_Reads[1:]:
-                        output.append(i+[Left_Info[0],Left_Info[1]/Window_Size,float(Left_Info[1]/Window_Size*Window_Size+Window_Size-Left_Info[1])/float(Left_Info[2]-Left_Info[1]),Left_Info[2]/Window_Size,float(Left_Info[2]-Left_Info[2]/Window_Size*Window_Size)/float(Left_Info[2]-Left_Info[1])]+[Right_Info[0],Right_Info[1]/Window_Size,float(Right_Info[1]/Window_Size*Window_Size+Window_Size-Right_Info[1])/float(Right_Info[2]-Right_Info[1]),Right_Info[2]/Window_Size,float(Right_Info[2]-Right_Info[2]/Window_Size*Window_Size)/float(Right_Info[2]-Right_Info[1])])
-                else:
-                    if not len(Out_Pair_Reads)==1:
-                        output1=[j for j in Out_Pair_Reads[1:] if not j[4]==j[5]]
-                        output2=[j for j in Out_Pair_Reads[1:] if j[4]==j[5]]
-                        if not len(output1)==0:
-                            pdfs=[pdf_calculate(numpy.max(output1[i][:4])-numpy.min(output1[i][:4]),IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero) for i in range(len(output1))]
-                            for j in range(len(pdfs)):
-                                if pdfs[j]==numpy.max(pdfs):
-                                    output.append(output1[j]+[Left_Info[0],Left_Info[1]/Window_Size,float(Left_Info[1]/Window_Size*Window_Size+Window_Size-Left_Info[1])/float(Left_Info[2]-Left_Info[1]),Left_Info[2]/Window_Size,float(Left_Info[2]-Left_Info[2]/Window_Size*Window_Size)/float(Left_Info[2]-Left_Info[1])]+[Right_Info[0],Right_Info[1]/Window_Size,float(Right_Info[1]/Window_Size*Window_Size+Window_Size-Right_Info[1])/float(Right_Info[2]-Right_Info[1]),Right_Info[2]/Window_Size,float(Right_Info[2]-Right_Info[2]/Window_Size*Window_Size)/float(Right_Info[2]-Right_Info[1])])
-                        else:
-                            pdfs=[pdf_calculate(numpy.max(output2[i][:4])-numpy.min(output2[i][:4]),IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero) for i in range(len(output2))]
-                            for j in range(len(pdfs)):
-                                if pdfs[j]==numpy.max(pdfs):
-                                    output.append(output2[j]+[Left_Info[0],Left_Info[1]/Window_Size,float(Left_Info[1]/Window_Size*Window_Size+Window_Size-Left_Info[1])/float(Left_Info[2]-Left_Info[1]),Left_Info[2]/Window_Size,float(Left_Info[2]-Left_Info[2]/Window_Size*Window_Size)/float(Left_Info[2]-Left_Info[1])]+[Right_Info[0],Right_Info[1]/Window_Size,float(Right_Info[1]/Window_Size*Window_Size+Window_Size-Right_Info[1])/float(Right_Info[2]-Right_Info[1]),Right_Info[2]/Window_Size,float(Right_Info[2]-Right_Info[2]/Window_Size*Window_Size)/float(Right_Info[2]-Right_Info[1])])
-                    else:
-                        output.append([-flank/2,-flank/2,-flank/2,-flank/2,'+','-','M','left_0','left_0','left',1,1,0,0,'left',1,1,0,0])
-                        output.append([-flank/2,-flank/2,-flank/2,-flank/2,'+','-','P','left_0','left_0','left',1,1,0,0,'left',1,1,0,0])
-                return  output
             def oppo_direct(x):
                 if x=='+':
                     return '-'
                 elif x=='-':
                     return '+'
-            def Letter_Through_Rearrange_3(IL_Statistics,Letter_Through,Af_Letter,original_bp_list):
-                #Through reads that got mapped to several spots are divided absolutely equally to each spot
-                New_Info_of_Reads={}
-                for key in Letter_Through.keys():
-                    after_key=MP_Letter_Through_Read_Rearrange_3(Letter_Through[key],Af_Letter,original_bp_list)
-                    if len(after_key)==2:
-                        New_Info_of_Reads[key]=after_key[1]
-                    elif len(after_key)>2:
-                        if after_key[0]=='IN' or after_key[0]=='NON':
-                            for i in range(len(after_key))[1:]:
-                                New_Info_of_Reads[key+'_'+str(i)]=after_key[i]+[str(float(1)/float(len(after_key)-1))]
-                        elif after_key[0]=='OUT':
-                            pdfs=[pdf_calculate(numpy.max(after_key[i][:4])-numpy.min(after_key[i][:4]),IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero) for i in range(len(after_key))[1:]]
-                            best_Out=[after_key[j+1] for j in range(len(pdfs)) if pdfs[j]==numpy.max(pdfs)]
-                            if len(best_Out)==1:
-                                New_Info_of_Reads[key]=best_Out[0]
-                            elif len(best_Out)>1:
-                                for i in range(len(best_Out)+1)[1:]:
-                                    New_Info_of_Reads[key+'_'+str(i)]=best_Out[i-1]+[str(float(1)/float(len(best_Out)))]
-                return New_Info_of_Reads
             def complement(direction):
                 if direction=='+':
                     return '-'
@@ -7274,7 +7231,7 @@ else:
                             Qual_Filter_3.append(Qual_Filter_2[j])
                 return Qual_Filter_3
             def Cov_Cal_Block(pos,bp,cov,perc):
-                 for j in range(len(bp)-2):
+                for j in range(len(bp)-2):
                      if not pos[0]<bp[j] and pos[0]<bp[j+1]:
                         if not pos[1]<bp[j] and pos[1]<bp[j+1]:
                             cov[j]+=(pos[1]-pos[0])*perc
@@ -7285,8 +7242,8 @@ else:
                             cov[j]+=(bp[j+1]-pos[0])*perc
                             cov[j+1]+=(bp[j+2]-bp[j+1])*perc
                             cov[j+2]+=(pos[1]-bp[j+2])*perc
-                 j=len(bp)-2
-                 if not pos[0]<bp[j] and pos[0]<bp[j+1]:
+                j=len(bp)-2
+                if not pos[0]<bp[j] and pos[0]<bp[j+1]:
                     if not pos[1]<bp[j] and pos[1]<bp[j+1]:
                         cov[j]+=(pos[1]-pos[0])*perc
                     else:
@@ -7931,13 +7888,13 @@ else:
                         if Uniparental_disomy_check(original_letters,bestletter)=='Pass':
                             print >>fo, ' '.join([str(bp_ele) for bp_ele in bps3])
                             print >>fo, '/'.join([''.join(bestletter[0]),''.join(bestletter[1])])
-                            print  ' '.join([str(bp_ele) for bp_ele in bps3])
-                            print  '/'.join([''.join(bestletter[0]),''.join(bestletter[1])])
+                            #print  ' '.join([str(bp_ele) for bp_ele in bps3])
+                            #print  '/'.join([''.join(bestletter[0]),''.join(bestletter[1])])
                             print >>fo, 'Theoretical Best Score: '+str(Best_IL_Score+Best_RD_Score+20)
                             if Best_Score_Rec>80:
                                 Best_Score_Rec=80
                             print >>fo, 'Current Best Scure: '+str(Best_Score_Rec+20)
-                            print>>fo, 'Time Consuming:'+str(datetime.timedelta(seconds=(time2-time1)))
+                            print >>fo, 'Time Consuming:'+str(datetime.timedelta(seconds=(time2-time1)))
                 fo.close()
             def Uniparental_disomy_check(original_letters,bestletter):
                 flag_out=0
@@ -7950,6 +7907,7 @@ else:
                 else:
                     flag_out+=1
                 if flag_out==0:
+                    print 'Uniparental_disomy: '+'/'.join([''.join(bestletter[0]),''.join(bestletter[1])])
                     return 'Uniparental_disomy'
                 else:
                     return 'Pass'
@@ -8045,13 +8003,22 @@ else:
                     Regu_IL=[i*K_IL_new for i in Regu_IL]
                     Regu_RD=[P_RD[i]*(1-TB_Weight*P_TB[i]) for i in range(len(P_RD))] 
                     return [Regu_IL,Regu_RD,Letter_Rec,BP_Rec]
+            def score_rec_hash_Modify_for_short_del(Score_rec_hash):
+                Score_rec_hash_new={}
+                for x in sorted(Score_rec_hash.keys())[::-1][:1]:
+                    Score_rec_hash_new[x]=Score_rec_hash[x]
+                for x in sorted(Score_rec_hash.keys())[::-1][1:]:
+                    Score_rec_hash_new[x-1.1]=Score_rec_hash[x]
+                return Score_rec_hash_new
             def one_RD_Process(run_flag,Score_rec_hash):
+                #Letter_Candidates=[[[],[]],[['a'], []],[['a^'], []],[['a'], ['a']],[['a^'], ['a']],[['a^'], ['a^']],[['a','a^'], []],[['a^','a'], []],[['a^','a^'], []]]
+                Letter_Candidates=[[[],[]],[['a'], []],[['a^'], []],[['a'], ['a']],[['a^'], ['a']],[['a^'], ['a^']]]
                 if Ploidy==2:
-                    Letter_Candidates=[[[],[]],[['a'], []],[['a^'], []],[['a'], ['a']],[['a^'], ['a']],[['a^'], ['a^']],[['a','a^'], []],[['a^','a'], []],[['a^','a^'], []]]
+                    Letter_Candidates=Letter_Candidates
                 elif Ploidy==1:
-                    Letter_Candidates=[i for i in [[[],[]],[['a'], []],[['a^'], []],[['a'], ['a']],[['a^'], ['a']],[['a^'], ['a^']],[['a','a^'], []],[['a^','a'], []]] if i[0]==i[1]]
+                    Letter_Candidates=[i for i in Letter_Candidates if i[0]==i[1]]
                 elif Ploidy==0:
-                    Letter_Candidates=[i for i in [[[],[]],[['a'], []],[['a^'], []],[['a'], ['a']],[['a^'], ['a']],[['a^'], ['a^']],[['a','a^'], []],[['a^','a'], []]] if ['a'] in i]
+                    Letter_Candidates=[i for i in Letter_Candidates if ['a'] in i]
                 IL_RD_Temp_Info=Af_Rearrange_Info_Collect(Letter_Candidates)
                 if not IL_RD_Temp_Info=='Error':
                     ILTemp=IL_RD_Temp_Info[0]
@@ -8076,15 +8043,9 @@ else:
                     return([Best_Letter_Rec,Best_Score_Rec,run_flag,Score_rec_hash2])
                 else:
                     return 'Error'
-            def score_rec_hash_Modify_for_short_del(Score_rec_hash):
-                Score_rec_hash_new={}
-                for x in sorted(Score_rec_hash.keys())[::-1][:1]:
-                    Score_rec_hash_new[x]=Score_rec_hash[x]
-                for x in sorted(Score_rec_hash.keys())[::-1][1:]:
-                    Score_rec_hash_new[x-1.1]=Score_rec_hash[x]
-                return Score_rec_hash_new
             def two_RD_Process(run_flag,Score_rec_hash):
                 Letter_Candidates=struc_propose_single_block(2)+struc_propose_single_block(3)+struc_propose_single_block(4)+struc_propose_single_block(5)   
+                Letter_Candidates=[i for i in Letter_Candidates if not [] in i]
                 if [[], ['a', 'a']] in Letter_Candidates:
                     del Letter_Candidates[Letter_Candidates.index([[], ['a', 'a']])]
                 if [[], ['a^', 'a^']] in Letter_Candidates:
@@ -8119,6 +8080,7 @@ else:
                 else: return 'Error'
             def few_RD_Process(run_flag,Score_rec_hash):
                 Letter_Candidates=struc_propose_single_block(copy_num_a)+struc_propose_single_block(copy_num_b)
+                Letter_Candidates=[i for i in Letter_Candidates if not [] in i]
                 if Ploidy==2:
                     Letter_Candidates=Letter_Candidates
                 elif Ploidy==1:
@@ -8263,6 +8225,8 @@ else:
                     for x1 in bps2:
                         for x2 in range(len(x1)-2):
                             if int(x1[x2+2])-int(x1[x2+1])<100: 
+                                flag=1
+                            elif int(x1[x2+2])-int(x1[x2+1])>10**7: 
                                 flag=1
                 if flag==0:
                     return 'right'
@@ -8645,6 +8609,53 @@ else:
                         GC_Mean_Coverage[x]=GC_Mean_Coverage[chrom_N]
                     if not x in GC_Std_Coverage.keys():
                         GC_Std_Coverage[x]=GC_Std_Coverage[chrom_N]
+            def copy_num_estimate_calcu(bps2):
+                chr_letter_bp=letter_rearrange(bps2)
+                Initial_GCRD_Adj_pre=letter_RD_ReadIn(letter_RD_test_calcu(chr_letter_bp))
+                global Initial_GCRD_Adj
+                Initial_GCRD_Adj={}
+                for k1 in Initial_GCRD_Adj_pre.keys():
+                    for k2 in Initial_GCRD_Adj_pre[k1].keys():
+                        Initial_GCRD_Adj[k2]=Initial_GCRD_Adj_pre[k1][k2]
+                Initial_GCRD_Adj['left']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
+                Initial_GCRD_Adj['right']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
+                Copy_num_estimate={}
+                for i in Initial_GCRD_Adj.keys():
+                    if not i in ['left','right']:
+                        Copy_num_estimate[i]=round(Initial_GCRD_Adj[i]*2/GC_Mean_Coverage[Chr])
+                        if Initial_GCRD_Adj[i]<float(GC_Mean_Coverage[Chr])/10.0:
+                            Copy_num_estimate[i]=-1
+                Copy_num_Check=[]
+                for CNE in Copy_num_estimate.keys():
+                    if Copy_num_estimate[CNE]>4:
+                        Copy_num_Check.append(CNE)
+                return [Copy_num_estimate,Copy_num_Check]
+            def bps4_to_bps2(bps4):
+                bps2=[]
+                for k1 in bps4.keys():
+                    for k2 in bps4[k1]:
+                        bps2.append(k2)
+                return bps2
+            def RD_within_B_calcu(Full_Info):
+                RD_within_B=Full_Info[0]
+                RD_within_B['left']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
+                RD_within_B['right']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
+                for i in RD_within_B.keys():
+                    RD_within_B[i+'^']=RD_within_B[i]
+                return RD_within_B
+            def theo_best_score_ini():
+                global Best_IL_Score    
+                Best_IL_Score=0
+                global Best_RD_Score
+                Best_RD_Score=0
+            def GC_Median_Num_Correct():
+                numbers=[]
+                for k1 in sorted(GC_Median_Num.keys()):
+                    if not GC_Median_Num[k1]==0.0:
+                        numbers.append(GC_Median_Num[k1])
+                for k1 in sorted(GC_Median_Num.keys()):
+                    if GC_Median_Num[k1]==0.0:
+                        GC_Median_Num[k1]=Median_Pick(numbers)
             Define_Default_SVPredict()
             if not '--workdir' in dict_opts.keys():
                 print 'Error: please specify working directory using: --workdir'
@@ -8657,123 +8668,128 @@ else:
                         dict_opts['--out-path']='/'.join(dict_opts['--bp-file'].split('/')[:-1])
                     if not dict_opts['--out-path'][-1]=='/':
                         dict_opts['--out-path']+='/'
-                        ref_path=workdir+'reference/'
-                        ref_file=ref_path+'genome.fa'
-                        ref_index=ref_file+'.fai'
-                        ref_ppre=ref_path
-                        ref_prefix='.'.join(ref_file.split('.')[:-1])
-                        global GC_hash
-                        GC_hash=GC_Index_Readin(ref_prefix+'.GC_Content')
-                        chromos_all=[]
-                        refFile=ref_file
-                        if not os.path.isfile(ref_file):
-                            print 'Error: wrong reference genome provided'
+                    ref_path=workdir+'reference_SVelter/'
+                    ref_file=ref_path+'genome.fa'
+                    ref_index=ref_file+'.fai'
+                    ref_ppre=ref_path
+                    ref_prefix='.'.join(ref_file.split('.')[:-1])
+                    global GC_hash
+                    GC_hash=GC_Index_Readin(ref_prefix+'.GC_Content')
+                    chromos_all=[]
+                    refFile=ref_file
+                    if not os.path.isfile(ref_file):
+                        print 'Error: wrong reference genome provided'
+                    else:
+                        if not os.path.isfile(ref_index):
+                            print 'Error: reference genome not indexed'
                         else:
-                            if not os.path.isfile(ref_index):
-                                print 'Error: reference genome not indexed'
+                            chromos_all=chromos_readin(ref_file)
+                            if not '--sample' in dict_opts.keys():
+                                print 'Error: please specify either input file using --sample'
                             else:
-                                chromos_all=chromos_readin(ref_file)
-                                if not '--sample' in dict_opts.keys():
-                                    print 'Error: please specify either input file using --sample'
+                                time1=time.time()
+                                bam_files_appdix=dict_opts['--sample'].split('.')[-1]
+                                BamN=dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'')
+                                Input_File=dict_opts['--bp-file']
+                                Insert_Len_Stat=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/ILNull.'+BamN+'.'+genome_name+'.Bimodal'
+                                if not os.path.isfile(Insert_Len_Stat):
+                                    print 'wrong workdir defined'
                                 else:
-                                    time1=time.time()
-                                    BamN=dict_opts['--sample'].split('/')[-1].replace('.bam','')
-                                    Input_File=dict_opts['--bp-file']
-                                    Insert_Len_Stat=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/ILNull.'+BamN+'.'+genome_name+'.Bimodal'
-                                    if not os.path.isfile(Insert_Len_Stat):
+                                    ReadLenFin=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/'+BamN+'.'+genome_name+'.Stats'
+                                    if not os.path.isfile(ReadLenFin):
                                         print 'wrong workdir defined'
                                     else:
-                                        ReadLenFin=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/'+BamN+'.'+genome_name+'.Stats'
-                                        if not os.path.isfile(ReadLenFin):
-                                            print 'wrong workdir defined'
-                                        else:
-                                            fin=open(ReadLenFin)
-                                            pin=fin.readline().strip().split()
-                                            pin=fin.readline().strip().split()
-                                            pin=fin.readline().strip().split()
-                                            Window_Size=int(pin[0])/3     
-                                            for line in fin:
-                                                pin=line.strip().split()
-                                            fin.close()
-                                            ReadLength=int(pin[-1].split(':')[-1])
-                                        Initial_Bam_Name=BamN+'.bam'
-                                        Initial_Bam=dict_opts['--sample']
-                                        flank=cdf_solver_application(Insert_Len_Stat,0.95)
-                                        Cut_Lower=cdf_solver_application(Insert_Len_Stat,0.005)
-                                        Cut_Upper=cdf_solver_application(Insert_Len_Stat,0.995)
-                                        IL_Stat_all=IL_Stat(Insert_Len_Stat)
-                                        IL_Statistics=IL_Stat_all[0]
-                                        IL_Normal_Stat=IL_Stat_all[1]
-                                        fi_test=os.popen(r'''wc -l %s'''%(Input_File))
-                                        line_test=fi_test.readline().strip().split()
-                                        fi_test.close()
-                                        if not line_test[0]=='0':
-                                            IL_Estimate=IL_Statistics[0]*IL_Statistics[4]+IL_Statistics[1]*IL_Statistics[5]
-                                            IL_SD=((IL_Statistics[2]*IL_Statistics[4])**2+(IL_Statistics[3]*IL_Statistics[5])**2)**(0.5)
-                                            IL_Penal_Two_End_Limit=min([pdf_calculate(IL_Estimate-3*IL_SD,IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero),pdf_calculate(IL_Estimate+3*IL_SD,IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero)])
-                                            low_qual_edge=5
-                                            fi=open(Input_File)
-                                            bps_hash={}
-                                            bps_temp=[]
-                                            break_flag=0
-                                            for line in fi:
-                                                pi=line.strip().split()
-                                                if pi==[] or len(pi)<3:
-                                                    if bps_temp==[]:
-                                                        continue
-                                                    else:
-                                                        bp_key=0
-                                                        for l1 in bps_temp:
-                                                            bp_key+=len(l1)
-                                                        if not bp_key in bps_hash.keys():
-                                                            bps_hash[bp_key]=[]
-                                                        bps_hash[bp_key].append(bps_temp)
-                                                        bps_temp=[]
-                                                        if bp_key<3: 
-                                                            print pi
+                                        fin=open(ReadLenFin)
+                                        pin=fin.readline().strip().split()
+                                        pin=fin.readline().strip().split()
+                                        pin=fin.readline().strip().split()
+                                        Window_Size=int(pin[0])/3     
+                                        for line in fin:
+                                            pin=line.strip().split()
+                                        fin.close()
+                                        ReadLength=int(pin[-1].split(':')[-1])
+                                    Initial_Bam_Name=BamN+'.'+bam_files_appdix
+                                    Initial_Bam=dict_opts['--sample']
+                                    flank=cdf_solver_application(Insert_Len_Stat,0.95)
+                                    Cut_Lower=cdf_solver_application(Insert_Len_Stat,0.005)
+                                    Cut_Upper=cdf_solver_application(Insert_Len_Stat,0.995)
+                                    IL_Stat_all=IL_Stat(Insert_Len_Stat)
+                                    IL_Statistics=IL_Stat_all[0]
+                                    IL_Normal_Stat=IL_Stat_all[1]
+                                    fi_test=os.popen(r'''wc -l %s'''%(Input_File))
+                                    line_test=fi_test.readline().strip().split()
+                                    fi_test.close()
+                                    if not line_test[0]=='0':
+                                        IL_Estimate=IL_Statistics[0]*IL_Statistics[4]+IL_Statistics[1]*IL_Statistics[5]
+                                        IL_SD=((IL_Statistics[2]*IL_Statistics[4])**2+(IL_Statistics[3]*IL_Statistics[5])**2)**(0.5)
+                                        IL_Penal_Two_End_Limit=min([pdf_calculate(IL_Estimate-3*IL_SD,IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero),pdf_calculate(IL_Estimate+3*IL_SD,IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero)])
+                                        low_qual_edge=5
+                                        fi=open(Input_File)
+                                        bps_hash={}
+                                        bps_temp=[]
+                                        break_flag=0
+                                        for line in fi:
+                                            pi=line.strip().split()
+                                            if pi==[] or len(pi)<3:
+                                                if bps_temp==[]:
+                                                    continue
                                                 else:
-                                                    bps_temp.append(pi)
-                                            fi.close()
-                                            bps_hash_inter={}
-                                            for k1 in bps_hash.keys():
-                                                bps_hash_inter[k1]=[]
-                                                for k2 in bps_hash[k1]:
-                                                    if not k2 in bps_hash_inter[k1]:
-                                                        bps_hash_inter[k1].append(k2)
-                                            bps_hash=bps_hash_inter
-                                            output_Score_File=dict_opts['--out-path']+'_'.join(dict_opts['--bp-file'].split('/')[-1].split('.')[:-1])+'.coverge'
-                                            file_initiate(output_Score_File)
-                                            for bpsk1 in sorted(bps_hash.keys()):
-                                                for bps2 in bps_hash[bpsk1]:
-                                                    for i in bps2:
-                                                        if len(i)<3:
-                                                            i.append(str(int(i[-1])+Window_Size))
-                                            GC_Stat_Path=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat'
-                                            Affix_GC_Stat='_MP'+str(QCAlign)+'_GC_Coverage_ReadLength'
-                                            GC_Stat=GC_Stat_ReadIn(BamN,GC_Stat_Path,Affix_GC_Stat)
-                                            GC_Content_Coverage=GC_Stat[0]
-                                            Chromosome=GC_Stat[1]
-                                            Coverage=[int(k) for k in GC_Stat[2][1:]]
-                                            GC_Overall_Median_Coverage={}
-                                            GC_Overall_Median_Num=[]
-                                            GC_Median_Coverage={}
-                                            GC_Median_Num={}
-                                            GC_Mean_Coverage={}
-                                            GC_Std_Coverage={}
-                                            GC_Var_Coverage={}
-                                            for a in Chromosome:
+                                                    bp_key=0
+                                                    for l1 in bps_temp:
+                                                        bp_key+=len(l1)
+                                                    if not bp_key in bps_hash.keys():
+                                                        bps_hash[bp_key]=[]
+                                                    bps_hash[bp_key].append(bps_temp)
+                                                    bps_temp=[]
+                                                    if bp_key<3: 
+                                                        print pi
+                                            else:
+                                                bps_temp.append(pi)
+                                        fi.close()
+                                        bps_hash_inter={}
+                                        for k1 in bps_hash.keys():
+                                            bps_hash_inter[k1]=[]
+                                            for k2 in bps_hash[k1]:
+                                                if not k2 in bps_hash_inter[k1]:
+                                                    bps_hash_inter[k1].append(k2)
+                                        bps_hash=bps_hash_inter
+                                        output_Score_File=dict_opts['--out-path']+'_'.join(dict_opts['--bp-file'].split('/')[-1].split('.')[:-1])+'.coverge'
+                                        file_initiate(output_Score_File)
+                                        for bpsk1 in sorted(bps_hash.keys()):
+                                            for bps2 in bps_hash[bpsk1]:
+                                                for i in bps2:
+                                                    if len(i)<3:
+                                                        i.append(str(int(i[-1])+Window_Size))
+                                        GC_Stat_Path=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]+'/RD_Stat'
+                                        Affix_GC_Stat='_MP'+str(QCAlign)+'_GC_Coverage_ReadLength'
+                                        GC_Stat=GC_Stat_ReadIn(BamN,GC_Stat_Path,Affix_GC_Stat)
+                                        GC_Content_Coverage=GC_Stat[0]
+                                        Chromosome=GC_Stat[1]
+                                        Coverage=[int(k) for k in GC_Stat[2][1:]]
+                                        GC_Overall_Median_Coverage={}
+                                        GC_Overall_Median_Num=[]
+                                        GC_Median_Coverage={}
+                                        GC_Median_Num={}
+                                        GC_Mean_Coverage={}
+                                        GC_Std_Coverage={}
+                                        GC_Var_Coverage={}
+                                        for a in Chromosome:
+                                            if a in GC_Content_Coverage.keys():
                                                 GC_Overall_temp=[]
-                                                GC_Median_Coverage[a]={}
                                                 for b in Coverage:
+                                                    if not b in GC_Content_Coverage[a].keys(): continue
                                                     if not b in GC_Median_Num.keys():
                                                         GC_Median_Num[b]=[]
                                                     if len(GC_Content_Coverage[a][b][0])==2: continue
                                                     elif len(GC_Content_Coverage[a][b][0])>2:
                                                             num_list=[float(c) for c in GC_Content_Coverage[a][b][0][2:].split(',')]
-                                                            GC_Median_Num[b]+=num_list
-                                                            GC_Overall_Median_Num+=num_list
-                                                            GC_Overall_temp=GC_Overall_temp+num_list
-                                                            if not Median_Pick(num_list)==0.0:
+                                                            if not sum(num_list)==0:
+                                                                GC_Median_Num[b]+=num_list
+                                                                GC_Overall_Median_Num+=num_list
+                                                                GC_Overall_temp=GC_Overall_temp+num_list
+                                                                if not Median_Pick(num_list)==0.0:
+                                                                    if not a in GC_Median_Coverage.keys():
+                                                                        GC_Median_Coverage[a]={}
                                                                     GC_Median_Coverage[a][b]=Median_Pick(num_list)
                                                 if len(GC_Overall_temp)==0: continue
                                                 if sum(GC_Overall_temp)==0.0: continue
@@ -8782,127 +8798,95 @@ else:
                                                         GC_Mean_Coverage[a]=numpy.mean(GC_Overall_temp)
                                                         GC_Std_Coverage[a]=numpy.std(GC_Overall_temp)
                                                         GC_Var_Coverage[a]=(GC_Std_Coverage[a])**2
-                                            GC_Overall_Median_Num=Median_Pick(GC_Overall_Median_Num)
-                                            for a in GC_Median_Num.keys():
-                                                if GC_Median_Num[a]==[]:
-                                                    GC_Median_Num[a]=GC_Overall_Median_Num
+                                        GC_Overall_Median_Num=Median_Pick([i for i in GC_Overall_Median_Num if not i==0])
+                                        for a in GC_Median_Num.keys():
+                                            if GC_Median_Num[a]==[]:
+                                                GC_Median_Num[a]=GC_Overall_Median_Num
+                                            else:
+                                                GC_Median_Num[a]=Median_Pick(GC_Median_Num[a])
+                                        GC_Median_Num_Correct()
+                                        ChrN_Median_Coverage={}
+                                        for i in GC_Median_Coverage.keys():
+                                            for j in GC_Median_Coverage[i].keys():
+                                                if not j in ChrN_Median_Coverage.keys():
+                                                    ChrN_Median_Coverage[j]=[GC_Median_Coverage[i][j]]
                                                 else:
-                                                    GC_Median_Num[a]=Median_Pick(GC_Median_Num[a])
-                                            ChrN_Median_Coverage={}
-                                            for i in GC_Median_Coverage.keys():
-                                                for j in GC_Median_Coverage[i].keys():
-                                                    if not j in ChrN_Median_Coverage.keys():
-                                                        ChrN_Median_Coverage[j]=[GC_Median_Coverage[i][j]]
-                                                    else:
-                                                        ChrN_Median_Coverage[j]+=[GC_Median_Coverage[i][j]]
-                                            GC_RD_Info_Complete(ref_file)
-                                            for bpsk1 in sorted(bps_hash.keys()):
-                                                for bps2 in bps_hash[bpsk1]:
-                                                    if qual_check_bps2(bps2)=='right':
-                                                        Chromo=bps2[0][0]
-                                                        K_RD=GC_Std_Coverage[str(Chromo)]/GC_Mean_Coverage[str(Chromo)]
-                                                        K_IL=IL_Normal_Stat[2]/IL_Normal_Stat[1]
-                                                        K_RD_new=1
-                                                        K_IL_new=(K_IL/K_RD)**2
-                                                        IL_GS=Prob_Norm(IL_Normal_Stat[1],IL_Normal_Stat[1],IL_Normal_Stat[2]**2)
-                                                        RD_GS=Prob_Norm(GC_Mean_Coverage[str(Chromo)],GC_Mean_Coverage[str(Chromo)],GC_Std_Coverage[str(Chromo)]**2)
-                                                        for i in bps2:
-                                                            temp2=[int(j) for j in i[1:]]
-                                                            k=[i[0]]+sorted(temp2)
-                                                            k2=k[:2]
-                                                            for k3 in temp2:
-                                                                if not k3 in k2 and k3-k2[-1]>10:
-                                                                    k2.append(k3)
-                                                            if len(k2)>2:
-                                                                bps2[bps2.index(i)]=k2
-                                                            else:
-                                                                del bps2[bps2.index(i)]
-                                                        original_bps_all=[]
-                                                        for obas in bps2:
-                                                            original_bps_all+=obas
-                                                        original_structure=bp_to_let(original_bps_all,chromos_all)
-                                                        chr_letter_tbp=letter_rearrange(bps2)
-                                                        letter_tGC=letter_GC_ReadIn(chr_letter_tbp)
-                                                        if letter_tGC=='error': continue
-                                                        letter_tRD=letter_RD_ReadIn(chr_letter_tbp)
-                                                        if letter_tRD=='error': continue
-                                                        chr_letter_bp={}
-                                                        letter_GC={}
-                                                        letter_RD={}
-                                                        for k1 in chr_letter_tbp.keys():
-                                                            chr_letter_bp[k1]={}
-                                                            letter_GC[k1]={}
-                                                            letter_RD[k1]={}
-                                                            for k2 in chr_letter_tbp[k1].keys():
-                                                                if k2 in letter_tGC[k1].keys() and k2 in letter_tRD[k1].keys() and not math.isnan(letter_tRD[k1][k2]) and not math.isnan(letter_tGC[k1][k2]):
-                                                                    chr_letter_bp[k1][k2]=chr_letter_tbp[k1][k2]
-                                                                    letter_GC[k1][k2]=letter_tGC[k1][k2]
-                                                                    letter_RD[k1][k2]=letter_tRD[k1][k2]
-                                                        left_keys=[]
+                                                    ChrN_Median_Coverage[j]+=[GC_Median_Coverage[i][j]]
+                                        GC_RD_Info_Complete(ref_file)
+                                        for bpsk1 in sorted(bps_hash.keys()):
+                                            for bps2 in bps_hash[bpsk1]:
+                                                #print bps2
+                                                if qual_check_bps2(bps2)=='right':
+                                                    Chromo=bps2[0][0]
+                                                    K_RD=GC_Std_Coverage[str(Chromo)]/GC_Mean_Coverage[str(Chromo)]
+                                                    K_IL=IL_Normal_Stat[2]/IL_Normal_Stat[1]
+                                                    K_RD_new=1
+                                                    K_IL_new=(K_IL/K_RD)**2
+                                                    IL_GS=Prob_Norm(IL_Normal_Stat[1],IL_Normal_Stat[1],IL_Normal_Stat[2]**2)
+                                                    RD_GS=Prob_Norm(GC_Mean_Coverage[str(Chromo)],GC_Mean_Coverage[str(Chromo)],GC_Std_Coverage[str(Chromo)]**2)
+                                                    for i in bps2:
+                                                        temp2=[int(j) for j in i[1:]]
+                                                        k=[i[0]]+sorted(temp2)
+                                                        k2=k[:2]
+                                                        for k3 in temp2:
+                                                            if not k3 in k2 and k3-k2[-1]>10:
+                                                                k2.append(k3)
+                                                        if len(k2)>2:
+                                                            bps2[bps2.index(i)]=k2
+                                                        else:
+                                                            del bps2[bps2.index(i)]
+                                                    original_bps_all=[]
+                                                    for obas in bps2:
+                                                        original_bps_all+=obas
+                                                    original_structure=bp_to_let(original_bps_all,chromos_all)
+                                                    chr_letter_tbp=letter_rearrange(bps2)
+                                                    letter_tGC=letter_GC_ReadIn(chr_letter_tbp)
+                                                    if letter_tGC=='error': continue
+                                                    letter_tRD=letter_RD_ReadIn(chr_letter_tbp)
+                                                    if letter_tRD=='error': continue
+                                                    chr_letter_bp={}
+                                                    letter_GC={}
+                                                    letter_RD={}
+                                                    for k1 in chr_letter_tbp.keys():
+                                                        chr_letter_bp[k1]={}
+                                                        letter_GC[k1]={}
+                                                        letter_RD[k1]={}
+                                                        for k2 in chr_letter_tbp[k1].keys():
+                                                            if k2 in letter_tGC[k1].keys() and k2 in letter_tRD[k1].keys() and not math.isnan(letter_tRD[k1][k2]) and not math.isnan(letter_tGC[k1][k2]):
+                                                                chr_letter_bp[k1][k2]=chr_letter_tbp[k1][k2]
+                                                                letter_GC[k1][k2]=letter_tGC[k1][k2]
+                                                                letter_RD[k1][k2]=letter_tRD[k1][k2]
+                                                    left_keys=[]
+                                                    for k1 in chr_letter_bp.keys():
+                                                        for k2 in chr_letter_bp[k1].keys():
+                                                            left_keys.append(k2)
+                                                    if not left_keys==[]:
+                                                        bps3={}
                                                         for k1 in chr_letter_bp.keys():
+                                                            bps3[k1]={}
                                                             for k2 in chr_letter_bp[k1].keys():
-                                                                left_keys.append(k2)
-                                                        if not left_keys==[]:
-                                                            bamFlag=0
-                                                            bamtest=os.popen(r'''samtools view -H %s'''%(dict_opts['--sample']))
-                                                            for line in bamtest:
-                                                                pbamtest=line.strip().split()
-                                                                if pbamtest[0]=='@SQ' and pbamtest[1].split(':')[0]=='SN':
-                                                                    if len(pbamtest[1].split(':')[1])>3:
-                                                                        bamFlag+=1
-                                                                    break
-                                                            bps3={}
-                                                            for k1 in chr_letter_bp.keys():
-                                                                bps3[k1]={}
-                                                                for k2 in chr_letter_bp[k1].keys():
-                                                                    bps3[k1][chr_letter_bp[k1][k2][0]]=[chr_letter_bp[k1][k2][0],chr_letter_bp[k1][k2][-1]]
-                                                            bps4={}
-                                                            for k1 in bps3.keys():
-                                                                if not bps3[k1]=={}:
-                                                                    bps4[k1]=[[k1]+bps3[k1][sorted(bps3[k1].keys())[0]]]
-                                                                    for k2 in range(len(bps3[k1].keys())-1):
-                                                                        if bps3[k1][sorted(bps3[k1].keys())[k2+1]][0]==bps3[k1][sorted(bps3[k1].keys())[k2]][-1]:
-                                                                            bps4[k1][-1]+=[bps3[k1][sorted(bps3[k1].keys())[k2+1]][-1]]
-                                                                        else:
-                                                                            bps4[k1].append([bps3[k1][sorted(bps3[k1].keys())[k2+1]]])
-                                                            bps2=[]
-                                                            for k1 in bps4.keys():
-                                                                for k2 in bps4[k1]:
-                                                                    bps2.append(k2)
-                                                            Chr=bps2[0][0]
-                                                            Through_BP_Minimum=GC_Overall_Median_Coverage[str(Chr)]/10
-                                                            if len(Chr)>3:
-                                                                refChr0=Chr[3:]
-                                                                refChr1=Chr
-                                                            else:
-                                                                refChr0=Chr
-                                                                refChr1='chr'+Chr
-                                                            if refFlag==0:
-                                                                refChr=refChr0
-                                                            else:
-                                                                refChr=refChr1
-                                                            if bamFlag==0:
-                                                                bamChr=refChr0
-                                                            else:
-                                                                bamChr=refChr1
-                                                            bamtest.close()
-                                                            local_Minimum=[]
-                                                            block2_bin=[]
-                                                            GC_blocks_index=[]
+                                                                bps3[k1][chr_letter_bp[k1][k2][0]]=[chr_letter_bp[k1][k2][0],chr_letter_bp[k1][k2][-1]]
+                                                        bps4={}
+                                                        for k1 in bps3.keys():
+                                                            if not bps3[k1]=={}:
+                                                                bps4[k1]=[[k1]+bps3[k1][sorted(bps3[k1].keys())[0]]]
+                                                                for k2 in range(len(bps3[k1].keys())-1):
+                                                                    if bps3[k1][sorted(bps3[k1].keys())[k2+1]][0]==bps3[k1][sorted(bps3[k1].keys())[k2]][-1]:
+                                                                        bps4[k1][-1]+=[bps3[k1][sorted(bps3[k1].keys())[k2+1]][-1]]
+                                                                    else:
+                                                                        bps4[k1].append([bps3[k1][sorted(bps3[k1].keys())[k2+1]]])
+                                                        bps2=bps4_to_bps2(bps4)
+                                                        Chr=bps2[0][0]
+                                                        Copy_num_esti_info=copy_num_estimate_calcu(bps2)
+                                                        Copy_num_Check=Copy_num_esti_info[1]
+                                                        Copy_num_estimate=Copy_num_esti_info[0]
+                                                        theo_best_score_ini()
+                                                        if Copy_num_Check==[]:
                                                             Full_Info=Full_Info_of_Reads_Integrate(bps2)
-                                                            RD_within_B=Full_Info[0]
-                                                            RD_within_B['left']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
-                                                            RD_within_B['right']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
-                                                            for i in RD_within_B.keys():
-                                                                RD_within_B[i+'^']=RD_within_B[i]
-                                                            Initial_GCRD_Adj=Full_Info[1]
-                                                            Initial_GCRD_Adj['left']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
-                                                            Initial_GCRD_Adj['right']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
-                                                            Best_IL_Score=0
+                                                            RD_within_B=RD_within_B_calcu(Full_Info)
                                                             for j in range(Cut_Lower,Cut_Upper+1):
                                                                 Single_ILScore=pdf_calculate(j,IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero)
                                                                 Best_IL_Score+=Single_ILScore*exp(Single_ILScore)
-                                                            Best_RD_Score=0
                                                             let_chr_rec={}
                                                             for i in chr_letter_bp.keys():
                                                                 for j in chr_letter_bp[i].keys():
@@ -8915,558 +8899,542 @@ else:
                                                                     single_ProbNB=Prob_Norm(j,Theo_RD,Theo_Var)
                                                                     Best_RD_Score+=single_ProbNB*exp(single_ProbNB)
                                                             Block_CN_Upper={}
-                                                            Copy_num_estimate={}
-                                                            for i in Initial_GCRD_Adj.keys():
-                                                                if not i in ['left','right']:
-                                                                    Copy_num_estimate[i]=round(Initial_GCRD_Adj[i]*2/GC_Mean_Coverage[Chr])
-                                                                    if Initial_GCRD_Adj[i]<float(GC_Mean_Coverage[Chr])/10.0:
-                                                                        Copy_num_estimate[i]=-1
-                                                            Copy_num_Check=[]
-                                                            for CNE in Copy_num_estimate.keys():
-                                                                if Copy_num_estimate[CNE]>5:
-                                                                    Copy_num_Check.append(CNE)
-                                                            if Copy_num_Check==[]:
-                                                                median_CN=GC_Overall_Median_Coverage[chrom_N]/2
-                                                                for key in Initial_GCRD_Adj.keys():
-                                                                    if not key in ['left','right']:
-                                                                        Block_CN_Upper[key]=Initial_GCRD_Adj[key]/median_CN+2
-                                                                Initial_DR=Full_Info[2]
-                                                                Initial_IL=Full_Info[3]
-                                                                #Initial_Info=Full_Info[4]+Full_Info[5]+Full_Info[6]
-                                                                BlockGC=Full_Info[7]
-                                                                BlockGC['left']=0.476
-                                                                BlockGC['right']=0.476
-                                                                BlockGC2={}
-                                                                for key_B_GC in BlockGC.keys():
-                                                                    BlockGC2[key_B_GC]=BlockGC[key_B_GC]
-                                                                    BlockGC2[key_B_GC+'^']=BlockGC[key_B_GC]    
-                                                                original_letters=Full_Info[9]
-                                                                original_bp_list=Full_Info[8]
-                                                                Be_BP_Letter={}
-                                                                for let_key in original_letters:
-                                                                    Be_BP_Letter[let_key]=original_bp_list[original_letters.index(let_key)+1]-original_bp_list[original_letters.index(let_key)]
-                                                                ori_let2=[]
-                                                                for i in original_letters:
-                                                                    ori_let2.append(i)
-                                                                for i in original_letters:
-                                                                    if Copy_num_estimate[i]<1:
-                                                                        ori_let2.remove(i)
-                                                                    elif Copy_num_estimate[i]>3:
-                                                                        letter_copy=int(Copy_num_estimate[i]/2)
-                                                                        for j in range(letter_copy)[1:]:
-                                                                            ori_let2.append(i)
-                                                                ori_bp2=[original_bp_list[0]]
-                                                                for i in ori_let2:
-                                                                    ori_bp2.append(ori_bp2[-1]+Be_BP_Letter[i])
-                                                                Initial_TB=0
-                                                                Initial_Move_Prob=[1.0/3,1.0/3,1.0/3]
-                                                                Pair_Through=Full_Info[4]
-                                                                Read_Through=Full_Info[5]
-                                                                SingleR_Through=Full_Info[6]
-                                                                bp_MP=[original_bp_list,original_bp_list]
-                                                                letter_MP=[original_letters,original_letters]
-                                                                Be_BP=[ori_bp2,ori_bp2]
-                                                                Be_BP_Letter['left']=flank
-                                                                Be_BP_Letter['right']=flank
-                                                                for let_key in Be_BP_Letter.keys():
-                                                                    Be_BP_Letter[let_key+'^']=Be_BP_Letter[let_key]
-                                                                num_of_read_pairs=1
-                                                                for k1 in Be_BP_Letter.keys():
-                                                                    if not k1[-1]=='^' and not k1 in ['left','right']:
-                                                                        num_of_read_pairs+=Be_BP_Letter[k1]*RD_within_B[k1]/2/ReadLength
-                                                                num_of_read_pairs+=len(Full_Info[4])+len(Full_Info[5])+len(Full_Info[6])
-                                                                Be_Info=[Pair_Through,Read_Through,SingleR_Through]
-                                                                ori_let2=ori_let_Modi(Be_Info,ori_let2)
-                                                                Be_Letter=[ori_let2,ori_let2]
-                                                                Move_Step=0
-                                                                best_iterations=0
-                                                                Best_Score=float("-inf")
-                                                                Best_Letter=[]
-                                                                Best_BPs=[]
-                                                                score_record=[]
-                                                                #best_score_rec=[]
-                                                                total_read_Pairs_Num=(original_bp_list[-1]-original_bp_list[0])*GC_Mean_Coverage[Chr]/2/ReadLength
-                                                                num_of_reads=total_read_Pairs_Num
-                                                                Best_Score_Rec=0
-                                                                Score_rec_hash={}
-                                                                break_Iteration_Flag=0
-                                                                run_flag=0
-                                                                if len(Full_Info[9])==1:
-                                                                    if Full_Info[1]['a']<GC_Mean_Coverage[Chr]/4 and Full_Info[2]<3:
-                                                                        Run_Result=zero_RD_Process(run_flag)
+                                                            #if Copy_num_Check==[]:
+                                                            median_CN=GC_Overall_Median_Coverage[chrom_N]/2
+                                                            for key in Initial_GCRD_Adj.keys():
+                                                                if not key in ['left','right']:
+                                                                    Block_CN_Upper[key]=Initial_GCRD_Adj[key]/median_CN+2
+                                                            Initial_DR=Full_Info[2]
+                                                            Initial_IL=Full_Info[3]
+                                                            #Initial_Info=Full_Info[4]+Full_Info[5]+Full_Info[6]
+                                                            BlockGC=Full_Info[7]
+                                                            BlockGC['left']=0.476
+                                                            BlockGC['right']=0.476
+                                                            BlockGC2={}
+                                                            for key_B_GC in BlockGC.keys():
+                                                                BlockGC2[key_B_GC]=BlockGC[key_B_GC]
+                                                                BlockGC2[key_B_GC+'^']=BlockGC[key_B_GC]    
+                                                            original_letters=Full_Info[9]
+                                                            original_bp_list=Full_Info[8]
+                                                            Be_BP_Letter={}
+                                                            for let_key in original_letters:
+                                                                Be_BP_Letter[let_key]=original_bp_list[original_letters.index(let_key)+1]-original_bp_list[original_letters.index(let_key)]
+                                                            ori_let2=[]
+                                                            for i in original_letters:
+                                                                ori_let2.append(i)
+                                                            for i in original_letters:
+                                                                if Copy_num_estimate[i]<1:
+                                                                    ori_let2.remove(i)
+                                                                elif Copy_num_estimate[i]>3:
+                                                                    letter_copy=int(Copy_num_estimate[i]/2)
+                                                                    for j in range(letter_copy)[1:]:
+                                                                        ori_let2.append(i)
+                                                            ori_bp2=[original_bp_list[0]]
+                                                            for i in ori_let2:
+                                                                ori_bp2.append(ori_bp2[-1]+Be_BP_Letter[i])
+                                                            Initial_TB=0
+                                                            Initial_Move_Prob=[1.0/3,1.0/3,1.0/3]
+                                                            Pair_Through=Full_Info[4]
+                                                            Read_Through=Full_Info[5]
+                                                            SingleR_Through=Full_Info[6]
+                                                            bp_MP=[original_bp_list,original_bp_list]
+                                                            letter_MP=[original_letters,original_letters]
+                                                            Be_BP=[ori_bp2,ori_bp2]
+                                                            Be_BP_Letter['left']=flank
+                                                            Be_BP_Letter['right']=flank
+                                                            for let_key in Be_BP_Letter.keys():
+                                                                Be_BP_Letter[let_key+'^']=Be_BP_Letter[let_key]
+                                                            num_of_read_pairs=1
+                                                            for k1 in Be_BP_Letter.keys():
+                                                                if not k1[-1]=='^' and not k1 in ['left','right']:
+                                                                    num_of_read_pairs+=Be_BP_Letter[k1]*RD_within_B[k1]/2/ReadLength
+                                                            num_of_read_pairs+=len(Full_Info[4])+len(Full_Info[5])+len(Full_Info[6])
+                                                            Be_Info=[Pair_Through,Read_Through,SingleR_Through]
+                                                            ori_let2=ori_let_Modi(Be_Info,ori_let2)
+                                                            Be_Letter=[ori_let2,ori_let2]
+                                                            Move_Step=0
+                                                            best_iterations=0
+                                                            Best_Score=float("-inf")
+                                                            Best_Letter=[]
+                                                            Best_BPs=[]
+                                                            score_record=[]
+                                                            #best_score_rec=[]
+                                                            total_read_Pairs_Num=(original_bp_list[-1]-original_bp_list[0])*GC_Mean_Coverage[Chr]/2/ReadLength
+                                                            num_of_reads=total_read_Pairs_Num
+                                                            Best_Score_Rec=0
+                                                            Score_rec_hash={}
+                                                            break_Iteration_Flag=0
+                                                            run_flag=0
+                                                            Best_Letter_Rec=[]
+                                                            if len(Full_Info[9])==1:
+                                                                if Full_Info[1]['a']<GC_Mean_Coverage[Chr]/4 and Full_Info[2]<3:
+                                                                    Run_Result=zero_RD_Process(run_flag)
+                                                                    Best_Letter_Rec=Run_Result[0]
+                                                                    Best_Score_Rec=Run_Result[1]
+                                                                    run_flag=Run_Result[2]
+                                                                    Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
+                                                                else:
+                                                                    if Full_Info[1]['a']<GC_Mean_Coverage[Chr]:
+                                                                        Run_Result=one_RD_Process(run_flag,Score_rec_hash)
                                                                         Best_Letter_Rec=Run_Result[0]
                                                                         Best_Score_Rec=Run_Result[1]
                                                                         run_flag=Run_Result[2]
-                                                                        Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
+                                                                        Score_rec_hash=Run_Result[3]
+                                                                        #Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
                                                                     else:
-                                                                        if Full_Info[1]['a']<GC_Mean_Coverage[Chr]:
-                                                                            Run_Result=one_RD_Process(run_flag,Score_rec_hash)
+                                                                        if Full_Info[1]['a']<2*GC_Mean_Coverage[Chr]:
+                                                                            Run_Result=two_RD_Process(run_flag,Score_rec_hash)
                                                                             Best_Letter_Rec=Run_Result[0]
                                                                             Best_Score_Rec=Run_Result[1]
                                                                             run_flag=Run_Result[2]
                                                                             Score_rec_hash=Run_Result[3]
                                                                             #Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
                                                                         else:
-                                                                            if Full_Info[1]['a']<2*GC_Mean_Coverage[Chr]:
-                                                                                Run_Result=two_RD_Process(run_flag,Score_rec_hash)
+                                                                            copy_num_a=int(float(Full_Info[1]['a'])/(float(GC_Mean_Coverage[Chr])/2))
+                                                                            copy_num_b=int(float(Full_Info[1]['a'])/(float(GC_Mean_Coverage[Chr])/2))+1
+                                                                            if copy_num_b<4:
+                                                                                Run_Result=few_RD_Process(run_flag,Score_rec_hash)
                                                                                 Best_Letter_Rec=Run_Result[0]
                                                                                 Best_Score_Rec=Run_Result[1]
                                                                                 run_flag=Run_Result[2]
                                                                                 Score_rec_hash=Run_Result[3]
                                                                                 #Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
                                                                             else:
-                                                                                copy_num_a=int(float(Full_Info[1]['a'])/(float(GC_Mean_Coverage[Chr])/2))
-                                                                                copy_num_b=int(float(Full_Info[1]['a'])/(float(GC_Mean_Coverage[Chr])/2))+1
-                                                                                if copy_num_b<6:
-                                                                                    Run_Result=few_RD_Process(run_flag,Score_rec_hash)
-                                                                                    Best_Letter_Rec=Run_Result[0]
-                                                                                    Best_Score_Rec=Run_Result[1]
-                                                                                    run_flag=Run_Result[2]
-                                                                                    Score_rec_hash=Run_Result[3]
-                                                                                    #Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
-                                                                                else:
-                                                                                    Run_Result=many_RD_Process(run_flag)
-                                                                                    Best_Letter_Rec=Run_Result[0]
-                                                                                    Best_Score_Rec=Run_Result[1]
-                                                                                    run_flag=Run_Result[2]
-                                                                                    Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
-                                                                elif len(Full_Info[9])==2:
-                                                                    bl2_flag=0
-                                                                    for keyCNE in Copy_num_estimate.keys():
-                                                                        if not Copy_num_estimate[keyCNE]<2:
-                                                                            bl2_flag+=1
-                                                                    if bl2_flag==0:
-                                                                        Run_Result=two_block_RD_Process(run_flag)
-                                                                        Best_Letter_Rec=Run_Result[0]
-                                                                        Best_Score_Rec=Run_Result[1]
-                                                                        run_flag=Run_Result[2]
-                                                                        Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
-                                                                if run_flag==0:
-                                                                    speed_test=10
-                                                                    t1_sptest=time.time()
-                                                                    while True:
-                                                                        if Move_Step>speed_test: break
-                                                                        Move_Step+=1
-                                                                        M_Key_0='_'.join(['Step',str(Move_Step),'M'])
-                                                                        P_Key_0='_'.join(['Step',str(Move_Step),'P'])
-                                                                        Move_Sample_Pool=['delete','invert','insert']
-                                                                        Move_M_P=Move_Choose(Move_Sample_Pool,Ploidy,Initial_Move_Prob)
-                                                                        #print Best_Letter
-                                                                        #if not Move_M_P[1]=='x':
-                                                                        #print Be_Letter+[Move_Step]
-                                                                        M_Move_Choices=Move_Choice_procedure_2(Move_M_P[0],Be_Letter[0],original_letters,'2m')
-                                                                        P_Move_Choices=Move_Choice_procedure_2(Move_M_P[1],Be_Letter[1],original_letters,'2p')
-                                                                        if M_Move_Choices=='ERROR!' or P_Move_Choices=='ERROR!':
-                                                                                Move_Step-=1
-                                                                                continue
-                                                                        if not M_Move_Choices=='ERROR!' and not P_Move_Choices=='ERROR!':
-                                                                                #print Be_Letter
-                                                                                P_IL=[]
-                                                                                P_RD=[]
-                                                                                P_DR=[]
-                                                                                P_TB=[]
-                                                                                Letter_Rec=[]
-                                                                                BP_Rec=[]
-                                                                                for m in [['2m','1','1','1','X']]+M_Move_Choices:
-                                                                                        p=[str(Chr)+'p','1','1','1','X']
-                                                                                        Move_MP=[m,p]
-                                                                                        Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
-                                                                                        Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
-                                                                                        if Ploidy==1:
-                                                                                            Af_Letter[1]=Af_Letter[0]
-                                                                                            Af_BP[1]=Af_BP[0]
-                                                                                        if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
-                                                                                        if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
-                                                                                        letter_num_flag=0
-                                                                                        for key in Block_CN_Upper.keys():
-                                                                                                if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
-                                                                                                        letter_num_flag+=1
-                                                                                        if not letter_num_flag==0: continue
-                                                                                        Af_Info_all=Letter_Through_Rearrange_4(IL_Statistics,Be_Info,Af_Letter,Af_BP,BlockGC2,RD_within_B)
-                                                                                        if Af_Info_all==0:continue
-                                                                                        Letter_Rec.append(Af_Letter)
-                                                                                        BP_Rec.append(Af_BP)
-                                                                                        Af_IL_Penal=Af_Info_all[0]
-                                                                                        Af_RD_Rec=Af_Info_all[1]
-                                                                                        Af_DR_Penal=(Af_Info_all[2])**2
-                                                                                        Af_TB_Penal_a=Af_Info_all[4]
-                                                                                        Af_TB_Rec=Af_Info_all[3]
-                                                                                        Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
-                                                                                        Af_RD_Penal=RD_Adj_Penal(GC_Median_Coverage,GC_Overall_Median_Num,Chr,BlockGC2,Af_RD_Rec,Af_Letter)
-                                                                                        for key in Af_Info_all[5].keys():
-                                                                                                Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N]/2)
-                                                                                        P_IL.append(Af_IL_Penal)
-                                                                                        P_RD.append(Af_RD_Penal)
-                                                                                        P_DR.append(Af_DR_Penal/num_of_read_pairs)
-                                                                                        P_TB.append(Af_TB_Penal)
-                                                                                if len(P_IL)==0: continue
-                                                                                Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
-                                                                                Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
-                                                                                Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
-                                                                                Regu_RD=[i-RD_GS for i in Regu_RD]
-                                                                                Regulator=1
-                                                                                ILTemp=[j/Regulator for j in Regu_IL]
-                                                                                RDTemp=[i for i in Regu_RD]
-                                                                                DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Overall_Median_Num,GC_Var_Coverage)
-                                                                                DECISION=DECISION_Score[0]
-                                                                                S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
-                                                                                Be_Letter=Letter_Rec[DECISION]
-                                                                                Be_BP=BP_Rec[DECISION]
-                                                                                if not S_DECISION in Score_rec_hash.keys():
-                                                                                    Score_rec_hash[S_DECISION]=[]
-                                                                                Score_rec_hash[S_DECISION].append(Be_Letter)
-                                                                                if S_DECISION>Best_Score:
-                                                                                        Best_Letter=[Be_Letter]
-                                                                                        Best_BPs=[Be_BP]
-                                                                                        Best_Score=S_DECISION
-                                                                                        best_iterations=0
-                                                                                elif S_DECISION==Best_Score:
-                                                                                        if not Be_Letter in Best_Letter:
-                                                                                                Best_Letter+=[Be_Letter]
-                                                                                                Best_BPs+=[Be_BP]
-                                                                                        best_iterations+=1
-                                                                                else:
-                                                                                        best_iterations+=1
-                                                                                score_record.append(S_DECISION)
-                                                                                #best_score_rec.append(Best_Score)
-                                                                                P_IL=[]
-                                                                                P_RD=[]
-                                                                                P_DR=[]
-                                                                                P_TB=[]
-                                                                                Letter_Rec=[]
-                                                                                BP_Rec=[]
-                                                                                if not P_Move_Choices==[]:
-                                                                                    for p in [['2p','1','1','1','X']]+P_Move_Choices:
-                                                                                        m=[str(Chr)+'m','1','1','1','X']
-                                                                                        Move_MP=[m,p]
-                                                                                        Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
-                                                                                        Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
-                                                                                        if Ploidy==1:
-                                                                                            Af_Letter[1]=Af_Letter[0]
-                                                                                            Af_BP[1]=Af_BP[0]
-                                                                                        if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
-                                                                                        if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
-                                                                                        letter_num_flag=0
-                                                                                        for key in Block_CN_Upper.keys():
-                                                                                                if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
-                                                                                                        letter_num_flag+=1
-                                                                                        if not letter_num_flag==0: continue
-                                                                                        Af_Info_all=Letter_Through_Rearrange_4(IL_Statistics,Be_Info,Af_Letter,Af_BP,BlockGC2,RD_within_B)
-                                                                                        if Af_Info_all==0:
-                                                                                                continue
-                                                                                        Letter_Rec.append(Af_Letter)
-                                                                                        BP_Rec.append(Af_BP)
-                                                                                        Af_IL_Penal=Af_Info_all[0]
-                                                                                        Af_RD_Rec=Af_Info_all[1]
-                                                                                        Af_DR_Penal=(Af_Info_all[2])**2
-                                                                                        Af_TB_Penal_a=Af_Info_all[4]
-                                                                                        Af_TB_Rec=Af_Info_all[3]
-                                                                                        Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
-                                                                                        Af_RD_Penal=RD_Adj_Penal(GC_Median_Coverage,GC_Overall_Median_Num,Chr,BlockGC2,Af_RD_Rec,Af_Letter)
-                                                                                        for key in Af_Info_all[5].keys():
-                                                                                                Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N])
-                                                                                        P_IL.append(Af_IL_Penal)
-                                                                                        P_RD.append(Af_RD_Penal)
-                                                                                        P_DR.append(Af_DR_Penal/num_of_read_pairs)
-                                                                                        P_TB.append(Af_TB_Penal)
-                                                                                if len(P_IL)==0: continue
-                                                                                Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
-                                                                                Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
-                                                                                Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
-                                                                                Regu_RD=[i-RD_GS for i in Regu_RD]
-                                                                                Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
-                                                                                Regulator=1
-                                                                                ILTemp=[j/Regulator for j in Regu_IL]
-                                                                                RDTemp=[i for i in Regu_RD]
-                                                                                DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Overall_Median_Num,GC_Var_Coverage)
-                                                                                DECISION=DECISION_Score[0]
-                                                                                S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
-                                                                                Be_Letter=Letter_Rec[DECISION]
-                                                                                Be_BP=BP_Rec[DECISION]
-                                                                                if not S_DECISION in Score_rec_hash.keys():
-                                                                                    Score_rec_hash[S_DECISION]=[]
-                                                                                Score_rec_hash[S_DECISION].append(Be_Letter)
-                                                                                if S_DECISION>Best_Score:
-                                                                                        Best_Letter=[Be_Letter]
-                                                                                        Best_BPs=[Be_BP]
-                                                                                        Best_Score=S_DECISION
-                                                                                        best_iterations=0
-                                                                                elif S_DECISION==Best_Score:
-                                                                                        if not Be_Letter in Best_Letter:
-                                                                                                Best_Letter+=[Be_Letter]
-                                                                                                Best_BPs+=[Be_BP]
-                                                                                        best_iterations+=1
-                                                                                else:
-                                                                                        best_iterations+=1
-                                                                                score_record.append(S_DECISION)
-                                                                                #best_score_rec.append(Best_Score)
-                                                                    t2_sptest=time.time()
-                                                                    if t2_sptest-t1_sptest<30 or bpsk1<4:
-                                                                        while True:
-                                                                                if Move_Step>Trail_Number: break
-                                                                                if best_iterations>100: 
-                                                                                        if Best_Score_Rec==0:
-                                                                                                best_iterations=0
-                                                                                                Best_Score_Rec=Best_Score
-                                                                                                Best_Letter_Rec=Best_Letter
-                                                                                                Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
-                                                                                                Best_BPs_Rec=Best_BPs
-                                                                                                Be_Letter=Best_Letter[0]
-                                                                                                Be_BP=Best_BPs[0]
-                                                                                                Best_Score-=100
-                                                                                                #print 'current best structure:'+str(Best_Score_Rec)
-                                                                                        else:
-                                                                                                if Best_Score<Best_Score_Rec:
-                                                                                                        break_Iteration_Flag=1
-                                                                                                        print 'final best structure:'+str(Best_Score_Rec)
-                                                                                                elif Best_Score==Best_Score_Rec:
-                                                                                                        break_Iteration_Flag=1
-                                                                                                        for i in Best_Letter:
-                                                                                                                if not i in Best_Letter_Rec:
-                                                                                                                        Best_Letter_Rec.append(i)
-                                                                                                else:
-                                                                                                        best_iterations=0
-                                                                                                        Best_Score_Rec=Best_Score
-                                                                                                        Best_Letter_Rec=Best_Letter
-                                                                                                        Best_BPs_Rec=Best_BPs
-                                                                                                        Be_Letter=Best_Letter[0]
-                                                                                                        Be_BP=Best_BPs[0]
-                                                                                                        Best_Score-=100
-                                                                                                        #print 'current best structure:'+str(Best_Score_Rec)
-                                                                                if break_Iteration_Flag>0:
-                                                                                        break
-                                                                                Move_Step+=1
-                                                                                M_Key_0='_'.join(['Step',str(Move_Step),'M'])
-                                                                                P_Key_0='_'.join(['Step',str(Move_Step),'P'])
-                                                                                Move_Sample_Pool=['delete','invert','insert']
-                                                                                Move_M_P=Move_Choose(Move_Sample_Pool,Ploidy,Initial_Move_Prob)
-                                                                                print Best_Letter
-                                                                                #if not Move_M_P[1]=='x':
-                                                                                M_Move_Choices=Move_Choice_procedure_2(Move_M_P[0],Be_Letter[0],original_letters,'2m')
-                                                                                P_Move_Choices=Move_Choice_procedure_2(Move_M_P[1],Be_Letter[1],original_letters,'2p')
-                                                                                if M_Move_Choices=='ERROR!' or P_Move_Choices=='ERROR!':
-                                                                                        Move_Step-=1
-                                                                                        continue
-                                                                                if not M_Move_Choices=='ERROR!' and not P_Move_Choices=='ERROR!':
-                                                                                        #print Be_Letter
-                                                                                        P_IL=[]
-                                                                                        P_RD=[]
-                                                                                        P_DR=[]
-                                                                                        P_TB=[]
-                                                                                        Letter_Rec=[]
-                                                                                        BP_Rec=[]
-                                                                                        for m in [['2m','1','1','1','X']]+M_Move_Choices:
-                                                                                                p=[str(Chr)+'p','1','1','1','X']
-                                                                                                Move_MP=[m,p]
-                                                                                                Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
-                                                                                                Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
-                                                                                                if Ploidy==1:
-                                                                                                    Af_Letter[1]=Af_Letter[0]
-                                                                                                    Af_BP[1]=Af_BP[0]
-                                                                                                if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
-                                                                                                if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
-                                                                                                letter_num_flag=0
-                                                                                                for key in Block_CN_Upper.keys():
-                                                                                                        if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
-                                                                                                                letter_num_flag+=1
-                                                                                                if not letter_num_flag==0: continue
-                                                                                                Af_Info_all=Letter_Through_Rearrange_4(IL_Statistics,Be_Info,Af_Letter,Af_BP,BlockGC2,RD_within_B)
-                                                                                                if Af_Info_all==0:continue
-                                                                                                Letter_Rec.append(Af_Letter)
-                                                                                                BP_Rec.append(Af_BP)
-                                                                                                Af_IL_Penal=Af_Info_all[0]
-                                                                                                Af_RD_Rec=Af_Info_all[1]
-                                                                                                Af_DR_Penal=(Af_Info_all[2])**2
-                                                                                                Af_TB_Penal_a=Af_Info_all[4]
-                                                                                                Af_TB_Rec=Af_Info_all[3]
-                                                                                                Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
-                                                                                                Af_RD_Penal=RD_Adj_Penal(GC_Median_Coverage,GC_Overall_Median_Num,Chr,BlockGC2,Af_RD_Rec,Af_Letter)
-                                                                                                for key in Af_Info_all[5].keys():
-                                                                                                        Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N]/2)
-                                                                                                P_IL.append(Af_IL_Penal)
-                                                                                                P_RD.append(Af_RD_Penal)
-                                                                                                P_DR.append(Af_DR_Penal/num_of_read_pairs)
-                                                                                                P_TB.append(Af_TB_Penal)
-                                                                                        if len(P_IL)==0: continue
-                                                                                        Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
-                                                                                        Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
-                                                                                        Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
-                                                                                        Regu_RD=[i-RD_GS for i in Regu_RD]
-                                                                                        Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
-                                                                                        Regulator=1
-                                                                                        ILTemp=[j/Regulator for j in Regu_IL]
-                                                                                        RDTemp=[i for i in Regu_RD]
-                                                                                        DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Overall_Median_Num,GC_Var_Coverage)
-                                                                                        DECISION=DECISION_Score[0]
-                                                                                        S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
-                                                                                        Be_Letter=Letter_Rec[DECISION]
-                                                                                        Be_BP=BP_Rec[DECISION]
-                                                                                        if not S_DECISION in Score_rec_hash.keys():
-                                                                                            Score_rec_hash[S_DECISION]=[Be_Letter]
-                                                                                        else: 
-                                                                                            if not Be_Letter in Score_rec_hash[S_DECISION]:
-                                                                                                Score_rec_hash[S_DECISION].append(Be_Letter)
-                                                                                        if S_DECISION>Best_Score:
-                                                                                                Best_Letter=[Be_Letter]
-                                                                                                Best_BPs=[Be_BP]
-                                                                                                Best_Score=S_DECISION
-                                                                                                best_iterations=0
-                                                                                        elif S_DECISION==Best_Score:
-                                                                                                if not Be_Letter in Best_Letter:
-                                                                                                        Best_Letter+=[Be_Letter]
-                                                                                                        Best_BPs+=[Be_BP]
-                                                                                                best_iterations+=1
-                                                                                        else:
-                                                                                                best_iterations+=1
-                                                                                        score_record.append(S_DECISION)
-                                                                                        #best_score_rec.append(Best_Score)
-                                                                                        P_IL=[]
-                                                                                        P_RD=[]
-                                                                                        P_DR=[]
-                                                                                        P_TB=[]
-                                                                                        Letter_Rec=[]
-                                                                                        BP_Rec=[]
-                                                                                        if not P_Move_Choices==[]:
-                                                                                            for p in [['2p','1','1','1','X']]+P_Move_Choices:
-                                                                                                m=[str(Chr)+'m','1','1','1','X']
-                                                                                                Move_MP=[m,p]
-                                                                                                Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
-                                                                                                Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
-                                                                                                if Ploidy==1:
-                                                                                                    Af_Letter[1]=Af_Letter[0]
-                                                                                                    Af_BP[1]=Af_BP[0]
-                                                                                                if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
-                                                                                                if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
-                                                                                                letter_num_flag=0
-                                                                                                for key in Block_CN_Upper.keys():
-                                                                                                        if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
-                                                                                                                letter_num_flag+=1
-                                                                                                if not letter_num_flag==0: continue
-                                                                                                Af_Info_all=Letter_Through_Rearrange_4(IL_Statistics,Be_Info,Af_Letter,Af_BP,BlockGC2,RD_within_B)
-                                                                                                if Af_Info_all==0:
-                                                                                                        continue
-                                                                                                Letter_Rec.append(Af_Letter)
-                                                                                                BP_Rec.append(Af_BP)
-                                                                                                Af_IL_Penal=Af_Info_all[0]
-                                                                                                Af_RD_Rec=Af_Info_all[1]
-                                                                                                Af_DR_Penal=(Af_Info_all[2])**2
-                                                                                                Af_TB_Penal_a=Af_Info_all[4]
-                                                                                                Af_TB_Rec=Af_Info_all[3]
-                                                                                                Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
-                                                                                                Af_RD_Penal=RD_Adj_Penal(GC_Median_Coverage,GC_Overall_Median_Num,Chr,BlockGC2,Af_RD_Rec,Af_Letter)
-                                                                                                for key in Af_Info_all[5].keys():
-                                                                                                        Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N])
-                                                                                                P_IL.append(Af_IL_Penal)
-                                                                                                P_RD.append(Af_RD_Penal)
-                                                                                                P_DR.append(Af_DR_Penal/num_of_read_pairs)
-                                                                                                P_TB.append(Af_TB_Penal)
-                                                                                        if len(P_IL)==0: continue
-                                                                                        Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
-                                                                                        Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
-                                                                                        Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
-                                                                                        Regu_RD=[i-RD_GS for i in Regu_RD]
-                                                                                        Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
-                                                                                        Regulator=1
-                                                                                        ILTemp=[j/Regulator for j in Regu_IL]
-                                                                                        RDTemp=[i for i in Regu_RD]
-                                                                                        DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Overall_Median_Num,GC_Var_Coverage)
-                                                                                        DECISION=DECISION_Score[0]
-                                                                                        S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
-                                                                                        Be_Letter=Letter_Rec[DECISION]
-                                                                                        Be_BP=BP_Rec[DECISION]
-                                                                                        if not S_DECISION in Score_rec_hash.keys():
-                                                                                            Score_rec_hash[S_DECISION]=[Be_Letter]
-                                                                                        else: 
-                                                                                            if not Be_Letter in Score_rec_hash[S_DECISION]:
-                                                                                                Score_rec_hash[S_DECISION].append(Be_Letter)
-                                                                                        if S_DECISION>Best_Score:
-                                                                                                Best_Letter=[Be_Letter]
-                                                                                                Best_BPs=[Be_BP]
-                                                                                                Best_Score=S_DECISION
-                                                                                                best_iterations=0
-                                                                                        elif S_DECISION==Best_Score:
-                                                                                                if not Be_Letter in Best_Letter:
-                                                                                                        Best_Letter+=[Be_Letter]
-                                                                                                        Best_BPs+=[Be_BP]
-                                                                                                best_iterations+=1
-                                                                                        else:
-                                                                                                best_iterations+=1
-                                                                                        score_record.append(S_DECISION)
-                                                                                        #best_score_rec.append(Best_Score)
-                                                                    else:
-                                                                        gaps=[]
-                                                                        bps2_new=[]
-                                                                        for k1 in bps2:
-                                                                            gaps.append([])
-                                                                            for k2 in range(len(k1)-2):
-                                                                                gaps[-1].append(int(k1[k2+2])-int(k1[k2+1]))
-                                                                        for k1 in range(len(gaps)):
-                                                                            bps2_new.append([])
-                                                                            chr_rec=bps2[k1][0]
-                                                                            rec1=1
-                                                                            for k2 in range(len(gaps[k1])):
-                                                                                if gaps[k1][k2]==max(gaps[k1]):
-                                                                                    bps2_new[-1].append([chr_rec]+bps2[k1][rec1:(k2+2)])
-                                                                                    bps2_new[-1].append([chr_rec]+bps2[k1][(k2+1):(k2+3)])
-                                                                                    rec1=k2+2
-                                                                            bps2_new[-1].append([chr_rec]+bps2[k1][rec1:])
-                                                                        for k1 in bps2_new:
-                                                                            for k2 in k1:
-                                                                                bps_hash[max(bps_hash.keys())].append([k2])
-                                                                                print k2
-                                                                        Best_Letter_Rec=[]
-                                                                        Best_Score_Rec=100
-                                                                struc_to_remove=[]
-                                                                for bestletter in Best_Letter_Rec:
-                                                                    if '/'.join([''.join(bestletter[0]),''.join(bestletter[1])])==original_structure:
-                                                                        struc_to_remove.append(bestletter)
-                                                                Best_Letter_Rec=[i for i in Best_Letter_Rec if not i in struc_to_remove]
-                                                                if Best_Letter_Rec==[] and Best_Score_Rec==100:
-                                                                    continue
-                                                                else:
-                                                                    write_best_letter(bps2,Best_Letter_Rec,Best_Score_Rec,Score_rec_hash,original_letters)
-                                                            else:
-                                                                Score_rec_hash={}
-                                                                bps_new={}
-                                                                Initial_DR=Full_Info[2]
-                                                                Initial_IL=Full_Info[3]
-                                                                #Initial_Info=Full_Info[4]+Full_Info[5]+Full_Info[6]
-                                                                BlockGC=Full_Info[7]
-                                                                BlockGC['left']=0.476
-                                                                BlockGC['right']=0.476
-                                                                BlockGC2={}
-                                                                for key_B_GC in BlockGC.keys():
-                                                                    BlockGC2[key_B_GC]=BlockGC[key_B_GC]
-                                                                    BlockGC2[key_B_GC+'^']=BlockGC[key_B_GC]    
-                                                                original_letters=Full_Info[9]
-                                                                original_bp_list=Full_Info[8]
-                                                                for bl in Copy_num_Check:
-                                                                    for blk1 in chr_letter_bp.keys():
-                                                                        for blk2 in sorted(chr_letter_bp[blk1].keys()):
-                                                                            if blk2==bl:
-                                                                                bps2_temp=[blk1]+[chr_letter_bp[blk1][blk2][0],chr_letter_bp[blk1][blk2][-1]]
-                                                                                copy_num_a=int(Copy_num_estimate[bl])/2
-                                                                                copy_num_b=Copy_num_estimate[bl]-copy_num_a
-                                                                                Best_Letter_Rec=[[['a' for i in range(copy_num_a)],['a' for i in range(copy_num_a)]]]
-                                                                                Best_Score_Rec=100
-                                                                                write_best_letter([bps2_temp],Best_Letter_Rec,Best_Score_Rec,Score_rec_hash,original_letters)
-                                                                for blk1 in chr_letter_bp.keys():
-                                                                    bps_new[blk1]=[]
-                                                                    for blk2 in sorted(chr_letter_bp[blk1].keys()):
-                                                                        if not blk2 in Copy_num_Check:
-                                                                            bps_new[blk1].append([chr_letter_bp[blk1][blk2][0],chr_letter_bp[blk1][blk2][-1]])
-                                                                bps_new_2=[]
-                                                                for k1 in bps_new.keys():
-                                                                    for k2 in bps_new[k1]:
-                                                                        if bps_new_2==[]:
-                                                                            bps_new_2.append([k1]+k2)
-                                                                        else:
-                                                                            if k1==bps_new_2[-1][0] and k2[0]==bps_new_2[-1][-1]:
-                                                                                bps_new_2[-1]+=k2[1:]
+                                                                                Run_Result=many_RD_Process(run_flag)
+                                                                                Best_Letter_Rec=Run_Result[0]
+                                                                                Best_Score_Rec=Run_Result[1]
+                                                                                run_flag=Run_Result[2]
+                                                                                Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
+                                                            elif len(Full_Info[9])==2:
+                                                                bl2_flag=0
+                                                                for keyCNE in Copy_num_estimate.keys():
+                                                                    if not Copy_num_estimate[keyCNE]<2:
+                                                                        bl2_flag+=1
+                                                                if bl2_flag==0:
+                                                                    Run_Result=two_block_RD_Process(run_flag)
+                                                                    if Run_Result=='Error': continue
+                                                                    Best_Letter_Rec=Run_Result[0]
+                                                                    Best_Score_Rec=Run_Result[1]
+                                                                    run_flag=Run_Result[2]
+                                                                    Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
+                                                            if run_flag==0:
+                                                                speed_test=10
+                                                                t1_sptest=time.time()
+                                                                while True:
+                                                                    if Move_Step>speed_test: break
+                                                                    Move_Step+=1
+                                                                    M_Key_0='_'.join(['Step',str(Move_Step),'M'])
+                                                                    P_Key_0='_'.join(['Step',str(Move_Step),'P'])
+                                                                    Move_Sample_Pool=['delete','invert','insert']
+                                                                    Move_M_P=Move_Choose(Move_Sample_Pool,Ploidy,Initial_Move_Prob)
+                                                                    M_Move_Choices=Move_Choice_procedure_2(Move_M_P[0],Be_Letter[0],original_letters,'2m')
+                                                                    P_Move_Choices=Move_Choice_procedure_2(Move_M_P[1],Be_Letter[1],original_letters,'2p')
+                                                                    if M_Move_Choices=='ERROR!' or P_Move_Choices=='ERROR!':
+                                                                            Move_Step-=1
+                                                                            continue
+                                                                    if not M_Move_Choices=='ERROR!' and not P_Move_Choices=='ERROR!':
+                                                                            P_IL=[]
+                                                                            P_RD=[]
+                                                                            P_DR=[]
+                                                                            P_TB=[]
+                                                                            Letter_Rec=[]
+                                                                            BP_Rec=[]
+                                                                            for m in [['2m','1','1','1','X']]+M_Move_Choices:
+                                                                                    p=[str(Chr)+'p','1','1','1','X']
+                                                                                    Move_MP=[m,p]
+                                                                                    Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
+                                                                                    Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
+                                                                                    if Ploidy==1:
+                                                                                        Af_Letter[1]=Af_Letter[0]
+                                                                                        Af_BP[1]=Af_BP[0]
+                                                                                    if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
+                                                                                    if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
+                                                                                    letter_num_flag=0
+                                                                                    for key in Block_CN_Upper.keys():
+                                                                                            if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
+                                                                                                    letter_num_flag+=1
+                                                                                    if not letter_num_flag==0: continue
+                                                                                    Af_Info_all=Letter_Through_Rearrange_4(IL_Statistics,Be_Info,Af_Letter,Af_BP,BlockGC2,RD_within_B)
+                                                                                    if Af_Info_all==0:continue
+                                                                                    Letter_Rec.append(Af_Letter)
+                                                                                    BP_Rec.append(Af_BP)
+                                                                                    Af_IL_Penal=Af_Info_all[0]
+                                                                                    Af_RD_Rec=Af_Info_all[1]
+                                                                                    Af_DR_Penal=(Af_Info_all[2])**2
+                                                                                    Af_TB_Penal_a=Af_Info_all[4]
+                                                                                    Af_TB_Rec=Af_Info_all[3]
+                                                                                    Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
+                                                                                    Af_RD_Penal=RD_Adj_Penal(GC_Median_Coverage,GC_Overall_Median_Num,Chr,BlockGC2,Af_RD_Rec,Af_Letter)
+                                                                                    for key in Af_Info_all[5].keys():
+                                                                                            Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N]/2)
+                                                                                    P_IL.append(Af_IL_Penal)
+                                                                                    P_RD.append(Af_RD_Penal)
+                                                                                    P_DR.append(Af_DR_Penal/num_of_read_pairs)
+                                                                                    P_TB.append(Af_TB_Penal)
+                                                                            if len(P_IL)==0: continue
+                                                                            Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
+                                                                            Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
+                                                                            Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
+                                                                            Regu_RD=[i-RD_GS for i in Regu_RD]
+                                                                            Regulator=1
+                                                                            ILTemp=[j/Regulator for j in Regu_IL]
+                                                                            RDTemp=[i for i in Regu_RD]
+                                                                            DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Overall_Median_Num,GC_Var_Coverage)
+                                                                            DECISION=DECISION_Score[0]
+                                                                            S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
+                                                                            Be_Letter=Letter_Rec[DECISION]
+                                                                            Be_BP=BP_Rec[DECISION]
+                                                                            if not S_DECISION in Score_rec_hash.keys():
+                                                                                Score_rec_hash[S_DECISION]=[]
+                                                                            Score_rec_hash[S_DECISION].append(Be_Letter)
+                                                                            if S_DECISION>Best_Score:
+                                                                                    Best_Letter=[Be_Letter]
+                                                                                    Best_BPs=[Be_BP]
+                                                                                    Best_Score=S_DECISION
+                                                                                    best_iterations=0
+                                                                            elif S_DECISION==Best_Score:
+                                                                                    if not Be_Letter in Best_Letter:
+                                                                                            Best_Letter+=[Be_Letter]
+                                                                                            Best_BPs+=[Be_BP]
+                                                                                    best_iterations+=1
                                                                             else:
-                                                                                bps_new_2.append([k1]+k2)
-                                                                for k1 in bps_new_2:
-                                                                    bps_hash[max(bps_hash.keys())].append([k1])
+                                                                                    best_iterations+=1
+                                                                            score_record.append(S_DECISION)
+                                                                            #best_score_rec.append(Best_Score)
+                                                                            P_IL=[]
+                                                                            P_RD=[]
+                                                                            P_DR=[]
+                                                                            P_TB=[]
+                                                                            Letter_Rec=[]
+                                                                            BP_Rec=[]
+                                                                            if not P_Move_Choices==[]:
+                                                                                for p in [['2p','1','1','1','X']]+P_Move_Choices:
+                                                                                    m=[str(Chr)+'m','1','1','1','X']
+                                                                                    Move_MP=[m,p]
+                                                                                    Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
+                                                                                    Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
+                                                                                    if Ploidy==1:
+                                                                                        Af_Letter[1]=Af_Letter[0]
+                                                                                        Af_BP[1]=Af_BP[0]
+                                                                                    if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
+                                                                                    if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
+                                                                                    letter_num_flag=0
+                                                                                    for key in Block_CN_Upper.keys():
+                                                                                            if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
+                                                                                                    letter_num_flag+=1
+                                                                                    if not letter_num_flag==0: continue
+                                                                                    Af_Info_all=Letter_Through_Rearrange_4(IL_Statistics,Be_Info,Af_Letter,Af_BP,BlockGC2,RD_within_B)
+                                                                                    if Af_Info_all==0:
+                                                                                            continue
+                                                                                    Letter_Rec.append(Af_Letter)
+                                                                                    BP_Rec.append(Af_BP)
+                                                                                    Af_IL_Penal=Af_Info_all[0]
+                                                                                    Af_RD_Rec=Af_Info_all[1]
+                                                                                    Af_DR_Penal=(Af_Info_all[2])**2
+                                                                                    Af_TB_Penal_a=Af_Info_all[4]
+                                                                                    Af_TB_Rec=Af_Info_all[3]
+                                                                                    Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
+                                                                                    Af_RD_Penal=RD_Adj_Penal(GC_Median_Coverage,GC_Overall_Median_Num,Chr,BlockGC2,Af_RD_Rec,Af_Letter)
+                                                                                    for key in Af_Info_all[5].keys():
+                                                                                            Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N])
+                                                                                    P_IL.append(Af_IL_Penal)
+                                                                                    P_RD.append(Af_RD_Penal)
+                                                                                    P_DR.append(Af_DR_Penal/num_of_read_pairs)
+                                                                                    P_TB.append(Af_TB_Penal)
+                                                                            if len(P_IL)==0: continue
+                                                                            Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
+                                                                            Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
+                                                                            Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
+                                                                            Regu_RD=[i-RD_GS for i in Regu_RD]
+                                                                            Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
+                                                                            Regulator=1
+                                                                            ILTemp=[j/Regulator for j in Regu_IL]
+                                                                            RDTemp=[i for i in Regu_RD]
+                                                                            DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Overall_Median_Num,GC_Var_Coverage)
+                                                                            DECISION=DECISION_Score[0]
+                                                                            S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
+                                                                            Be_Letter=Letter_Rec[DECISION]
+                                                                            Be_BP=BP_Rec[DECISION]
+                                                                            if not S_DECISION in Score_rec_hash.keys():
+                                                                                Score_rec_hash[S_DECISION]=[]
+                                                                            Score_rec_hash[S_DECISION].append(Be_Letter)
+                                                                            if S_DECISION>Best_Score:
+                                                                                    Best_Letter=[Be_Letter]
+                                                                                    Best_BPs=[Be_BP]
+                                                                                    Best_Score=S_DECISION
+                                                                                    best_iterations=0
+                                                                            elif S_DECISION==Best_Score:
+                                                                                    if not Be_Letter in Best_Letter:
+                                                                                            Best_Letter+=[Be_Letter]
+                                                                                            Best_BPs+=[Be_BP]
+                                                                                    best_iterations+=1
+                                                                            else:
+                                                                                    best_iterations+=1
+                                                                            score_record.append(S_DECISION)
+                                                                            #best_score_rec.append(Best_Score)
+                                                                t2_sptest=time.time()
+                                                                if t2_sptest-t1_sptest<10 or bpsk1<4:
+                                                                    while True:
+                                                                            if Move_Step>Trail_Number: break
+                                                                            if best_iterations>100: 
+                                                                                    if Best_Score_Rec==0:
+                                                                                            best_iterations=0
+                                                                                            Best_Score_Rec=Best_Score
+                                                                                            Best_Letter_Rec=Best_Letter
+                                                                                            Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
+                                                                                            Best_BPs_Rec=Best_BPs
+                                                                                            Be_Letter=Best_Letter[0]
+                                                                                            Be_BP=Best_BPs[0]
+                                                                                            Best_Score-=100
+                                                                                    else:
+                                                                                            if Best_Score<Best_Score_Rec:
+                                                                                                    break_Iteration_Flag=1
+                                                                                                    print 'final best structure:'+str(Best_Score_Rec)
+                                                                                            elif Best_Score==Best_Score_Rec:
+                                                                                                    break_Iteration_Flag=1
+                                                                                                    for i in Best_Letter:
+                                                                                                            if not i in Best_Letter_Rec:
+                                                                                                                    Best_Letter_Rec.append(i)
+                                                                                            else:
+                                                                                                    best_iterations=0
+                                                                                                    Best_Score_Rec=Best_Score
+                                                                                                    Best_Letter_Rec=Best_Letter
+                                                                                                    Best_BPs_Rec=Best_BPs
+                                                                                                    Be_Letter=Best_Letter[0]
+                                                                                                    Be_BP=Best_BPs[0]
+                                                                                                    Best_Score-=100
+                                                                            if break_Iteration_Flag>0:
+                                                                                    break
+                                                                            Move_Step+=1
+                                                                            M_Key_0='_'.join(['Step',str(Move_Step),'M'])
+                                                                            P_Key_0='_'.join(['Step',str(Move_Step),'P'])
+                                                                            Move_Sample_Pool=['delete','invert','insert']
+                                                                            Move_M_P=Move_Choose(Move_Sample_Pool,Ploidy,Initial_Move_Prob)
+                                                                            M_Move_Choices=Move_Choice_procedure_2(Move_M_P[0],Be_Letter[0],original_letters,'2m')
+                                                                            P_Move_Choices=Move_Choice_procedure_2(Move_M_P[1],Be_Letter[1],original_letters,'2p')
+                                                                            if M_Move_Choices=='ERROR!' or P_Move_Choices=='ERROR!':
+                                                                                    Move_Step-=1
+                                                                                    continue
+                                                                            if not M_Move_Choices=='ERROR!' and not P_Move_Choices=='ERROR!':
+                                                                                    P_IL=[]
+                                                                                    P_RD=[]
+                                                                                    P_DR=[]
+                                                                                    P_TB=[]
+                                                                                    Letter_Rec=[]
+                                                                                    BP_Rec=[]
+                                                                                    for m in [['2m','1','1','1','X']]+M_Move_Choices:
+                                                                                            p=[str(Chr)+'p','1','1','1','X']
+                                                                                            Move_MP=[m,p]
+                                                                                            Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
+                                                                                            Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
+                                                                                            if Ploidy==1:
+                                                                                                Af_Letter[1]=Af_Letter[0]
+                                                                                                Af_BP[1]=Af_BP[0]
+                                                                                            if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
+                                                                                            if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
+                                                                                            letter_num_flag=0
+                                                                                            for key in Block_CN_Upper.keys():
+                                                                                                    if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
+                                                                                                            letter_num_flag+=1
+                                                                                            if not letter_num_flag==0: continue
+                                                                                            Af_Info_all=Letter_Through_Rearrange_4(IL_Statistics,Be_Info,Af_Letter,Af_BP,BlockGC2,RD_within_B)
+                                                                                            if Af_Info_all==0:continue
+                                                                                            Letter_Rec.append(Af_Letter)
+                                                                                            BP_Rec.append(Af_BP)
+                                                                                            Af_IL_Penal=Af_Info_all[0]
+                                                                                            Af_RD_Rec=Af_Info_all[1]
+                                                                                            Af_DR_Penal=(Af_Info_all[2])**2
+                                                                                            Af_TB_Penal_a=Af_Info_all[4]
+                                                                                            Af_TB_Rec=Af_Info_all[3]
+                                                                                            Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
+                                                                                            Af_RD_Penal=RD_Adj_Penal(GC_Median_Coverage,GC_Overall_Median_Num,Chr,BlockGC2,Af_RD_Rec,Af_Letter)
+                                                                                            for key in Af_Info_all[5].keys():
+                                                                                                    Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N]/2)
+                                                                                            P_IL.append(Af_IL_Penal)
+                                                                                            P_RD.append(Af_RD_Penal)
+                                                                                            P_DR.append(Af_DR_Penal/num_of_read_pairs)
+                                                                                            P_TB.append(Af_TB_Penal)
+                                                                                    if len(P_IL)==0: continue
+                                                                                    Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
+                                                                                    Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
+                                                                                    Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
+                                                                                    Regu_RD=[i-RD_GS for i in Regu_RD]
+                                                                                    Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
+                                                                                    Regulator=1
+                                                                                    ILTemp=[j/Regulator for j in Regu_IL]
+                                                                                    RDTemp=[i for i in Regu_RD]
+                                                                                    DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Overall_Median_Num,GC_Var_Coverage)
+                                                                                    DECISION=DECISION_Score[0]
+                                                                                    S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
+                                                                                    Be_Letter=Letter_Rec[DECISION]
+                                                                                    #print Be_Letter
+                                                                                    Be_BP=BP_Rec[DECISION]
+                                                                                    if not S_DECISION in Score_rec_hash.keys():
+                                                                                        Score_rec_hash[S_DECISION]=[Be_Letter]
+                                                                                    else: 
+                                                                                        if not Be_Letter in Score_rec_hash[S_DECISION]:
+                                                                                            Score_rec_hash[S_DECISION].append(Be_Letter)
+                                                                                    if S_DECISION>Best_Score:
+                                                                                            Best_Letter=[Be_Letter]
+                                                                                            Best_BPs=[Be_BP]
+                                                                                            Best_Score=S_DECISION
+                                                                                            best_iterations=0
+                                                                                    elif S_DECISION==Best_Score:
+                                                                                            if not Be_Letter in Best_Letter:
+                                                                                                    Best_Letter+=[Be_Letter]
+                                                                                                    Best_BPs+=[Be_BP]
+                                                                                            best_iterations+=1
+                                                                                    else:
+                                                                                            best_iterations+=1
+                                                                                    score_record.append(S_DECISION)
+                                                                                    #best_score_rec.append(Best_Score)
+                                                                                    P_IL=[]
+                                                                                    P_RD=[]
+                                                                                    P_DR=[]
+                                                                                    P_TB=[]
+                                                                                    Letter_Rec=[]
+                                                                                    BP_Rec=[]
+                                                                                    if not P_Move_Choices==[]:
+                                                                                        for p in [['2p','1','1','1','X']]+P_Move_Choices:
+                                                                                            m=[str(Chr)+'m','1','1','1','X']
+                                                                                            Move_MP=[m,p]
+                                                                                            Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
+                                                                                            Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
+                                                                                            if Ploidy==1:
+                                                                                                Af_Letter[1]=Af_Letter[0]
+                                                                                                Af_BP[1]=Af_BP[0]
+                                                                                            if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
+                                                                                            if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
+                                                                                            letter_num_flag=0
+                                                                                            for key in Block_CN_Upper.keys():
+                                                                                                    if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
+                                                                                                            letter_num_flag+=1
+                                                                                            if not letter_num_flag==0: continue
+                                                                                            Af_Info_all=Letter_Through_Rearrange_4(IL_Statistics,Be_Info,Af_Letter,Af_BP,BlockGC2,RD_within_B)
+                                                                                            if Af_Info_all==0:
+                                                                                                    continue
+                                                                                            Letter_Rec.append(Af_Letter)
+                                                                                            BP_Rec.append(Af_BP)
+                                                                                            Af_IL_Penal=Af_Info_all[0]
+                                                                                            Af_RD_Rec=Af_Info_all[1]
+                                                                                            Af_DR_Penal=(Af_Info_all[2])**2
+                                                                                            Af_TB_Penal_a=Af_Info_all[4]
+                                                                                            Af_TB_Rec=Af_Info_all[3]
+                                                                                            Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
+                                                                                            Af_RD_Penal=RD_Adj_Penal(GC_Median_Coverage,GC_Overall_Median_Num,Chr,BlockGC2,Af_RD_Rec,Af_Letter)
+                                                                                            for key in Af_Info_all[5].keys():
+                                                                                                    Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N])
+                                                                                            P_IL.append(Af_IL_Penal)
+                                                                                            P_RD.append(Af_RD_Penal)
+                                                                                            P_DR.append(Af_DR_Penal/num_of_read_pairs)
+                                                                                            P_TB.append(Af_TB_Penal)
+                                                                                    if len(P_IL)==0: continue
+                                                                                    Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
+                                                                                    Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
+                                                                                    Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
+                                                                                    Regu_RD=[i-RD_GS for i in Regu_RD]
+                                                                                    Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
+                                                                                    Regulator=1
+                                                                                    ILTemp=[j/Regulator for j in Regu_IL]
+                                                                                    RDTemp=[i for i in Regu_RD]
+                                                                                    DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Overall_Median_Num,GC_Var_Coverage)
+                                                                                    DECISION=DECISION_Score[0]
+                                                                                    S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
+                                                                                    Be_Letter=Letter_Rec[DECISION]
+                                                                                    Be_BP=BP_Rec[DECISION]
+                                                                                    if not S_DECISION in Score_rec_hash.keys():
+                                                                                        Score_rec_hash[S_DECISION]=[Be_Letter]
+                                                                                    else: 
+                                                                                        if not Be_Letter in Score_rec_hash[S_DECISION]:
+                                                                                            Score_rec_hash[S_DECISION].append(Be_Letter)
+                                                                                    if S_DECISION>Best_Score:
+                                                                                            Best_Letter=[Be_Letter]
+                                                                                            Best_BPs=[Be_BP]
+                                                                                            Best_Score=S_DECISION
+                                                                                            best_iterations=0
+                                                                                    elif S_DECISION==Best_Score:
+                                                                                            if not Be_Letter in Best_Letter:
+                                                                                                    Best_Letter+=[Be_Letter]
+                                                                                                    Best_BPs+=[Be_BP]
+                                                                                            best_iterations+=1
+                                                                                    else:
+                                                                                            best_iterations+=1
+                                                                                    score_record.append(S_DECISION)
+                                                                                    #best_score_rec.append(Best_Score)
+                                                                else:
+                                                                    gaps=[]
+                                                                    bps2_new=[]
+                                                                    for k1 in bps2:
+                                                                        gaps.append([])
+                                                                        for k2 in range(len(k1)-2):
+                                                                            gaps[-1].append(int(k1[k2+2])-int(k1[k2+1]))
+                                                                    for k1 in range(len(gaps)):
+                                                                        bps2_new.append([])
+                                                                        chr_rec=bps2[k1][0]
+                                                                        rec1=1
+                                                                        for k2 in range(len(gaps[k1])):
+                                                                            if gaps[k1][k2]==max(gaps[k1]):
+                                                                                bps2_new[-1].append([chr_rec]+bps2[k1][rec1:(k2+2)])
+                                                                                bps2_new[-1].append([chr_rec]+bps2[k1][(k2+1):(k2+3)])
+                                                                                rec1=k2+2
+                                                                        bps2_new[-1].append([chr_rec]+bps2[k1][rec1:])
+                                                                    for k1 in bps2_new:
+                                                                        for k2 in k1:
+                                                                            bps_hash[max(bps_hash.keys())].append([k2])
+                                                                    Best_Letter_Rec=[]
+                                                                    Best_Score_Rec=100
+                                                            struc_to_remove=[]
+                                                            for bestletter in Best_Letter_Rec:
+                                                                if '/'.join([''.join(bestletter[0]),''.join(bestletter[1])])==original_structure:
+                                                                    struc_to_remove.append(bestletter)
+                                                            Best_Letter_Rec=[i for i in Best_Letter_Rec if not i in struc_to_remove]
+                                                            if Best_Letter_Rec==[] and Best_Score_Rec==100:
+                                                                continue
+                                                            else:
+                                                                write_best_letter(bps2,Best_Letter_Rec,Best_Score_Rec,Score_rec_hash,original_letters)
+                                                        else:
+                                                            Score_rec_hash={}
+                                                            bps_new={}
+                                                            #Initial_DR=Full_Info[2]
+                                                            #Initial_IL=Full_Info[3]
+                                                            #Initial_Info=Full_Info[4]+Full_Info[5]+Full_Info[6]
+                                                            #BlockGC=Full_Info[7]
+                                                            #BlockGC['left']=0.476
+                                                            #BlockGC['right']=0.476
+                                                            #BlockGC2={}
+                                                            #for key_B_GC in BlockGC.keys():
+                                                            #    BlockGC2[key_B_GC]=BlockGC[key_B_GC]
+                                                            #    BlockGC2[key_B_GC+'^']=BlockGC[key_B_GC]    
+                                                            temp_Full_Info=original_bp_let_produce(chr_letter_bp,bps2)
+                                                            original_letters=temp_Full_Info[1]
+                                                            original_bp_list=temp_Full_Info[0]
+                                                            for bl in Copy_num_Check:
+                                                                for blk1 in chr_letter_bp.keys():
+                                                                    for blk2 in sorted(chr_letter_bp[blk1].keys()):
+                                                                        if blk2==bl:
+                                                                            bps2_temp=[blk1]+[chr_letter_bp[blk1][blk2][0],chr_letter_bp[blk1][blk2][-1]]
+                                                                            copy_num_a=int(Copy_num_estimate[bl])/2
+                                                                            copy_num_b=Copy_num_estimate[bl]-copy_num_a
+                                                                            Best_Letter_Rec=[[['a' for i in range(copy_num_a)],['a' for i in range(copy_num_a)]]]
+                                                                            Best_Score_Rec=100
+                                                                            write_best_letter([bps2_temp],Best_Letter_Rec,Best_Score_Rec,Score_rec_hash,original_letters)
+                                                            for blk1 in chr_letter_bp.keys():
+                                                                bps_new[blk1]=[]
+                                                                for blk2 in sorted(chr_letter_bp[blk1].keys()):
+                                                                    if not blk2 in Copy_num_Check:
+                                                                        bps_new[blk1].append([chr_letter_bp[blk1][blk2][0],chr_letter_bp[blk1][blk2][-1]])
+                                                            bps_new_2=[]
+                                                            for k1 in bps_new.keys():
+                                                                for k2 in bps_new[k1]:
+                                                                    if bps_new_2==[]:
+                                                                        bps_new_2.append([k1]+k2)
+                                                                    else:
+                                                                        if k1==bps_new_2[-1][0] and k2[0]==bps_new_2[-1][-1]:
+                                                                            bps_new_2[-1]+=k2[1:]
+                                                                        else:
+                                                                            bps_new_2.append([k1]+k2)
+                                                            for k1 in bps_new_2:
+                                                                bps_hash[max(bps_hash.keys())].append([k1])
     if function_name=='SVIntegrate':
         import glob
         import getopt
@@ -11576,7 +11544,7 @@ else:
                                 for fi2 in os.listdir(path1):
                                     path2=path1+fi2+'/'
                                     InputPath.append(path2)
-                    ref_path=workdir+'reference/'
+                    ref_path=workdir+'reference_SVelter/'
                     ref_file=ref_path+'genome.fa'
                     ref_index=ref_file+'.fai'
                     if '--reference' in dict_opts.keys():
@@ -11695,7 +11663,7 @@ else:
                 if '--keep-temp-figs' in dict_opts.keys():
                     KeepFigure=dict_opts['--keep-temp-figs']
                 else:
-                    KeepFigure='No'
+                    KeepFigure='Yes'
                 global Trail_Number
                 if '--num-iteration' in dict_opts.keys():
                     Trail_Number=int(dict_opts['--num-iteration'])
@@ -11774,13 +11742,13 @@ else:
                 if '--copyneutral' in dict_opts.keys():
                     cn2_file=dict_opts['--copyneutral']
                 else:
-                    cn2_file=workdir+'reference/CN2.bed'
+                    cn2_file=workdir+'reference_SVelter/CN2.bed'
                 return cn2_file
             def ex_file_read_in():
                 if '--exclude' in dict_opts.keys():
                     ex_file=dict_opts['--exclude']
                 else:
-                    ex_file=workdir+'reference/Exclude.bed'
+                    ex_file=workdir+'reference_SVelter/Exclude.bed'
                 return ex_file
             def cn2_length_read_in():
                 if '--null-copyneutral-length' in dict_opts.keys():
@@ -11831,7 +11799,7 @@ else:
                 Code3_Function='BPIntegrate'
                 Code4_Function='SVPredict'
                 Code5_Function='SVIntegrate'
-                RCode_Path=workdir+'reference/'
+                RCode_Path=workdir+'reference_SVelter/'
                 Code1a_file=RCode_Path+'SVelter1.NullModel.Figure.a.r'
                 Code1d_file=RCode_Path+'SVelter1.NullModel.Figure.b.r'
                 Code1d2_file=RCode_Path+'SVelter1.NullModel.Figure.c.r'
@@ -11859,13 +11827,14 @@ else:
                     if '--sample' in dict_opts.keys():
                         bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
                         bam_files=[dict_opts['--sample']]
+                        bam_files_appdix=dict_opts['--sample'].split('.')[-1]
                     else:
                         bam_path=path_modify(dict_opts['--samplePath'])
                         bam_files=[]
                         for file in os.listdir(bam_path):
-                            if file.split('.')[-1]=='bam':
+                            if file.split('.')[-1]==bam_files_appdix:
                                 bam_files.append(bam_path+file)
-                    ref_path=workdir+'reference/'
+                    ref_path=workdir+'reference_SVelter/'
                     ref_file=ref_path+'genome.fa'
                     ref_index=ref_file+'.fai'
                     if not os.path.isfile(ref_index):
@@ -11892,7 +11861,7 @@ else:
                                     chr_bam_check.append(pin[1].split(':')[1])
                             fin.close()
                         if not chr_ref_check==chr_bam_check:
-                            print 'Warning: please make sure the reference file matches the bam'
+                            print 'Warning: please make sure the reference file matches the sample file'
                         chr_flag=0
                         if 'chr' in chr_ref_check[0]:
                             chr_flag=1
@@ -11931,8 +11900,8 @@ else:
                             out_vcf=dict_opts['--prefix']+'.vcf'
                             out_svelter=dict_opts['--prefix']+'.svelter'
                         else:
-                            out_vcf=workdir+dict_opts['--sample'].split('/')[-1].replace('.bam','.vcf')
-                            out_svelter=workdir+dict_opts['--sample'].split('/')[-1].replace('.bam','.svelter')
+                            out_vcf=workdir+dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'.vcf')
+                            out_svelter=workdir+dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'.svelter')
                             print 'Warning: output file is not specified'
                             print 'output file: '+out_vcf
                             print 'output file: '+out_svelter
@@ -11947,7 +11916,7 @@ else:
                         for sin_bam_file in bam_files:
                             running_time=[]
                             print ' '
-                            print 'Step1: Running null parameters for '+sin_bam_file.split('/')[-1].replace('.bam','')+' ...'
+                            print 'Step1: Running null parameters for '+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,'')+' ...'
                             time1=time.time()
                             if len(chromos)>1:
                                 run_SVelter1_chrom(sin_bam_file)
@@ -11955,10 +11924,10 @@ else:
                                 run_SVelter1_Single_chrom(sin_bam_file,chromos[0])
                             time2=time.time()
                             running_time.append(time2-time1)
-                            print 'Null model built for '+sin_bam_file.split('/')[-1].replace('.bam','')
+                            print 'Null model built for '+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,'')
                             print 'Time Consuming: '+str(datetime.timedelta(seconds=(time2-time1)))
                             print ' '
-                            print 'Step2: Searching for BreakPoints of sample '+sin_bam_file.split('/')[-1].replace('.bam','')+' ...'
+                            print 'Step2: Searching for BreakPoints of sample '+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,'')+' ...'
                             time1=time.time()
                             for x in chromos:
                                 print x
@@ -11966,7 +11935,7 @@ else:
                                 print time.time()-time1
                             time2=time.time()
                             running_time.append(time2-time1)
-                            print 'Break points searching done for sample:'+sin_bam_file.split('/')[-1].replace('.bam','')
+                            print 'Break points searching done for sample:'+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,'')
                             print 'Time Consuming: '+str(datetime.timedelta(seconds=(time2-time1)))
                             print ' '
                             print 'Step3: Integrating breakpoints ... '
@@ -11976,13 +11945,13 @@ else:
                             run_SVelter3_chrom(sin_bam_file)
                             time2=time.time()
                             running_time.append(time2-time1)
-                            print 'Break points cluster done for sample:'+sin_bam_file.split('/')[-1].replace('.bam','')
+                            print 'Break points cluster done for sample:'+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,'')
                             print 'Time Consuming: '+str(datetime.timedelta(seconds=(time2-time1)))
                             print ' '
                             print 'Step4: Resolving structure ... '
                             time1=time.time()
                             for k1 in os.listdir(workdir+'bp_files.'+dict_opts['--sample'].split('/')[-1]+'/'):
-                                if k1==dict_opts['--sample'].split('/')[-1].replace('.bam',''):
+                                if k1==dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,''):
                                     path1=workdir+'bp_files.'+dict_opts['--sample'].split('/')[-1]+'/'+k1+'/'
                                     for k2 in os.listdir(path1):
                                         path2=path1+k2+'/'
@@ -12017,4 +11986,3 @@ else:
                             os.system(r'''rm -r %s'''%(NullPath))
                             os.system(r'''rm -r %s'''%(BPPath))
                             os.system(r'''rm -r %s'''%(TXTPath))
-
