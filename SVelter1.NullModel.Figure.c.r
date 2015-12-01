@@ -66,10 +66,10 @@ if (StatType=='ILNull'){
     cex_main=0.9
     break_num=as.integer(nrow(dataNull)/2)
     if (nrow(dataNull)>500){        break_num=as.integer(nrow(dataNull)/5)}
-    xrange=range(min(data_IL)*0.9,min(max(data_IL)*1.1,TB_Mean*3))
+    xrange=range(min(data_IL)*0.9,min(max(data_IL)*1.1,IL_Mean*3))
     yrange=c(0,max(dnorm(seq(range(data_IL)[1],range(data_IL)[2],1),IL_Normal_Mean,IL_Normal_STD))*1.2)
     plot(xrange,yrange,type='n',frame.plot=F,xlab='Insert Length',ylab='Frequency',main='Fitted By Normal')
-    hist(data_IL,freq=F,col=boxcolor,breaks=break_num,xlim=xrange,add=T)
+    hist(data_IL2,freq=F,col=boxcolor,breaks=break_num,xlim=xrange,add=T)
     lines(seq(range(data_IL)[1],range(data_IL)[2],1),dnorm(seq(range(data_IL)[1],range(data_IL)[2],1),IL_Normal_Mean,IL_Normal_STD),type='l',lwd=2,col=linecolor)
     dev.off()
     StatMatrix1=data.frame(Mean=IL_Mean, Median=IL_Median, STD=IL_STD)
@@ -104,7 +104,7 @@ if (StatType=='TBNull'){
     xrange=range(min(data_TB)*0.9,min(max(data_TB)*1.1,TB_Mean*3))
     yrange=c(0,max(dnorm(seq(range(data_TB)[1],range(data_TB)[2],1),TB_Normal_Mean,TB_Normal_STD))*1.2)
     plot(xrange,yrange,type='n',frame.plot=F,xlab='Physical Coverage',ylab='Frequency',main='Fitted By Normal')
-    hist(data_TB,freq=F,col=boxcolor,breaks=break_num,xlim=xrange,add=T)
+    hist(data_TB2,freq=F,col=boxcolor,breaks=break_num,xlim=xrange,add=T)
     lines(seq(range(data_TB)[1],range(data_TB)[2],1),dnorm(seq(range(data_TB)[1],range(data_TB)[2],1),TB_Normal_Mean,TB_Normal_STD),type='l',lwd=2,col=linecolor)
     dev.off()
     StatMatrix1=data.frame(Mean=TB_Mean, Median=TB_Median, STD=TB_STD)

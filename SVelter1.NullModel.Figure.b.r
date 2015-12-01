@@ -95,7 +95,7 @@ if (StatType=='ILNull'){
     break_num=as.integer(nrow(dataNull)/2)
     if (nrow(dataNull)>500){        break_num=as.integer(nrow(dataNull)/5)}
     plot(xrange,yrange,type='n',frame.plot=F,xlab='Insert Length',cex.main=cex_main,main='Fitted By Bimodal')
-    hist(data_IL,freq=F,col=boxcolor,breaks=break_num,add=T)
+    hist(data_IL2,freq=F,col=boxcolor,breaks=break_num,add=T)
     lines(xin,yin,pch='l',col=linecolor)
     
     par(fig=c(0,0.15,0,1),new=T)
@@ -106,7 +106,7 @@ if (StatType=='ILNull'){
     par(fig=c(0.5,1,0,1),new=T)
     par(mar=rep(3,4))
     plot(xrange,yrange,type='n',frame.plot=F,xlab='Insert Length',cex.main=cex_main,main='Fitted By Normal')
-    hist(data_IL,freq=F,col=boxcolor,breaks=break_num,xlim=xrange,add=T)
+    hist(data_IL2,freq=F,col=boxcolor,breaks=break_num,xlim=xrange,add=T)
     lines(seq(range(data_IL)[1],range(data_IL)[2],1),dnorm(seq(range(data_IL)[1],range(data_IL)[2],1),IL_Normal_Mean,IL_Normal_STD),type='l',lwd=2,col=linecolor)
     dev.off()
 
@@ -149,7 +149,7 @@ if (StatType=='TBNull'){
     break_num=as.integer(nrow(dataNull)/2)
     if (nrow(dataNull)>500){        break_num=as.integer(nrow(dataNull)/5)}
     plot(xrange,yrange,type='n',frame.plot=F,xlab='Insert Length',cex.main=cex_main,main='Fitted By Bimodal')
-    hist(data_TB,freq=F,col=boxcolor,breaks=break_num,add=T)
+    hist(data_TB2,freq=F,col=boxcolor,breaks=break_num,add=T)
     lines(xin,yin,pch='l',col=linecolor)
     
     par(fig=c(0,0.15,0,1),new=T)
@@ -160,7 +160,7 @@ if (StatType=='TBNull'){
     par(fig=c(0.5,1,0,1),new=T)
     par(mar=rep(3,4))
     plot(xrange,yrange,type='n',frame.plot=F,xlab='Insert Length',cex.main=cex_main,main='Fitted By Normal')
-    hist(data_TB,freq=F,col=boxcolor,breaks=break_num,xlim=xrange,add=T)
+    hist(data_TB2,freq=F,col=boxcolor,breaks=break_num,xlim=xrange,add=T)
     lines(seq(range(data_TB)[1],range(data_TB)[2],1),dnorm(seq(range(data_TB)[1],range(data_TB)[2],1),TB_Normal_Mean,TB_Normal_STD),type='l',lwd=2,col=linecolor)
     dev.off()
 
