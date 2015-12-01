@@ -6,9 +6,10 @@ This software is designed to identify both simple and complex rearrangements fro
 ##Required third-party resources
 ```
 R:        https://www.r-project.org/
-	with *mixtools* package installed
+          with  mixtools  package installed
+
 python:   https://www.python.org/
-	with *getopt,glob,math,numpy,scipy,random,pickle,time,itertools* installed
+          with  getopt,glob,math,numpy,scipy,random,pickle,time,itertools  installed
 samtools: http://samtools.sourceforge.net/
 ```
 
