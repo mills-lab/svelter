@@ -31,6 +31,7 @@ SVelter.py --sample /absolute/path/of/sample.bam --workdir /working/directory
 
 ##Test Data
 Test data are available from: [SVelter Test Data Box](https://umich.app.box.com/files/0/f/5608050317/SVelter)
+
 Pre-indexed files for certain references are also available from the box linked above. It's recommended to download to accelerate the *Setup* step.
 
 Index Reference genome
