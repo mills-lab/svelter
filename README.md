@@ -4,14 +4,13 @@
 This software is designed to identify both simple and complex rearrangements from paired-end sequencing data. Users could ran it easily by just alling *SVelter.py* with proper parameters. It's also possible to ran it on multiple cores by calling different sub-functions separately.
 
 ##Required third-party resources
-```
-R:        (https://www.r-project.org/)
-          with  mixtools  package installed
+R:        [https://www.r-project.org/](https://www.r-project.org/)
+          with  *mixtools*  package installed
 
-python:   (https://www.python.org/)
-          with  getopt,glob,math,numpy,scipy,random,pickle,time,itertools  installed
-samtools: (http://samtools.sourceforge.net/)
-```
+python:   [https://www.python.org/](https://www.python.org/)
+          with *getopt,glob,math,numpy,scipy,random,pickle,time,itertools* installed
+samtools: [http://samtools.sourceforge.net/](http://samtools.sourceforge.net/)
+
 
 ## Quick Start
 Download and Install
@@ -30,11 +29,18 @@ Run SVelter with its default setting:
 SVelter.py --sample /absolute/path/of/sample.bam --workdir /working/directory
 ```
 
-##Example
-Example data are available from: [SVelter Example Data Box](https://umich.app.box.com/files/0/f/5608050317/SVelter)
+##Test Data
+Test data are available from: [SVelter Test Data Box](https://umich.app.box.com/files/0/f/5608050317/SVelter)
+Pre-indexed files for certain references are also available from the box linked above. It's recommended to download to accelerate the *Setup* step.
 
-
-
+Index Reference genome
+``` 
+SVelter.py Setup --reference hg19.fa --workdir /working/directory/ --exclude ../svelter/Support/Exclude.hg19.bed --copyneutral ../svelter/Support/CN2.hg19.bed --svelter-path ../svelter/  --ref-index ..Index.Reference/
+```
+Run SVelter with its default setting:
+```
+SVelter.py --sample sample.bam --workdir /working/directory/
+```
 
 ###Required files:
 `exclude.ref.bed` and `CN2.ref.bed` are available from the folder *Support* for some versions of reference genome. Users could replace with their custom version as long as both are in bed format. For more details, please see *Support*. 
