@@ -30,7 +30,7 @@ SVelter.py --sample /absolute/path/of/sample.bam --workdir /working/directory
 ```
 
 ##Test Data
-Test data are available from: [SVelter Test Data Box](https://umich.box.com/s/owzli74p3g0vmrp0zwjx0neznopp1ch3), together with [results from SVelter](https://umich.box.com/s/asqcpqtqhemd2jursa8l7vjq1ud6zh70)
+Test data are available from: [SVelter Test Data Box](https://umich.box.com/s/owzli74p3g0vmrp0zwjx0neznopp1ch3), together with [results from SVelter](https://umich.box.com/s/i8kk5bjcm7rqjqtxu5jb6ajdfoym9imh)
 
 Pre-indexed files for certain references are also available from [the box linked above](https://umich.box.com/s/t9kefajmkmsb6ajgaawo0erxosf32r2m). It's recommended to download to accelerate the *Setup* step.
 
