@@ -5,12 +5,12 @@ This software is designed to identify both simple and complex rearrangements fro
 
 ##Required third-party resources
 ```
-R:        https://www.r-project.org/
+R:        (https://www.r-project.org/)
           with  mixtools  package installed
 
-python:   https://www.python.org/
+python:   (https://www.python.org/)
           with  getopt,glob,math,numpy,scipy,random,pickle,time,itertools  installed
-samtools: http://samtools.sourceforge.net/
+samtools: (http://samtools.sourceforge.net/)
 ```
 
 ## Quick Start
@@ -29,6 +29,12 @@ Run SVelter with its default setting:
 ```
 SVelter.py --sample /absolute/path/of/sample.bam --workdir /working/directory
 ```
+
+##Example
+Example data are available from: [SVelter Example Data Box](https://umich.app.box.com/files/0/f/5608050317/SVelter)
+
+
+
 
 ###Required files:
 `exclude.ref.bed` and `CN2.ref.bed` are available from the folder *Support* for some versions of reference genome. Users could replace with their custom version as long as both are in bed format. For more details, please see *Support*. 
