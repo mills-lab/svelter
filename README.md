@@ -46,7 +46,7 @@ SVelter.py --sample sample.bam --workdir /working/directory/
 ###Required files:
 `exclude.ref.bed` and `CN2.ref.bed` are available from the folder *Support* for some versions of reference genome. Users could replace with their custom version as long as both are in bed format. For more details, please see *Support*. 
 
-Pre-indexed files of certain reference genomes have been produced and kept under folder *index-ref*. For specific reference, if not pre-indexed files provided, the optional parameter '--ref-index' could be omit and the indexed files would be produced through the setup step. 
+*Pre-indexed* files of certain reference genomes have been produced through [box link](https://umich.box.com/s/t9kefajmkmsb6ajgaawo0erxosf32r2m). For specific reference, if not *pre-indexed* files provided, the optional parameter '--ref-index' could be omit and the indexed files would be produced through the setup step. 
 
 ###Attention:
 1. reference file should have been indexed by calling samtools first:  `samtools faidx ref.fasta`
