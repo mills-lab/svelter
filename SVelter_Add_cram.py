@@ -114,7 +114,7 @@ else:
                                 if position+bounce_length in range(relative_bps[j],relative_bps[j+1]+1):
                                     return([letters[j]]+[relative_bps[j]]+[relative_bps[j+1]])
             def Pick_CN2_Region(CN2_File,bamF,Length_Limit):
-                fi=os.popen('samtools view -h %s'%(bamF))
+                fi=os.popen('samtools view -h -F 256 %s'%(bamF))
                 Chromosome=[]
                 while True:
                     pi=fi.readline().strip().split()
@@ -587,7 +587,7 @@ else:
                                 if position+bounce_length in range(relative_bps[j],relative_bps[j+1]+1):
                                     return([letters[j]]+[relative_bps[j]]+[relative_bps[j+1]])
             def Pick_CN2_Region(cn2_file,bamF,Length_Limit):
-                fi=os.popen('samtools view -h %s'%(bamF))
+                fi=os.popen('samtools view -h -F 256 %s'%(bamF))
                 Chromosome=[]
                 while True:
                     pi=fi.readline().strip().split()
@@ -972,7 +972,7 @@ else:
                                         chr_cn2.append(pcn2[0])
                                     if (int(pcn2[2])-int(pcn2[1]))>cn2_length and (int(pcn2[2])-int(pcn2[1]))<10**6:
                                         if not random.choice(range(100))>SamplingPercentage*100:
-                                            freadpairs=os.popen('''samtools view %s %s:%d-%d'''%(bamF,pcn2[0],int(pcn2[1])+100,int(pcn2[2])-100))
+                                            freadpairs=os.popen('''samtools view -F 256 %s %s:%d-%d'''%(bamF,pcn2[0],int(pcn2[1])+100,int(pcn2[2])-100))
                                             while True:
                                                 preadpair=freadpairs.readline().strip().split()
                                                 if not preadpair: break
@@ -1020,7 +1020,7 @@ else:
                                                 TBNull=[0 for i in pos]
                                                 ILNull=[0 for i in pos]
                                                 readInf=[]
-                                                freadpairs=os.popen('''samtools view %s %s:%d-%d'''%(bamF,pcn2[0],int(pcn2[1]),int(pcn2[2])))
+                                                freadpairs=os.popen('''samtools view -F 256 %s %s:%d-%d'''%(bamF,pcn2[0],int(pcn2[1]),int(pcn2[2])))
                                                 while True:
                                                         preadpair=freadpairs.readline().strip().split()
                                                         if not preadpair: break
@@ -1382,7 +1382,7 @@ else:
                                                     if Seq1=='ERROR!':continue
                                                     if not Seq1=='ERROR!':
                                                         sam_file=NullPath+temp_Name+'.sam'
-                                                        os.system(r'''samtools view %s %s:%d-%d > %s'''%(bamF,str(pcn2[0]),int(pcn2[1]),int(pcn2[2]),sam_file))
+                                                        os.system(r'''samtools view -F 256 %s %s:%d-%d > %s'''%(bamF,str(pcn2[0]),int(pcn2[1]),int(pcn2[2]),sam_file))
                                                         Number_Of_Windows=len(Seq1)/Window_Size
                                                         GC_Content={}
                                                         for i in range(len(Seq1)/Window_Size+1)[1:]:                
@@ -2104,9 +2104,9 @@ else:
                 flank=int(flank)
                 bps=[bpCoordinate-flank,bpCoordinate+flank]
                 if Bam_Flag==1:
-                    fin=os.popen(r'''samtools view %s chr%s:%d-%d'''%(BamInput,chrom,int(bps[0]),int(bps[1])))
+                    fin=os.popen(r'''samtools view -F 256 %s chr%s:%d-%d'''%(BamInput,chrom,int(bps[0]),int(bps[1])))
                 else:
-                    fin=os.popen(r'''samtools view %s %s:%d-%d'''%(BamInput,chrom,int(bps[0]),int(bps[1])))
+                    fin=os.popen(r'''samtools view -F 256 %s %s:%d-%d'''%(BamInput,chrom,int(bps[0]),int(bps[1])))
                 RDs=[0*i for i in range(bps[1]-bps[0])]
                 while True:
                     pbam=fin.readline().strip().split()
@@ -2538,7 +2538,7 @@ else:
                     return 'Error'
             def out_pair_modify_check(out_pair_modify,link_limit):
                 for i in sorted(out_pair_modify.keys()):
-                    if len(out_pair_modify[i])>2:
+                    if len(out_pair_modify[i])>5:
                         all_interval=[out_pair_modify[i][x+1]-out_pair_modify[i][x] for x in range(len(out_pair_modify[i])-1)]
                         del out_pair_modify[i]
             def out_pair_bp_check(out_pair_bp,link_limit):
@@ -2564,26 +2564,117 @@ else:
                         if not sorted([x,y]) in out2:
                             out2.append(sorted([x,y]))
                 return out2
-            def loc_rec_modify(loc_rec,chrom):
-                out=[loc_rec[chrom][0]]
-                min_cff=2000
-                for x in loc_rec[chrom][1:]:
-                    if x[0]-out[-1][-1]<min_cff:
-                        out[-1]+=x
-                    else:
-                        out.append(x)
-                out2=[]
-                for x in out:
-                    out2.append([x[0],x[-1]])
-                return out2
-            def test_chromo_in_bam_file(bamF,chrF):
-                fin=os.popen(r'''samtools view %s %s| head -10 | wc -l'''%(bamF,chrF))
+            def Segdup_readin(filein,chromo_name):
+                data_hash={}
+                fin=open(filein)
                 pin=fin.readline().strip().split()
+                for line in fin:
+                    pin=line.strip().split()
+                    if pin[0]==chromo_name:
+                        if not pin[0] in data_hash.keys():
+                            data_hash[pin[0]]={}
+                        if not int(pin[1]) in data_hash[pin[0]].keys():
+                            data_hash[pin[0]][int(pin[1])]=[]
+                        if not int(pin[2]) in data_hash[pin[0]][int(pin[1])]:
+                            data_hash[pin[0]][int(pin[1])].append(int(pin[2]))
                 fin.close()
-                if int(pin[0])==10:
-                    return 'Pass'
-                else:
-                    return 'Fail'
+                data_list={}
+                for k1 in data_hash.keys():
+                    data_list[k1]=[]
+                    for k2 in sorted(data_hash[k1].keys()):
+                        for k3 in sorted(data_hash[k1][k2]):
+                            data_list[k1].append([k2,k3])
+                return data_list
+            def LN_file_readin(LN_filein):
+                LN_hash={}
+                fin=open(LN_filein)
+                for line in fin:
+                    pin=line.strip().split()
+                    if not int(pin[0]) in LN_hash.keys():
+                        LN_hash[int(pin[0])]={}
+                    if not int(pin[2]) in LN_hash[int(pin[0])].keys():
+                        LN_hash[int(pin[0])][int(pin[2])]=[]
+                    LN_hash[int(pin[0])][int(pin[2])].append([pin[1],pin[3]])
+                fin.close()
+                LN_list=[]
+                for k1 in sorted(LN_hash.keys()):
+                    for k2 in sorted(LN_hash[k1].keys()):
+                        for k3 in LN_hash[k1][k2]:
+                            LN_list.append([k1,k2]+k3)
+                return LN_list
+            def Compare_LN_list_against_Segdup_list(segdup_list,LN_list,chromo_name):
+                in_list=[]
+                out_list=[]
+                rec1=0
+                rec2=0
+                while True:
+                    if rec2==len(segdup_list[chromo_name]) or rec1==len(LN_list): break
+                    if LN_list[rec1][1]<segdup_list[chromo_name][rec2][0]:
+                        rec1+=1
+                        in_list.append(rec1)
+                    elif LN_list[rec1][0]<segdup_list[chromo_name][rec2][1]+1 and LN_list[rec1][0]>segdup_list[chromo_name][rec2][0]-1:
+                        rec1+=1
+                        out_list.append(rec1)
+                    elif LN_list[rec1][1]<segdup_list[chromo_name][rec2][1]+1 and LN_list[rec1][1]>segdup_list[chromo_name][rec2][0]-1:
+                        rec1+=1
+                        out_list.append(rec1)
+                    elif LN_list[rec1][0]>segdup_list[chromo_name][rec2][1]:
+                        rec2+=1
+                    elif LN_list[rec1][0]<segdup_list[chromo_name][rec2][0] and LN_list[rec1][1]>segdup_list[chromo_name][rec2][1]:
+                        rec1+=1
+                        in_list.append(rec1)
+                if rec1<len(LN_list):
+                    in_list+=range(len(LN_list))[rec1+1:]
+                return [LN_list[i] for i in in_list]
+            def Write_filtered_LN_list(LN_keep_list,LN_filein):
+                fo=open(LN_filein,'w')
+                for k1 in LN_keep_list:
+                    print >>fo, ' '.join([str(i) for i in [k1[0],k1[2],k1[1],k1[3]]])
+                fo.close()
+            def SP_file_readin(SP_filein):
+                SP_hash={}
+                fin=open(SP_filein)
+                for line in fin:
+                    pin=line.strip().split()
+                    SP_hash[int(pin[0])]=int(pin[1])
+                fin.close()
+                SP_list=[]
+                for k1 in sorted(SP_hash.keys()):
+                    SP_list.append([k1,SP_hash[k1]])
+                return SP_list
+            def Compare_SP_list_against_Segdup_list(segdup_list,SP_list,chromo_name):
+                in_list=[]
+                out_list=[]
+                rec1=0
+                rec2=0
+                while True:
+                    if rec1==len(SP_list) or rec2==len(segdup_list[chromo_name]):
+                        break
+                    if SP_list[rec1][0]<segdup_list[chromo_name][rec2][0]:
+                        in_list.append(rec1)
+                        rec1+=1
+                    elif SP_list[rec1][0]>segdup_list[chromo_name][rec2][0]-1 and SP_list[rec1][0]<segdup_list[chromo_name][rec2][1]+1:
+                        out_list.append(rec1)
+                        rec1+=1
+                    elif SP_list[rec1][0]>segdup_list[chromo_name][rec2][1]:
+                        rec2+=1
+                return [SP_list[i] for i in in_list]
+            def Write_filtered_SP_list(SP_keep_list,SP_filein):
+                fo=open(SP_filein,'w')
+                for x in SP_keep_list:
+                    print >>fo, ' '.join([str(i) for i in x])
+                fo.close()
+            def LN_Filter(LN_filein,SP_filein,workdir):
+                filein=workdir+'reference_SVelter/Segdup.bed'
+                if os.path.isfile(filein):
+                    chromo_name=LN_filein.split('.')[-6]
+                    segdup_list=Segdup_readin(filein,chromo_name)
+                    LN_list=LN_file_readin(LN_filein)
+                    LN_keep_list=Compare_LN_list_against_Segdup_list(segdup_list,LN_list,chromo_name)
+                    SP_list=SP_file_readin(SP_filein)
+                    SP_keep_list=Compare_SP_list_against_Segdup_list(segdup_list,SP_list,chromo_name)
+                    Write_filtered_LN_list(LN_keep_list,LN_filein)
+                    Write_filtered_SP_list(SP_keep_list,SP_filein)
             import numpy
             import scipy
             import math
@@ -2631,1000 +2722,999 @@ else:
                                 time1=time.time()
                                 Null_Stats_Readin_One(NullPath,bamF,NullSplitLen_perc)
                                 for chrF in chromos:
-                                    if test_chromo_in_bam_file(bamF,chrF)=='Pass':
-                                        bamF_Name=bamF.split('/')[-1].replace('.'+bam_files_appdix,'')
-                                        floc_Name=BPPath+bamF_Name+'.'+chrF
-                                        Refloc_name='.'.join(ref_file.split('.')[:-1])+'.Mappable.bed'
-                                        stat_file_name(bamF_Name,genome_name)
-                                        if os.path.isfile(Refloc_name):
-                                            BamInput=bamF
-                                            ILStats=ILStats_readin(ILStat)
-                                            RDStats=RDStats_readin(RDStat)
-                                            TBStats=TBStats_readin(TBStat)
-                                            SPLCff=SPLCff_Calculate(NullSplitLen_perc,SPLenStat)
-                                            fAllS=open(AllStat)
-                                            pAllS=fAllS.readline().rstrip()
-                                            ILCIs={}
-                                            pAllS1=fAllS.readline().strip().split()
-                                            pAllS2=fAllS.readline().strip().split()
-                                            for i in range(len(pAllS1)):
-                                                    ILCIs[pAllS1[i]]=pAllS2[i]
-                                            pAllS=fAllS.readline().rstrip()
-                                            RDCIs={}
-                                            pAllS1=fAllS.readline().strip().split()
-                                            pAllS2=fAllS.readline().strip().split()
-                                            for i in range(len(pAllS1)):
-                                                RDCIs[pAllS1[i]]=pAllS2[i]
-                                            pAllS=fAllS.readline().rstrip()
-                                            TBCIs={}
-                                            pAllS1=fAllS.readline().strip().split()
-                                            pAllS2=fAllS.readline().strip().split()
-                                            for i in range(len(pAllS1)):
-                                                TBCIs[pAllS1[i]]=pAllS2[i]
-                                            pAllS=fAllS.readline().rstrip()
-                                            InsertLen={}
-                                            pAllS1=fAllS.readline().strip().split()
-                                            pAllS2=fAllS.readline().strip().split()
-                                            for i in range(len(pAllS1)):
-                                                    InsertLen[pAllS1[i]]=pAllS2[i]
-                                            for i in range(len(pAllS1)):
-                                                    if float(pAllS2[i])>ABILCutoff:
-                                                            InsertLenMin=int(pAllS1[i])-1
-                                                            break
-                                            if InsertLenMin<5:
-                                                    InsertLenMin=5
-                                            pAllS=fAllS.readline().rstrip()
-                                            SplitReads={}
-                                            pAllS1=fAllS.readline().strip().split()
-                                            pAllS2=fAllS.readline().strip().split()
-                                            for i in range(len(pAllS1)):
-                                                    SplitReads[pAllS1[i]]=pAllS2[i]
-                                            for i in range(len(pAllS1)):
-                                                    if float(pAllS2[i])>SplitCutoff:
-                                                            SplitMin=int(pAllS1[i])-1
-                                                            break
-                                            if SplitMin<5:
-                                                    SplitMin=5
-                                            pAllS=fAllS.readline().rstrip()
-                                            AbDirection={}
-                                            pAllS1=fAllS.readline().strip().split()
-                                            pAllS2=fAllS.readline().strip().split()
-                                            for i in range(len(pAllS1)):
-                                                    AbDirection[pAllS1[i]]=pAllS2[i]
-                                            for i in range(len(pAllS1)):
-                                                if float(pAllS2[i])>DRCutoff:
-                                                    DRMin=int(pAllS1[i])-1
-                                                    break
-                                            if DRMin<5:
-                                                    DRMin=5
-                                            fbam=os.popen('''samtools view -H %s'''%(BamInput))
-                                            if '--BPSPCff' in dict_opts.keys():
-                                                BPSPCff=int(float(dict_opts['--BPSPCff']))
-                                            else:
-                                                #BPSPCff=int(round(0.8*float(TBStats['stat']['Median'])/float(10)))
-                                                BPSPCff=int(round(2*float(RDStats['Median'])/float(10)))
-                                            if BPSPCff<3:
-                                                BPSPCff=3
-                                            if '--BPLNCff' in dict_opts.keys():
-                                                BPLNCff=int(float(dict_opts['--BPLNCff']))
-                                            else:
-                                                #BPLNCff=int(round(1.2*float(TBStats['stat']['Median'])/float(10)))
-                                                BPLNCff=int(round(3*float(RDStats['Median'])/float(10)))
-                                            if BPLNCff<3:
-                                                BPLNCff=3
-                                            SPCluMin=BPSPCff
-                                            LnCluMin=BPLNCff
-                                            if '--SPCluLen' in dict_opts.keys():
-                                                SPCluLen=int(dict_opts['--SPCluLen'])
-                                            else:
-                                                SPCluLen=5
-                                            SubLnCluMin=max([LnCluMin,SPCluMin])
-                                            LinkCluMin=min([LnCluMin,SPCluMin])
-                                            ClusterLen=ClusterLen_Calculation(ILStats,model_comp)
-                                            ClusterLen2=int(ClusterLen/Window_Size+1)*Window_Size
-                                            Min_Distinguish_Len=Window_Size
-                                            subLnClusterLen=ClusterLen/2
-                                            if not '-S' in dict_opts.keys():
-                                                dict_opts['-S']=3
-                                            ILCffs=IL_CI_Decide(ILStats,int(dict_opts['-S']),model_comp)
-                                            BPOutputa=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.SPs'
-                                            fout=open(BPOutputa,'w')
+                                    bamF_Name=bamF.split('/')[-1].replace('.'+bam_files_appdix,'')
+                                    floc_Name=BPPath+bamF_Name+'.'+chrF
+                                    Refloc_name='.'.join(ref_file.split('.')[:-1])+'.Mappable.bed'
+                                    stat_file_name(bamF_Name,genome_name)
+                                    if os.path.isfile(Refloc_name):
+                                        BamInput=bamF
+                                        ILStats=ILStats_readin(ILStat)
+                                        RDStats=RDStats_readin(RDStat)
+                                        TBStats=TBStats_readin(TBStat)
+                                        SPLCff=SPLCff_Calculate(NullSplitLen_perc,SPLenStat)
+                                        fAllS=open(AllStat)
+                                        pAllS=fAllS.readline().rstrip()
+                                        ILCIs={}
+                                        pAllS1=fAllS.readline().strip().split()
+                                        pAllS2=fAllS.readline().strip().split()
+                                        for i in range(len(pAllS1)):
+                                                ILCIs[pAllS1[i]]=pAllS2[i]
+                                        pAllS=fAllS.readline().rstrip()
+                                        RDCIs={}
+                                        pAllS1=fAllS.readline().strip().split()
+                                        pAllS2=fAllS.readline().strip().split()
+                                        for i in range(len(pAllS1)):
+                                            RDCIs[pAllS1[i]]=pAllS2[i]
+                                        pAllS=fAllS.readline().rstrip()
+                                        TBCIs={}
+                                        pAllS1=fAllS.readline().strip().split()
+                                        pAllS2=fAllS.readline().strip().split()
+                                        for i in range(len(pAllS1)):
+                                            TBCIs[pAllS1[i]]=pAllS2[i]
+                                        pAllS=fAllS.readline().rstrip()
+                                        InsertLen={}
+                                        pAllS1=fAllS.readline().strip().split()
+                                        pAllS2=fAllS.readline().strip().split()
+                                        for i in range(len(pAllS1)):
+                                                InsertLen[pAllS1[i]]=pAllS2[i]
+                                        for i in range(len(pAllS1)):
+                                                if float(pAllS2[i])>ABILCutoff:
+                                                        InsertLenMin=int(pAllS1[i])-1
+                                                        break
+                                        if InsertLenMin<5:
+                                                InsertLenMin=5
+                                        pAllS=fAllS.readline().rstrip()
+                                        SplitReads={}
+                                        pAllS1=fAllS.readline().strip().split()
+                                        pAllS2=fAllS.readline().strip().split()
+                                        for i in range(len(pAllS1)):
+                                                SplitReads[pAllS1[i]]=pAllS2[i]
+                                        for i in range(len(pAllS1)):
+                                                if float(pAllS2[i])>SplitCutoff:
+                                                        SplitMin=int(pAllS1[i])-1
+                                                        break
+                                        if SplitMin<5:
+                                                SplitMin=5
+                                        pAllS=fAllS.readline().rstrip()
+                                        AbDirection={}
+                                        pAllS1=fAllS.readline().strip().split()
+                                        pAllS2=fAllS.readline().strip().split()
+                                        for i in range(len(pAllS1)):
+                                                AbDirection[pAllS1[i]]=pAllS2[i]
+                                        for i in range(len(pAllS1)):
+                                            if float(pAllS2[i])>DRCutoff:
+                                                DRMin=int(pAllS1[i])-1
+                                                break
+                                        if DRMin<5:
+                                                DRMin=5
+                                        fbam=os.popen('''samtools view -H %s'''%(BamInput))
+                                        if '--BPSPCff' in dict_opts.keys():
+                                            BPSPCff=int(float(dict_opts['--BPSPCff']))
+                                        else:
+                                            #BPSPCff=int(round(0.8*float(TBStats['stat']['Median'])/float(10)))
+                                            BPSPCff=int(round(2*float(RDStats['Median'])/float(10)))
+                                        if BPSPCff<3:
+                                            BPSPCff=3
+                                        if '--BPLNCff' in dict_opts.keys():
+                                            BPLNCff=int(float(dict_opts['--BPLNCff']))
+                                        else:
+                                            #BPLNCff=int(round(1.2*float(TBStats['stat']['Median'])/float(10)))
+                                            BPLNCff=int(round(3*float(RDStats['Median'])/float(10)))
+                                        if BPLNCff<3:
+                                            BPLNCff=3
+                                        SPCluMin=BPSPCff
+                                        LnCluMin=BPLNCff
+                                        if '--SPCluLen' in dict_opts.keys():
+                                            SPCluLen=int(dict_opts['--SPCluLen'])
+                                        else:
+                                            SPCluLen=5
+                                        SubLnCluMin=max([LnCluMin,SPCluMin])
+                                        LinkCluMin=min([LnCluMin,SPCluMin])
+                                        ClusterLen=ClusterLen_Calculation(ILStats,model_comp)
+                                        ClusterLen2=int(ClusterLen/Window_Size+1)*Window_Size
+                                        Min_Distinguish_Len=Window_Size
+                                        subLnClusterLen=ClusterLen/2
+                                        if not '-S' in dict_opts.keys():
+                                            dict_opts['-S']=3
+                                        ILCffs=IL_CI_Decide(ILStats,int(dict_opts['-S']),model_comp)
+                                        BPOutputa=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.SPs'
+                                        fout=open(BPOutputa,'w')
+                                        fout.close()
+                                        BPOutputb=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.LNs'
+                                        fout=open(BPOutputb,'w')
+                                        fout.close()
+                                        BPOutputd=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.chromLNs'
+                                        fout=open(BPOutputd,'w')
+                                        fout.close()
+                                        BPOutpute='/'.join(BPOutputd.split('/')[:-1])+'/'+'.'.join(BPOutputd.split('/')[-1].split('.')[:-6]+BPOutputd.split('/')[-1].split('.')[-5:])
+                                        if not os.path.isfile(BPOutpute):
+                                            fout=open(BPOutpute,'w')
                                             fout.close()
-                                            BPOutputb=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.LNs'
-                                            fout=open(BPOutputb,'w')
-                                            fout.close()
-                                            BPOutputd=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.chromLNs'
-                                            fout=open(BPOutputd,'w')
-                                            fout.close()
-                                            BPOutpute='/'.join(BPOutputd.split('/')[:-1])+'/'+'.'.join(BPOutputd.split('/')[-1].split('.')[:-6]+BPOutputd.split('/')[-1].split('.')[-5:])
-                                            if not os.path.isfile(BPOutpute):
-                                                fout=open(BPOutpute,'w')
-                                                fout.close()
-                                            abtLink={}
-                                            floc=open(Refloc_name)
-                                            loc_rec={}
-                                            for line in floc:
-                                                ploc=line.strip().split()
-                                                if not ploc[0] in loc_rec.keys():
-                                                    loc_rec[ploc[0]]=[]
-                                                    loc_rec[ploc[0]].append([int(ploc2) for ploc2 in ploc[1:]])
-                                                else:
-                                                    loc_rec[ploc[0]].append([int(ploc2) for ploc2 in ploc[1:]])
-                                            floc.close()
-                                            if not loc_rec=={} and chrF in loc_rec.keys():
-                                                test_mul_RP=[]
-                                                test_mul_SP=[]
-                                                chrom=chrF
-                                                mini_fout_Name=BPPath+bamF_Name+'.mini.'+chrom+'.sam'
-                                                mini_fout_N2=BPPath+bamF_Name+'.mini.'+chrom+'.bam'
-                                                mini_fout_N3=BPPath+bamF_Name+'.mini.'+chrom+'.sorted'
-                                                mini_fout_N4=BPPath+bamF_Name+'.mini.'+chrom+'.sorted.bam'
-                                                if not os.path.isfile(mini_fout_N4):
-                                                    os.system(r''' samtools view -H %s -o %s'''%(BamInput,mini_fout_Name)) 
-                                                    RD_index_Path=NullPath+'RD_Stat/'
-                                                    if not os.path.isdir(RD_index_Path):
-                                                        os.system(r'''mkdir %s'''%(RD_index_Path))
-                                                    RD_index_File=RD_index_Path+bamF_Name+'.'+chrF+'.RD.index'
-                                                    fRDind=open(RD_index_File,'w')
-                                                    fRDind.close()
-                                                    for loc in loc_rec[chrom]:
-                                                        loc2=split_loc_to_subloc(loc,sub_loc_size)
-                                                        for real_region in loc2:
-                                                            fmini=open(mini_fout_Name,'a')
-                                                            fRDind=open(RD_index_File,'a')
-                                                            print >>fRDind,chrom+':'+str(real_region[0])+'-'+str(real_region[1])                
-                                                            RD_RealRegion=[0 for i in range((real_region[1]-real_region[0])/Window_Size+1)]
-                                                            fbam=os.popen('''samtools view %s %s:%d-%d'''%(BamInput,chrom,real_region[0],real_region[1]))
-                                                            while True:
-                                                                pbam1=fbam.readline().strip()
-                                                                if not pbam1: break
-                                                                pbam=pbam1.split()
-                                                                if int(pbam[1])&4>0: continue           #the read was not mapped, skip
-                                                                DRtemp=Reads_Direction_Detect(pbam[1])
-                                                                ReadLen=cigar2reaadlength(pbam[5])
-                                                                pos1=int(pbam[3])
-                                                                pos2=int(pbam[3])+ReadLen
-                                                                if pos2>real_region[0] and pos1<real_region[1]:
-                                                                    if pos1<real_region[0] and pos2>real_region[0]:
-                                                                        pos1=real_region[0]
-                                                                    if pos1<real_region[1] and pos2>real_region[1]:
-                                                                        pos2=real_region[1]
-                                                                    block1=(pos1-real_region[0])/Window_Size
-                                                                    RD_RealRegion[block1]+=ReadLen
-                                                                if int(pbam[4])>int(QCAlign):             #fail quality control, skip
-                                                                    absIL=abs(int(pbam[8]))
-                                                                    QCFlag=0
-                                                                    link_flag=0
-                                                                    if absIL<int(ILCffs[0]) or absIL>int(ILCffs[1]):
-                                                                        QCFlag+=1
-                                                                    if DRtemp==['+','-'] and int(pbam[8])<0:
-                                                                        QCFlag+=1
-                                                                    if DRtemp==['+','+'] or DRtemp==['-','-']:
-                                                                        QCFlag+=1
-                                                                    if int(pbam[8])==0:
-                                                                       QCFlag+=1
-                                                                    if not pbam[5].find('S')==-1:
-                                                                        QCFlag+=1
-                                                                    if not QCFlag==0:
-                                                                        print>>fmini, pbam1
-                                                            fbam.close()
-                                                            fmini.close()
-                                                            for rfrr in range(len(RD_RealRegion[:-1])):
-                                                                RD_RealRegion[rfrr]=str(float(RD_RealRegion[rfrr])/Window_Size)
-                                                            if real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size ==0:
-                                                                del RD_RealRegion[-1]
-                                                            else:
-                                                                RD_RealRegion[-1]=str(float(RD_RealRegion[-1])/float(real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size))
-                                                            print >>fRDind, ' '.join(RD_RealRegion)
-                                                            fRDind.close()
-                                                    os.system(r'''samtools view -h -Sb %s -o %s'''%(mini_fout_Name,mini_fout_N2))
-                                                    os.system(r'''samtools sort %s %s'''%(mini_fout_N2,mini_fout_N3))
-                                                    os.system(r'''samtools index %s '''%(mini_fout_N4))
-                                                    os.system(r'''rm %s'''%(mini_fout_N2))
-                                                    os.system(r'''rm %s'''%(mini_fout_Name))
-                                                temp_IL_Rec={}
-                                                Link_IL_Rec={}
-                                                loc_rec_new=loc_rec_modify(loc_rec,chrom)
-                                                for loc in loc_rec_new: 
-                                                    loc2=split_loc_to_loc2(loc)
+                                        abtLink={}
+                                        floc=open(Refloc_name)
+                                        loc_rec={}
+                                        for line in floc:
+                                            ploc=line.strip().split()
+                                            if not ploc[0] in loc_rec.keys():
+                                                loc_rec[ploc[0]]=[]
+                                                loc_rec[ploc[0]].append([int(ploc2) for ploc2 in ploc[1:]])
+                                            else:
+                                                loc_rec[ploc[0]].append([int(ploc2) for ploc2 in ploc[1:]])
+                                        floc.close()
+                                        if not loc_rec=={} and chrF in loc_rec.keys():
+                                            test_mul_RP=[]
+                                            test_mul_SP=[]
+                                            chrom=chrF
+                                            mini_fout_Name=BPPath+bamF_Name+'.mini.'+chrom+'.sam'
+                                            mini_fout_N2=BPPath+bamF_Name+'.mini.'+chrom+'.bam'
+                                            mini_fout_N3=BPPath+bamF_Name+'.mini.'+chrom+'.sorted'
+                                            mini_fout_N4=BPPath+bamF_Name+'.mini.'+chrom+'.sorted.bam'
+                                            if not os.path.isfile(mini_fout_N4):
+                                                os.system(r''' samtools view -H %s -o %s'''%(BamInput,mini_fout_Name)) 
+                                                RD_index_Path=NullPath+'RD_Stat/'
+                                                if not os.path.isdir(RD_index_Path):
+                                                    os.system(r'''mkdir %s'''%(RD_index_Path))
+                                                RD_index_File=RD_index_Path+bamF_Name+'.'+chrF+'.RD.index'
+                                                fRDind=open(RD_index_File,'w')
+                                                fRDind.close()
+                                                for loc in loc_rec[chrom]:
+                                                    loc2=split_loc_to_subloc(loc,sub_loc_size)
                                                     for real_region in loc2:
-                                                            fbam=os.popen('''samtools view %s %s:%d-%d'''%(mini_fout_N4,chrom,real_region[0],real_region[1]))
-                                                            abInfF={}
-                                                            abInfR={}
-                                                            abLink={}
-                                                            abInf3={}
-                                                            LinkFR={}
-                                                            LinkFF={}
-                                                            LinkRR={}
-                                                            LinkRF={}
-                                                            LinkNM={}
-                                                            LinkNM['F']=[]
-                                                            LinkNM['R']=[]
-                                                            LinkSP={}
-                                                            abLinkSP={}
-                                                            test=[]
-                                                            LinkSPTemp={}
-                                                            while True:
-                                                                pbam=fbam.readline().strip().split()
-                                                                if not pbam: break
-                                                                if int(pbam[4])<int(QCAlign): continue             #fail quality control, skip
-                                                                if int(pbam[1])&4>0: continue           #the read was not mapped, skip
-                                                                DRtemp=Reads_Direction_Detect(pbam[1])
-                                                                ReadLen=cigar2reaadlength(pbam[5])
+                                                        fmini=open(mini_fout_Name,'a')
+                                                        fRDind=open(RD_index_File,'a')
+                                                        print >>fRDind,chrom+':'+str(real_region[0])+'-'+str(real_region[1])                
+                                                        RD_RealRegion=[0 for i in range((real_region[1]-real_region[0])/Window_Size+1)]
+                                                        fbam=os.popen('''samtools view -F 256 %s %s:%d-%d'''%(BamInput,chrom,real_region[0],real_region[1]))
+                                                        while True:
+                                                            pbam1=fbam.readline().strip()
+                                                            if not pbam1: break
+                                                            pbam=pbam1.split()
+                                                            if int(pbam[1])&4>0: continue           #the read was not mapped, skip
+                                                            DRtemp=Reads_Direction_Detect(pbam[1])
+                                                            ReadLen=cigar2reaadlength(pbam[5])
+                                                            pos1=int(pbam[3])
+                                                            pos2=int(pbam[3])+ReadLen
+                                                            if pos2>real_region[0] and pos1<real_region[1]:
+                                                                if pos1<real_region[0] and pos2>real_region[0]:
+                                                                    pos1=real_region[0]
+                                                                if pos1<real_region[1] and pos2>real_region[1]:
+                                                                    pos2=real_region[1]
+                                                                block1=(pos1-real_region[0])/Window_Size
+                                                                RD_RealRegion[block1]+=ReadLen
+                                                            if int(pbam[4])>int(QCAlign):             #fail quality control, skip
                                                                 absIL=abs(int(pbam[8]))
-                                                                signIL=0
-                                                                posF=[]
+                                                                QCFlag=0
+                                                                link_flag=0
                                                                 if absIL<int(ILCffs[0]) or absIL>int(ILCffs[1]):
-                                                                        signIL+=1
-                                                                if not pbam[5].find('S')==-1 or not pbam[5].find('H')==-1:
-                                                                    ClippedLen=cigar2splitlen(pbam[5])
-                                                                    ClippedPos=cigar2split(pbam[5])
-                                                                    ClippedQual=cigar2splitqual(pbam[5],pbam[10])
-                                                                    if ClippedQual>QCSplit:
-                                                                            ClipAbsPos=[]
-                                                                            for c in range(len(ClippedLen)):
-                                                                                if ClippedLen[c]>SPLCff:
-                                                                                        pos1=int(pbam[3])+ClippedPos[c]
-                                                                                        posF.append(pos1)
-                                                                                        pos2=int(pbam[7])
-                                                                                        if DRtemp[0]=='+':
-                                                                                            if not pos1 in abInfF.keys():
-                                                                                                abInfF[pos1]=[0,0,0,1]
-                                                                                            else:
-                                                                                                abInfF[pos1][3]+=1
-                                                                                        elif DRtemp[0]=='-':
-                                                                                            if not pos1 in abInfR.keys():
-                                                                                                abInfR[pos1]=[0,0,0,1]
-                                                                                            else:
-                                                                                                abInfR[pos1][3]+=1
-                                                                    if not pbam[0] in LinkSPTemp.keys():
-                                                                        LinkSPTemp[pbam[0]]=[[]]
+                                                                    QCFlag+=1
+                                                                if DRtemp==['+','-'] and int(pbam[8])<0:
+                                                                    QCFlag+=1
+                                                                if DRtemp==['+','+'] or DRtemp==['-','-']:
+                                                                    QCFlag+=1
+                                                                if int(pbam[8])==0:
+                                                                   QCFlag+=1
+                                                                if not pbam[5].find('S')==-1:
+                                                                    QCFlag+=1
+                                                                if not QCFlag==0:
+                                                                    print>>fmini, pbam1
+                                                        fbam.close()
+                                                        fmini.close()
+                                                        for rfrr in range(len(RD_RealRegion[:-1])):
+                                                            RD_RealRegion[rfrr]=str(float(RD_RealRegion[rfrr])/Window_Size)
+                                                        if real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size ==0:
+                                                            del RD_RealRegion[-1]
+                                                        else:
+                                                            RD_RealRegion[-1]=str(float(RD_RealRegion[-1])/float(real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size))
+                                                        print >>fRDind, ' '.join(RD_RealRegion)
+                                                        fRDind.close()
+                                                os.system(r'''samtools view -h -Sb -F 256 %s -o %s'''%(mini_fout_Name,mini_fout_N2))
+                                                os.system(r'''samtools sort %s %s'''%(mini_fout_N2,mini_fout_N3))
+                                                os.system(r'''samtools index %s '''%(mini_fout_N4))
+                                                os.system(r'''rm %s'''%(mini_fout_N2))
+                                                os.system(r'''rm %s'''%(mini_fout_Name))
+                                            temp_IL_Rec={}
+                                            Link_IL_Rec={}
+                                            for loc in loc_rec[chrom]: 
+                                                loc2=split_loc_to_loc2(loc)
+                                                for real_region in loc2:
+                                                        fbam=os.popen('''samtools view -F 256 %s %s:%d-%d'''%(mini_fout_N4,chrom,real_region[0],real_region[1]))
+                                                        abInfF={}
+                                                        abInfR={}
+                                                        abLink={}
+                                                        abInf3={}
+                                                        LinkFR={}
+                                                        LinkFF={}
+                                                        LinkRR={}
+                                                        LinkRF={}
+                                                        LinkNM={}
+                                                        LinkNM['F']=[]
+                                                        LinkNM['R']=[]
+                                                        LinkSP={}
+                                                        abLinkSP={}
+                                                        test=[]
+                                                        LinkSPTemp={}
+                                                        while True:
+                                                            pbam=fbam.readline().strip().split()
+                                                            if not pbam: break
+                                                            if int(pbam[4])<int(QCAlign): continue             #fail quality control, skip
+                                                            if int(pbam[1])&4>0: continue           #the read was not mapped, skip
+                                                            DRtemp=Reads_Direction_Detect(pbam[1])
+                                                            ReadLen=cigar2reaadlength(pbam[5])
+                                                            absIL=abs(int(pbam[8]))
+                                                            signIL=0
+                                                            posF=[]
+                                                            if absIL<int(ILCffs[0]) or absIL>int(ILCffs[1]):
+                                                                    signIL+=1
+                                                            if not pbam[5].find('S')==-1 or not pbam[5].find('H')==-1:
+                                                                ClippedLen=cigar2splitlen(pbam[5])
+                                                                ClippedPos=cigar2split(pbam[5])
+                                                                ClippedQual=cigar2splitqual(pbam[5],pbam[10])
+                                                                if ClippedQual>QCSplit:
+                                                                        ClipAbsPos=[]
+                                                                        for c in range(len(ClippedLen)):
+                                                                            if ClippedLen[c]>SPLCff:
+                                                                                    pos1=int(pbam[3])+ClippedPos[c]
+                                                                                    posF.append(pos1)
+                                                                                    pos2=int(pbam[7])
+                                                                                    if DRtemp[0]=='+':
+                                                                                        if not pos1 in abInfF.keys():
+                                                                                            abInfF[pos1]=[0,0,0,1]
+                                                                                        else:
+                                                                                            abInfF[pos1][3]+=1
+                                                                                    elif DRtemp[0]=='-':
+                                                                                        if not pos1 in abInfR.keys():
+                                                                                            abInfR[pos1]=[0,0,0,1]
+                                                                                        else:
+                                                                                            abInfR[pos1][3]+=1
+                                                                if not pbam[0] in LinkSPTemp.keys():
+                                                                    LinkSPTemp[pbam[0]]=[[]]
+                                                                else:
+                                                                    LinkSPTemp[pbam[0]]+=[[]]
+                                                                for c in ClippedPos:
+                                                                    pos1=int(pbam[3])+c
+                                                                    LinkSPTemp[pbam[0]][-1]+=[pos1,DRtemp[0]]
+                                                                LinkSPTemp[pbam[0]].append('S')
+                                                            #else:
+                                                            if posF==[]:
+                                                                if DRtemp[0]=='+':
+                                                                    pos1=int(pbam[3])+len(pbam[9])
+                                                                elif DRtemp[0]=='-':
+                                                                    pos1=int(pbam[3])
+                                                            else:
+                                                                pos1=posF[0]
+                                                            pos2=int(pbam[7])
+                                                            if pbam[0] in LinkSPTemp.keys():
+                                                                LinkSPTemp[pbam[0]]+=[[pos1,DRtemp[0]]]
+                                                            else:
+                                                                LinkSPTemp[pbam[0]]=[[pos1,DRtemp[0]]]
+                                                            if DRtemp==['+','-'] and int(pbam[8])>0:
+                                                                    if signIL>0:
+                                                                            #pos1=int(pbam[3])+ReadLen
+                                                                            #pos2=int(pbam[7])
+                                                                            if not pos1 in LinkFR.keys():
+                                                                                    LinkFR[pos1]=[pos2]
+                                                                            else:
+                                                                                    LinkFR[pos1]+=[pos2]
+                                                                            if not pos1 in abInfF.keys():
+                                                                                    abInfF[pos1]=[1,0,0,0]
+                                                                            else:
+                                                                                    abInfF[pos1][0]+=1
+                                                                            if not pos2 in abInfR.keys():
+                                                                               abInfR[pos2]=[1,0,0,0]
+                                                                            else:
+                                                                                    abInfR[pos2][0]+=1
+                                                            elif DRtemp==['+','-'] and int(pbam[8])<0:
+                                                                    #pos1=int(pbam[3])+ReadLen
+                                                                    #pos2=int(pbam[7])
+                                                                    if not pos1 in LinkFR.keys():
+                                                                            LinkFR[pos1]=[pos2]
                                                                     else:
-                                                                        LinkSPTemp[pbam[0]]+=[[]]
-                                                                    for c in ClippedPos:
-                                                                        pos1=int(pbam[3])+c
-                                                                        LinkSPTemp[pbam[0]][-1]+=[pos1,DRtemp[0]]
-                                                                    LinkSPTemp[pbam[0]].append('S')
-                                                                #else:
-                                                                if posF==[]:
-                                                                    if DRtemp[0]=='+':
-                                                                        pos1=int(pbam[3])+len(pbam[9])
-                                                                    elif DRtemp[0]=='-':
-                                                                        pos1=int(pbam[3])
-                                                                else:
-                                                                    pos1=posF[0]
-                                                                pos2=int(pbam[7])
-                                                                if pbam[0] in LinkSPTemp.keys():
-                                                                    LinkSPTemp[pbam[0]]+=[[pos1,DRtemp[0]]]
-                                                                else:
-                                                                    LinkSPTemp[pbam[0]]=[[pos1,DRtemp[0]]]
-                                                                if DRtemp==['+','-'] and int(pbam[8])>0:
-                                                                        if signIL>0:
-                                                                                #pos1=int(pbam[3])+ReadLen
-                                                                                #pos2=int(pbam[7])
-                                                                                if not pos1 in LinkFR.keys():
-                                                                                        LinkFR[pos1]=[pos2]
-                                                                                else:
-                                                                                        LinkFR[pos1]+=[pos2]
-                                                                                if not pos1 in abInfF.keys():
-                                                                                        abInfF[pos1]=[1,0,0,0]
-                                                                                else:
-                                                                                        abInfF[pos1][0]+=1
-                                                                                if not pos2 in abInfR.keys():
-                                                                                   abInfR[pos2]=[1,0,0,0]
-                                                                                else:
-                                                                                        abInfR[pos2][0]+=1
-                                                                elif DRtemp==['+','-'] and int(pbam[8])<0:
-                                                                        #pos1=int(pbam[3])+ReadLen
-                                                                        #pos2=int(pbam[7])
-                                                                        if not pos1 in LinkFR.keys():
-                                                                                LinkFR[pos1]=[pos2]
-                                                                        else:
-                                                                                LinkFR[pos1]+=[pos2]
-                                                                        if not pos1 in abInfF.keys():
-                                                                                abInfF[pos1]=[0,1,0,0]
-                                                                        else:
-                                                                                abInfF[pos1][1]+=1
-                                                                        if not pos2 in abInfR.keys():
-                                                                           abInfR[pos2]=[0,1,0,0]
-                                                                        else:
-                                                                                abInfR[pos2][1]+=1
-                                                                        if signIL>0:
-                                                                                abInfF[pos1][0]+=1
-                                                                                abInfR[pos2][0]+=1
-                                                                elif DRtemp==['+','+'] and not int(pbam[8])==0:
-                                                                        #pos1=int(pbam[3])+ReadLen
-                                                                        if not pos1 in abInfF.keys():
-                                                                                abInfF[pos1]=[0,1,0,0]
-                                                                        else:
-                                                                                abInfF[pos1][1]+=1
-                                                                        if signIL>0:
-                                                                                abInfF[pos1][0]+=1
-                                                                        if not pbam[0] in abtLink.keys():
-                                                                                abtLink[pbam[0]]=[pos1]
-                                                                        elif pbam[0] in abtLink.keys():
-                                                                                abtLink[pbam[0]].append(pos1)
-                                                                                if not min(abtLink[pbam[0]]) in LinkFF.keys():
-                                                                                        LinkFF[min(abtLink[pbam[0]])]=[max(abtLink[pbam[0]])]
-                                                                                else:
-                                                                                        LinkFF[min(abtLink[pbam[0]])]+=[max(abtLink[pbam[0]])]
-                                                                                del abtLink[pbam[0]]
-                                                                elif DRtemp==['-','-'] and int(pbam[8])>0:
-                                                                        #pos1=int(pbam[3])
-                                                                        #pos2=int(pbam[7])
-                                                                        if not min(pos1,pos2) in LinkRR.keys():
-                                                                                LinkRR[min(pos1,pos2)]=[max(pos1,pos2)]
-                                                                        else:
-                                                                                LinkRR[min(pos1,pos2)]+=[max(pos1,pos2)]
-                                                                        if not pos1 in abInfR.keys():
-                                                                                abInfR[pos1]=[0,1,0,0]
-                                                                        else:
-                                                                                abInfR[pos1][1]+=1                                    
-                                                                        if not pos2 in abInfR.keys():
-                                                                                abInfR[pos2]=[0,1,0,0]
-                                                                        else:
-                                                                                abInfR[pos2][1]+=1
-                                                                        if signIL>0:
-                                                                                abInfR[pos1][0]+=1
-                                                                                abInfR[pos2][0]+=1
-                                                                elif int(pbam[8])==0:
-                                                                        if int(pbam[1])&8>0:
-                                                                                if DRtemp[0]=='+':
-                                                                                        #pos1=int(pbam[3])+ReadLen
-                                                                                        LinkNM['F'].append(pos1)
-                                                                                        if pos1>real_region[0] and pos1<real_region[1]:
-                                                                                                if not pos1 in abInfF.keys():
-                                                                                                        abInfF[pos1]=[0,0,1,0]
-                                                                                                else:
-                                                                                                        abInfF[pos1][2]+=1
-                                                                                elif DRtemp[0]=='-':
-                                                                                        #pos1=int(pbam[3])
-                                                                                        LinkNM['R'].append(pos1)
-                                                                                        if pos1>real_region[0] and pos1<real_region[1]:
-                                                                                                if not pos1 in abInfR.keys():
-                                                                                                        abInfR[pos1]=[0,0,1,0]
-                                                                                                else:
-                                                                                                        abInfR[pos1][2]+=1
-                                                                        if not pbam[6]=='=':
-                                                                                if DRtemp[0]=='+':
-                                                                                        #pos1=int(pbam[3])+ReadLen
-                                                                                        if pos1>real_region[0] and pos1<real_region[1]:
-                                                                                                if not pos1 in abLink.keys():
-                                                                                                        abLink[pos1]=['f',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
-                                                                                                else:
-                                                                                                        abLink[pos1]+=['f',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
-                                                                                                if not pos1 in abInfF.keys():
-                                                                                                        abInfF[pos1]=[0,0,1,0]
-                                                                                                else:
-                                                                                                        abInfF[pos1][2]+=1
-                                                                                elif DRtemp[0]=='-':
-                                                                                        #pos1=int(pbam[3])
-                                                                                        if pos1>real_region[0] and pos1<real_region[1]:
-                                                                                                if not pos1 in abLink.keys():
-                                                                                                        abLink[pos1]=['r',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
-                                                                                                else:
-                                                                                                        abLink[pos1]+=['r',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
-                                                                                                if not pos1 in abInfR.keys():
-                                                                                                        abInfR[pos1]=[0,0,1,0]
-                                                                                                else:
-                                                                                                        abInfR[pos1][2]+=1
-                                                            for k1 in LinkSPTemp.keys():
-                                                                if not 'S' in LinkSPTemp[k1]:
+                                                                            LinkFR[pos1]+=[pos2]
+                                                                    if not pos1 in abInfF.keys():
+                                                                            abInfF[pos1]=[0,1,0,0]
+                                                                    else:
+                                                                            abInfF[pos1][1]+=1
+                                                                    if not pos2 in abInfR.keys():
+                                                                       abInfR[pos2]=[0,1,0,0]
+                                                                    else:
+                                                                            abInfR[pos2][1]+=1
+                                                                    if signIL>0:
+                                                                            abInfF[pos1][0]+=1
+                                                                            abInfR[pos2][0]+=1
+                                                            elif DRtemp==['+','+'] and not int(pbam[8])==0:
+                                                                    #pos1=int(pbam[3])+ReadLen
+                                                                    if not pos1 in abInfF.keys():
+                                                                            abInfF[pos1]=[0,1,0,0]
+                                                                    else:
+                                                                            abInfF[pos1][1]+=1
+                                                                    if signIL>0:
+                                                                            abInfF[pos1][0]+=1
+                                                                    if not pbam[0] in abtLink.keys():
+                                                                            abtLink[pbam[0]]=[pos1]
+                                                                    elif pbam[0] in abtLink.keys():
+                                                                            abtLink[pbam[0]].append(pos1)
+                                                                            if not min(abtLink[pbam[0]]) in LinkFF.keys():
+                                                                                    LinkFF[min(abtLink[pbam[0]])]=[max(abtLink[pbam[0]])]
+                                                                            else:
+                                                                                    LinkFF[min(abtLink[pbam[0]])]+=[max(abtLink[pbam[0]])]
+                                                                            del abtLink[pbam[0]]
+                                                            elif DRtemp==['-','-'] and int(pbam[8])>0:
+                                                                    #pos1=int(pbam[3])
+                                                                    #pos2=int(pbam[7])
+                                                                    if not min(pos1,pos2) in LinkRR.keys():
+                                                                            LinkRR[min(pos1,pos2)]=[max(pos1,pos2)]
+                                                                    else:
+                                                                            LinkRR[min(pos1,pos2)]+=[max(pos1,pos2)]
+                                                                    if not pos1 in abInfR.keys():
+                                                                            abInfR[pos1]=[0,1,0,0]
+                                                                    else:
+                                                                            abInfR[pos1][1]+=1                                    
+                                                                    if not pos2 in abInfR.keys():
+                                                                            abInfR[pos2]=[0,1,0,0]
+                                                                    else:
+                                                                            abInfR[pos2][1]+=1
+                                                                    if signIL>0:
+                                                                            abInfR[pos1][0]+=1
+                                                                            abInfR[pos2][0]+=1
+                                                            elif int(pbam[8])==0:
+                                                                    if int(pbam[1])&8>0:
+                                                                            if DRtemp[0]=='+':
+                                                                                    #pos1=int(pbam[3])+ReadLen
+                                                                                    LinkNM['F'].append(pos1)
+                                                                                    if pos1>real_region[0] and pos1<real_region[1]:
+                                                                                            if not pos1 in abInfF.keys():
+                                                                                                    abInfF[pos1]=[0,0,1,0]
+                                                                                            else:
+                                                                                                    abInfF[pos1][2]+=1
+                                                                            elif DRtemp[0]=='-':
+                                                                                    #pos1=int(pbam[3])
+                                                                                    LinkNM['R'].append(pos1)
+                                                                                    if pos1>real_region[0] and pos1<real_region[1]:
+                                                                                            if not pos1 in abInfR.keys():
+                                                                                                    abInfR[pos1]=[0,0,1,0]
+                                                                                            else:
+                                                                                                    abInfR[pos1][2]+=1
+                                                                    if not pbam[6]=='=':
+                                                                            if DRtemp[0]=='+':
+                                                                                    #pos1=int(pbam[3])+ReadLen
+                                                                                    if pos1>real_region[0] and pos1<real_region[1]:
+                                                                                            if not pos1 in abLink.keys():
+                                                                                                    abLink[pos1]=['f',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
+                                                                                            else:
+                                                                                                    abLink[pos1]+=['f',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
+                                                                                            if not pos1 in abInfF.keys():
+                                                                                                    abInfF[pos1]=[0,0,1,0]
+                                                                                            else:
+                                                                                                    abInfF[pos1][2]+=1
+                                                                            elif DRtemp[0]=='-':
+                                                                                    #pos1=int(pbam[3])
+                                                                                    if pos1>real_region[0] and pos1<real_region[1]:
+                                                                                            if not pos1 in abLink.keys():
+                                                                                                    abLink[pos1]=['r',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
+                                                                                            else:
+                                                                                                    abLink[pos1]+=['r',int(pbam[7]),pbam[6]+'_'+DRtemp[1]]
+                                                                                            if not pos1 in abInfR.keys():
+                                                                                                    abInfR[pos1]=[0,0,1,0]
+                                                                                            else:
+                                                                                                    abInfR[pos1][2]+=1
+                                                        for k1 in LinkSPTemp.keys():
+                                                            if not 'S' in LinkSPTemp[k1]:
+                                                                del LinkSPTemp[k1]
+                                                            else:
+                                                                if len(LinkSPTemp[k1])==2:
                                                                     del LinkSPTemp[k1]
-                                                                else:
-                                                                    if len(LinkSPTemp[k1])==2:
-                                                                        del LinkSPTemp[k1]
-                                                            for k1 in LinkSPTemp.keys():
-                                                                tempk1=[]
-                                                                for k2 in LinkSPTemp[k1]:
-                                                                    if not k2=='S':
-                                                                        tempk1+=[k2]
-                                                                for k2 in range(len(tempk1[0])/2):
-                                                                    for k3 in range(len(tempk1[1])/2):
-                                                                        if tempk1[0][2*k2]<tempk1[1][2*k3]:
-                                                                            tempk2=[tempk1[0][2*k2],tempk1[0][2*k2+1],tempk1[1][2*k3],tempk1[1][2*k3+1]]
-                                                                            if [tempk2[1],tempk2[3]]==['+','-']:
-                                                                                if not tempk2[0] in LinkFR.keys():
-                                                                                    LinkFR[tempk2[0]]=[]
-                                                                                LinkFR[tempk2[0]].append(tempk2[2])
-                                                                            if [tempk2[1],tempk2[3]]==['+','+']:
-                                                                                if not tempk2[0] in LinkFF.keys():
-                                                                                    LinkFF[tempk2[0]]=[]
-                                                                                LinkFF[tempk2[0]].append(tempk2[2])
-                                                                            if [tempk2[1],tempk2[3]]==['-','-']:
-                                                                                if not tempk2[0] in LinkRR.keys():
-                                                                                    LinkRR[tempk2[0]]=[]
-                                                                                LinkRR[tempk2[0]].append(tempk2[2])
-                                                                            if [tempk2[1],tempk2[3]]==['-','+']:
-                                                                                if not tempk2[0] in LinkRF.keys():
-                                                                                    LinkRF[tempk2[0]]=[]
-                                                                                LinkRF[tempk2[0]].append(tempk2[2])
-                                                            for k1 in abInfF.keys():
-                                                                    if not abInfF[k1][-1]==0:
-                                                                            if not k1 in LinkSP.keys():
-                                                                                    LinkSP[k1]=0
-                                                                            LinkSP[k1]+=abInfF[k1][-1]
-                                                            for k1 in abInfR.keys():
-                                                                    if not abInfR[k1][-1]==0:
-                                                                            if not k1 in LinkSP.keys():
-                                                                                    LinkSP[k1]=0
-                                                                            LinkSP[k1]+=abInfR[k1][-1]                            
-                                                            for k1 in LinkFR.keys():
-                                                                    for k2 in LinkFR[k1]:
-                                                                            if not k2 in LinkRF.keys():
-                                                                                    LinkRF[k2]=[]
-                                                                            LinkRF[k2].append(k1)
-                                                            out_pair_bp=[]
-                                                            out_single_bp=[]
-                                                            SP4S=[]
-                                                            if not LinkSP=={}:
-                                                                SP2S=[]
-                                                                linkSP_First=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'f')
-                                                                for k1 in range(len(linkSP_First[0])):
-                                                                        if linkSP_First[1][k1]==1:
-                                                                                if linkSP_First[0][k1] in abInfF.keys():
-                                                                                        if abInfF[linkSP_First[0][k1]]==[0,0,0,1]:
-                                                                                                del abInfF[linkSP_First[0][k1]]
-                                                                                if linkSP_First[0][k1] in abInfR.keys():
-                                                                                        if abInfR[linkSP_First[0][k1]]==[0,0,0,1]:
-                                                                                                del abInfR[linkSP_First[0][k1]]
-                                                                linkSPF=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'f')[0]
-                                                                linkSPR=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'r')[0]
-                                                                linkSPFR=clusterSupVis2(sorted(LinkSP.keys()),sorted(linkSPR),sorted(linkSPF),'left')
-                                                                for k1 in linkSPFR.keys():
-                                                                        qual_num=0
-                                                                        qual_rec=[]
-                                                                        for k2 in linkSPFR[k1]:
-                                                                                qual_num+=LinkSP[k2]
-                                                                                qual_rec.append(LinkSP[k2])
-                                                                        if qual_num<SPCluMin:
-                                                                                del linkSPFR[k1]
-                                                                        else:
-                                                                                SP2S.append(linkSPFR[k1][qual_rec.index(max(qual_rec))])
-                                                                if not SP2S==[]:
-                                                                        SP3S=[]
-                                                                        key=[]
-                                                                        if align_QCflag==1:
-                                                                            for key1 in SP2S:
-                                                                                QCLNSP_flag=0
-                                                                                for aqb in [key1]:
-                                                                                    if aqb>BPAlignQCFlank:
-                                                                                        LNSPFR_aqb=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,aqb-BPAlignQCFlank,aqb+BPAlignQCFlank))
-                                                                                        LNSPFR_score=float(LNSPFR_aqb.read().strip())  
-                                                                                        if LNSPFR_score<float(BPAlignQC):
-                                                                                                QCLNSP_flag+=1
-                                                                                if not QCLNSP_flag==0:
-                                                                                        SP3S.append(key1)
-                                                                        SP4S=[]
-                                                                        for k1 in SP2S:
-                                                                                if not k1 in SP3S:
-                                                                                        SP4S.append(k1)
-                                                                        SP4S.sort()
-                                                                        for i in range(len(SP4S)-1):
-                                                                                if SP4S[i+1]-SP4S[i]<10:
-                                                                                        SP4S[i]=SP4S[i+1]
-                                                                        SP5S=[]
-                                                                        for i in SP4S:
-                                                                                if not i in SP5S:
-                                                                                        SP5S.append(i)
-                                                                        SP4S=SP5S
-                                                                        #SP5SF=clusterNums(sorted(SP4S), Window_Size, 'f')[0]
-                                                                        #SP5SR=clusterNums(sorted(SP4S), Window_Size, 'r')[0]
-                                                                        #SP5FR=clusterSupVis2(sorted(SP4S),sorted(SP5SR),sorted(SP5SF),'left')
-                                                                        #SP6S=[]
-                                                                        #for k1 in sorted(SP5FR.keys()):
-                                                                        #        temp=[]
-                                                                        #        for k2 in SP5FR[k1]:
-                                                                        #                temp.append(LinkSP[k2])
-                                                                        #        SP6S.append(SP5FR[k1][temp.index(max(temp))])
-                                                                        #SP4S=SP6S
-                                                                        if not SP4S==[]:
-                                                                                LinkSPF2=clusterSupVis2(sorted(abInfF.keys()), [i-ClusterLen for i in sorted(SP4S)], [i+10 for i in sorted(SP4S)],'right')
-                                                                                for k1x in LinkSPF2.keys():
-                                                                                    key1=k1x-10
-                                                                                    LinkSPF2[key1]=[i for i in LinkSPF2[k1x]]
-                                                                                    del LinkSPF2[k1x]
-                                                                                for k1x in LinkSPF2.keys():
-                                                                                    test1=bp_subgroup(LinkSPF2[k1x],Min_Distinguish_Len)
-                                                                                    if len(test1)>1:
-                                                                                        for k2x in test1[:-1]:
-                                                                                            new_core_ele=0
-                                                                                            for k3x in k2x:
-                                                                                                if k3x in abInfF.keys():
-                                                                                                    new_core_ele+=numpy.sum(abInfF[k3x])
-                                                                                            if new_core_ele>BPLNCff:
-                                                                                                #new_core.append(max(k2x))
-                                                                                                if not max(k2x) in LinkSPF2.keys():
-                                                                                                    LinkSPF2[max(k2x)]=k2x
-                                                                                                else:
-                                                                                                    LinkSPF2[max(k2x)]+=k2x
-                                                                                                if not max(k2x) in SP4S:
-                                                                                                    SP4S.append(max(k2x))
-                                                                                LinkSPR2=clusterSupVis2(sorted(abInfR.keys()), [i-10 for i in sorted(SP4S)], [i+ClusterLen for i in sorted(SP4S)],'left')
-                                                                                for k1x in LinkSPR2.keys():
-                                                                                    key1=k1x+10
-                                                                                    LinkSPR2[key1]=[i for i in LinkSPR2[k1x]]
-                                                                                    del LinkSPR2[k1x]
-                                                                                for k1x in LinkSPR2.keys():
-                                                                                    test1=bp_subgroup(LinkSPR2[k1x],Min_Distinguish_Len)
-                                                                                    if len(test1)>1:
-                                                                                        for k2x in test1[1:]:
-                                                                                            new_core_ele=0
-                                                                                            for k3x in k2x:
-                                                                                                if k3x in abInfR.keys():
-                                                                                                    new_core_ele+=numpy.sum(abInfR[k3x])
-                                                                                            if new_core_ele>BPLNCff:
-                                                                                                #new_core.append(min(k2x))
-                                                                                                if not min(k2x) in LinkSPR2.keys():
-                                                                                                    LinkSPR2[min(k2x)]=k2x
-                                                                                                else:
-                                                                                                    LinkSPR2[min(k2x)]+=k2x
-                                                                                                if not min(k2x) in SP4S:
-                                                                                                    SP4S.append(min(k2x))
-                                                                                for k1x in LinkSPF2.keys():
-                                                                                    temp_rec=LinkSPF2[k1x]
-                                                                                    LinkSPF2[k1x]=[LinkSPF2[k1x],[]]
-                                                                                    for k2 in temp_rec:
-                                                                                        if k2 in LinkFR.keys():
-                                                                                            LinkSPF2[k1x][1]+=LinkFR[k2]
-                                                                                        if k2 in LinkFF.keys():
-                                                                                            LinkSPF2[k1x][1]+=LinkFF[k2]
-                                                                                for k1x in LinkSPR2.keys():
-                                                                                    temp_rec=LinkSPR2[k1x]
-                                                                                    LinkSPR2[k1x]=[LinkSPR2[k1x],[]]
-                                                                                    for k2 in temp_rec:
-                                                                                        if k2 in LinkRR.keys():
-                                                                                            LinkSPR2[k1x][1]+=LinkRR[k2]
-                                                                                        if k2 in LinkRF.keys():
-                                                                                            LinkSPR2[k1x][1]+=LinkRF[k2]
-                                                                                LinkSP_To_Link={}
-                                                                                for k1x in SP4S:
-                                                                                    if k1x in LinkSPF2.keys():
+                                                        for k1 in LinkSPTemp.keys():
+                                                            tempk1=[]
+                                                            for k2 in LinkSPTemp[k1]:
+                                                                if not k2=='S':
+                                                                    tempk1+=[k2]
+                                                            for k2 in range(len(tempk1[0])/2):
+                                                                for k3 in range(len(tempk1[1])/2):
+                                                                    if tempk1[0][2*k2]<tempk1[1][2*k3]:
+                                                                        tempk2=[tempk1[0][2*k2],tempk1[0][2*k2+1],tempk1[1][2*k3],tempk1[1][2*k3+1]]
+                                                                        if [tempk2[1],tempk2[3]]==['+','-']:
+                                                                            if not tempk2[0] in LinkFR.keys():
+                                                                                LinkFR[tempk2[0]]=[]
+                                                                            LinkFR[tempk2[0]].append(tempk2[2])
+                                                                        if [tempk2[1],tempk2[3]]==['+','+']:
+                                                                            if not tempk2[0] in LinkFF.keys():
+                                                                                LinkFF[tempk2[0]]=[]
+                                                                            LinkFF[tempk2[0]].append(tempk2[2])
+                                                                        if [tempk2[1],tempk2[3]]==['-','-']:
+                                                                            if not tempk2[0] in LinkRR.keys():
+                                                                                LinkRR[tempk2[0]]=[]
+                                                                            LinkRR[tempk2[0]].append(tempk2[2])
+                                                                        if [tempk2[1],tempk2[3]]==['-','+']:
+                                                                            if not tempk2[0] in LinkRF.keys():
+                                                                                LinkRF[tempk2[0]]=[]
+                                                                            LinkRF[tempk2[0]].append(tempk2[2])
+                                                        for k1 in abInfF.keys():
+                                                                if not abInfF[k1][-1]==0:
+                                                                        if not k1 in LinkSP.keys():
+                                                                                LinkSP[k1]=0
+                                                                        LinkSP[k1]+=abInfF[k1][-1]
+                                                        for k1 in abInfR.keys():
+                                                                if not abInfR[k1][-1]==0:
+                                                                        if not k1 in LinkSP.keys():
+                                                                                LinkSP[k1]=0
+                                                                        LinkSP[k1]+=abInfR[k1][-1]                            
+                                                        for k1 in LinkFR.keys():
+                                                                for k2 in LinkFR[k1]:
+                                                                        if not k2 in LinkRF.keys():
+                                                                                LinkRF[k2]=[]
+                                                                        LinkRF[k2].append(k1)
+                                                        out_pair_bp=[]
+                                                        out_single_bp=[]
+                                                        SP4S=[]
+                                                        if not LinkSP=={}:
+                                                            SP2S=[]
+                                                            linkSP_First=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'f')
+                                                            for k1 in range(len(linkSP_First[0])):
+                                                                    if linkSP_First[1][k1]==1:
+                                                                            if linkSP_First[0][k1] in abInfF.keys():
+                                                                                    if abInfF[linkSP_First[0][k1]]==[0,0,0,1]:
+                                                                                            del abInfF[linkSP_First[0][k1]]
+                                                                            if linkSP_First[0][k1] in abInfR.keys():
+                                                                                    if abInfR[linkSP_First[0][k1]]==[0,0,0,1]:
+                                                                                            del abInfR[linkSP_First[0][k1]]
+                                                            linkSPF=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'f')[0]
+                                                            linkSPR=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'r')[0]
+                                                            linkSPFR=clusterSupVis2(sorted(LinkSP.keys()),sorted(linkSPR),sorted(linkSPF),'left')
+                                                            for k1 in linkSPFR.keys():
+                                                                    qual_num=0
+                                                                    qual_rec=[]
+                                                                    for k2 in linkSPFR[k1]:
+                                                                            qual_num+=LinkSP[k2]
+                                                                            qual_rec.append(LinkSP[k2])
+                                                                    if qual_num<SPCluMin:
+                                                                            del linkSPFR[k1]
+                                                                    else:
+                                                                            SP2S.append(linkSPFR[k1][qual_rec.index(max(qual_rec))])
+                                                            if not SP2S==[]:
+                                                                    SP3S=[]
+                                                                    key=[]
+                                                                    if align_QCflag==1:
+                                                                        for key1 in SP2S:
+                                                                            QCLNSP_flag=0
+                                                                            for aqb in [key1]:
+                                                                                if aqb>BPAlignQCFlank:
+                                                                                    LNSPFR_aqb=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,aqb-BPAlignQCFlank,aqb+BPAlignQCFlank))
+                                                                                    LNSPFR_score=float(LNSPFR_aqb.read().strip())  
+                                                                                    if LNSPFR_score<float(BPAlignQC):
+                                                                                            QCLNSP_flag+=1
+                                                                            if not QCLNSP_flag==0:
+                                                                                    SP3S.append(key1)
+                                                                    SP4S=[]
+                                                                    for k1 in SP2S:
+                                                                            if not k1 in SP3S:
+                                                                                    SP4S.append(k1)
+                                                                    SP4S.sort()
+                                                                    for i in range(len(SP4S)-1):
+                                                                            if SP4S[i+1]-SP4S[i]<10:
+                                                                                    SP4S[i]=SP4S[i+1]
+                                                                    SP5S=[]
+                                                                    for i in SP4S:
+                                                                            if not i in SP5S:
+                                                                                    SP5S.append(i)
+                                                                    SP4S=SP5S
+                                                                    #SP5SF=clusterNums(sorted(SP4S), Window_Size, 'f')[0]
+                                                                    #SP5SR=clusterNums(sorted(SP4S), Window_Size, 'r')[0]
+                                                                    #SP5FR=clusterSupVis2(sorted(SP4S),sorted(SP5SR),sorted(SP5SF),'left')
+                                                                    #SP6S=[]
+                                                                    #for k1 in sorted(SP5FR.keys()):
+                                                                    #        temp=[]
+                                                                    #        for k2 in SP5FR[k1]:
+                                                                    #                temp.append(LinkSP[k2])
+                                                                    #        SP6S.append(SP5FR[k1][temp.index(max(temp))])
+                                                                    #SP4S=SP6S
+                                                                    if not SP4S==[]:
+                                                                            LinkSPF2=clusterSupVis2(sorted(abInfF.keys()), [i-ClusterLen for i in sorted(SP4S)], [i+10 for i in sorted(SP4S)],'right')
+                                                                            for k1x in LinkSPF2.keys():
+                                                                                key1=k1x-10
+                                                                                LinkSPF2[key1]=[i for i in LinkSPF2[k1x]]
+                                                                                del LinkSPF2[k1x]
+                                                                            for k1x in LinkSPF2.keys():
+                                                                                test1=bp_subgroup(LinkSPF2[k1x],Min_Distinguish_Len)
+                                                                                if len(test1)>1:
+                                                                                    for k2x in test1[:-1]:
+                                                                                        new_core_ele=0
+                                                                                        for k3x in k2x:
+                                                                                            if k3x in abInfF.keys():
+                                                                                                new_core_ele+=numpy.sum(abInfF[k3x])
+                                                                                        if new_core_ele>BPLNCff:
+                                                                                            #new_core.append(max(k2x))
+                                                                                            if not max(k2x) in LinkSPF2.keys():
+                                                                                                LinkSPF2[max(k2x)]=k2x
+                                                                                            else:
+                                                                                                LinkSPF2[max(k2x)]+=k2x
+                                                                                            if not max(k2x) in SP4S:
+                                                                                                SP4S.append(max(k2x))
+                                                                            LinkSPR2=clusterSupVis2(sorted(abInfR.keys()), [i-10 for i in sorted(SP4S)], [i+ClusterLen for i in sorted(SP4S)],'left')
+                                                                            for k1x in LinkSPR2.keys():
+                                                                                key1=k1x+10
+                                                                                LinkSPR2[key1]=[i for i in LinkSPR2[k1x]]
+                                                                                del LinkSPR2[k1x]
+                                                                            for k1x in LinkSPR2.keys():
+                                                                                test1=bp_subgroup(LinkSPR2[k1x],Min_Distinguish_Len)
+                                                                                if len(test1)>1:
+                                                                                    for k2x in test1[1:]:
+                                                                                        new_core_ele=0
+                                                                                        for k3x in k2x:
+                                                                                            if k3x in abInfR.keys():
+                                                                                                new_core_ele+=numpy.sum(abInfR[k3x])
+                                                                                        if new_core_ele>BPLNCff:
+                                                                                            #new_core.append(min(k2x))
+                                                                                            if not min(k2x) in LinkSPR2.keys():
+                                                                                                LinkSPR2[min(k2x)]=k2x
+                                                                                            else:
+                                                                                                LinkSPR2[min(k2x)]+=k2x
+                                                                                            if not min(k2x) in SP4S:
+                                                                                                SP4S.append(min(k2x))
+                                                                            for k1x in LinkSPF2.keys():
+                                                                                temp_rec=LinkSPF2[k1x]
+                                                                                LinkSPF2[k1x]=[LinkSPF2[k1x],[]]
+                                                                                for k2 in temp_rec:
+                                                                                    if k2 in LinkFR.keys():
+                                                                                        LinkSPF2[k1x][1]+=LinkFR[k2]
+                                                                                    if k2 in LinkFF.keys():
+                                                                                        LinkSPF2[k1x][1]+=LinkFF[k2]
+                                                                            for k1x in LinkSPR2.keys():
+                                                                                temp_rec=LinkSPR2[k1x]
+                                                                                LinkSPR2[k1x]=[LinkSPR2[k1x],[]]
+                                                                                for k2 in temp_rec:
+                                                                                    if k2 in LinkRR.keys():
+                                                                                        LinkSPR2[k1x][1]+=LinkRR[k2]
+                                                                                    if k2 in LinkRF.keys():
+                                                                                        LinkSPR2[k1x][1]+=LinkRF[k2]
+                                                                            LinkSP_To_Link={}
+                                                                            for k1x in SP4S:
+                                                                                if k1x in LinkSPF2.keys():
+                                                                                    LinkSP_To_Link[k1x]=[[],[]]
+                                                                                    LinkSP_To_Link[k1x][0]+=LinkSPF2[k1x][0]
+                                                                                    LinkSP_To_Link[k1x][1]+=LinkSPF2[k1x][1]
+                                                                                if k1x in LinkSPR2.keys():
+                                                                                    if not k1x in LinkSP_To_Link.keys():
                                                                                         LinkSP_To_Link[k1x]=[[],[]]
-                                                                                        LinkSP_To_Link[k1x][0]+=LinkSPF2[k1x][0]
-                                                                                        LinkSP_To_Link[k1x][1]+=LinkSPF2[k1x][1]
-                                                                                    if k1x in LinkSPR2.keys():
-                                                                                        if not k1x in LinkSP_To_Link.keys():
-                                                                                            LinkSP_To_Link[k1x]=[[],[]]
-                                                                                        LinkSP_To_Link[k1x][0]+=LinkSPR2[k1x][0]
-                                                                                        LinkSP_To_Link[k1x][1]+=LinkSPR2[k1x][1]
-                                                                                    if k1x in LinkSP_To_Link.keys():
-                                                                                        LinkSP_To_Link[k1x][0].sort()
-                                                                                        LinkSP_To_Link[k1x][1].sort()
-                                                                                for k1x in sorted(LinkSP_To_Link.keys()):
-                                                                                    for k2 in LinkSP_To_Link[k1x][1]:
-                                                                                        if k2 in LinkSP_To_Link.keys():
-                                                                                            if not sorted([k1x,k2]) in out_pair_bp and not k1x==k2:
-                                                                                                out_pair_bp.append(sorted([k1x,k2]))
-                                                                                            elif k1x==k2:
+                                                                                    LinkSP_To_Link[k1x][0]+=LinkSPR2[k1x][0]
+                                                                                    LinkSP_To_Link[k1x][1]+=LinkSPR2[k1x][1]
+                                                                                if k1x in LinkSP_To_Link.keys():
+                                                                                    LinkSP_To_Link[k1x][0].sort()
+                                                                                    LinkSP_To_Link[k1x][1].sort()
+                                                                            for k1x in sorted(LinkSP_To_Link.keys()):
+                                                                                for k2 in LinkSP_To_Link[k1x][1]:
+                                                                                    if k2 in LinkSP_To_Link.keys():
+                                                                                        if not sorted([k1x,k2]) in out_pair_bp and not k1x==k2:
+                                                                                            out_pair_bp.append(sorted([k1x,k2]))
+                                                                                        elif k1x==k2:
+                                                                                            if not k1x in out_single_bp:
+                                                                                                out_single_bp.append(k1x)
+                                                                            for k1x in sorted(LinkSP_To_Link.keys()):
+                                                                                if not LinkSP_To_Link[k1x][1]==[]:
+                                                                                    for k2 in sorted(LinkSP_To_Link.keys())[sorted(LinkSP_To_Link.keys()).index(k1x):]:
+                                                                                        if not LinkSP_To_Link[k2][1]==[]:
+                                                                                            if k2==k1x: 
                                                                                                 if not k1x in out_single_bp:
                                                                                                     out_single_bp.append(k1x)
-                                                                                for k1x in sorted(LinkSP_To_Link.keys()):
-                                                                                    if not LinkSP_To_Link[k1x][1]==[]:
-                                                                                        for k2 in sorted(LinkSP_To_Link.keys())[sorted(LinkSP_To_Link.keys()).index(k1x):]:
-                                                                                            if not LinkSP_To_Link[k2][1]==[]:
-                                                                                                if k2==k1x: 
-                                                                                                    if not k1x in out_single_bp:
+                                                                                            else:
+                                                                                                overlap_rec=[overlap_calcu(LinkSP_To_Link[k1x][1],LinkSP_To_Link[k2][0]),overlap_calcu(LinkSP_To_Link[k1x][0],LinkSP_To_Link[k2][1])]
+                                                                                                if overlap_rec[0]+overlap_rec[1]>0:
+                                                                                                    if not sorted([k1x,k2]) in out_pair_bp and not k1x==k2:
+                                                                                                        out_pair_bp.append(sorted([k1x,k2]))
+                                                                                                    elif k1x==k2:
                                                                                                         out_single_bp.append(k1x)
-                                                                                                else:
-                                                                                                    overlap_rec=[overlap_calcu(LinkSP_To_Link[k1x][1],LinkSP_To_Link[k2][0]),overlap_calcu(LinkSP_To_Link[k1x][0],LinkSP_To_Link[k2][1])]
-                                                                                                    if overlap_rec[0]+overlap_rec[1]>0:
-                                                                                                        if not sorted([k1x,k2]) in out_pair_bp and not k1x==k2:
-                                                                                                            out_pair_bp.append(sorted([k1x,k2]))
-                                                                                                        elif k1x==k2:
-                                                                                                            out_single_bp.append(k1x)
-                                                                                for k1x in sorted(LinkSP_To_Link.keys()):
-                                                                                    if LinkSP_To_Link[k1x][1]==[]:
-                                                                                        out_single_bp.append(k1x)
-                                                                                        del LinkSP_To_Link[k1x]
-                                                                                for k1x in out_pair_bp:
-                                                                                    for k2 in k1x:
-                                                                                        if k2 in out_single_bp:
-                                                                                            del out_single_bp[out_single_bp.index(k2)]
-                                                                                        if k2 in LinkSP_To_Link.keys():
-                                                                                            del LinkSP_To_Link[k2]
-                                                                                for k1x in out_single_bp:
-                                                                                    if k1x in LinkSP_To_Link.keys():
-                                                                                        del LinkSP_To_Link[k1x]
-                                                                        SP4S.sort()
-                                                            LinkSP_To_Link={}
-                                                            tempIL={}
-                                                            if not abInfF=={}:
-                                                                    clu_a_F=clusterNums(abInfF.keys(), ClusterLen, 'f')[0]
-                                                                    if not clu_a_F==[]:
-                                                                            clu_b_F=clusterNums(abInfF.keys(), ClusterLen, 'r')[0]
-                                                                            clu_c_F=clusterSupVis2(sorted(abInfF.keys()), clu_b_F, [caf+10 for caf in clu_a_F],'right')
-                                                                            if not clu_c_F=={}:
-                                                                                    for key2 in clu_c_F.keys():
-                                                                                            key2b=key2-10
-                                                                                            record=0
-                                                                                            record2=0
-                                                                                            for key3 in clu_c_F[key2]:
-                                                                                                    if not key3 >key2b:
-                                                                                                            record+=sum(abInfF[key3][:3])
-                                                                                                    if abs(key2b-key3)<SPCluLen:
-                                                                                                            record2+=abInfF[key3][3]
-                                                                                            if not record+record2<LinkCluMin:
-                                                                                                    tempIL[key2b]=[[record,record2,'f'],clu_c_F[key2]]
-                                                                                            del clu_c_F[key2]
-                                                            if not abInfR=={}:
-                                                                    clu_a_R=clusterNums(abInfR.keys(), ClusterLen, 'r')[0]
-                                                                    if not clu_a_R==[]:
-                                                                            clu_b_R=clusterNums(abInfR.keys(), ClusterLen, 'f')[0]
-                                                                            clu_c_R=clusterSupVis2(sorted(abInfR.keys()), [car-10 for car in clu_a_R], clu_b_R,'left')
-                                                                            if not clu_c_R=={}:
-                                                                                    for key2 in clu_c_R.keys():  
-                                                                                            key2b=key2+10
-                                                                                            record=0
-                                                                                            record2=0
-                                                                                            for key3 in clu_c_R[key2]:
-                                                                                                    if not key3<key2b:
-                                                                                                            record+= sum(abInfR[key3][:3])   
-                                                                                                    if abs(key3-key2b)<SPCluLen:
-                                                                                                            record2+=abInfR[key3][3]
-                                                                                            if not record+record2<LinkCluMin:
-                                                                                                    tempIL[key2b]=[[record,record2,'r'],clu_c_R[key2]]
-                                                                                            del clu_c_R[key2]
-                                                            if not tempIL=={}:
-                                                                for aqb in tempIL.keys():
-                                                                    if aqb<BPAlignQCFlank:
+                                                                            for k1x in sorted(LinkSP_To_Link.keys()):
+                                                                                if LinkSP_To_Link[k1x][1]==[]:
+                                                                                    out_single_bp.append(k1x)
+                                                                                    del LinkSP_To_Link[k1x]
+                                                                            for k1x in out_pair_bp:
+                                                                                for k2 in k1x:
+                                                                                    if k2 in out_single_bp:
+                                                                                        del out_single_bp[out_single_bp.index(k2)]
+                                                                                    if k2 in LinkSP_To_Link.keys():
+                                                                                        del LinkSP_To_Link[k2]
+                                                                            for k1x in out_single_bp:
+                                                                                if k1x in LinkSP_To_Link.keys():
+                                                                                    del LinkSP_To_Link[k1x]
+                                                                    SP4S.sort()
+                                                        LinkSP_To_Link={}
+                                                        tempIL={}
+                                                        if not abInfF=={}:
+                                                                clu_a_F=clusterNums(abInfF.keys(), ClusterLen, 'f')[0]
+                                                                if not clu_a_F==[]:
+                                                                        clu_b_F=clusterNums(abInfF.keys(), ClusterLen, 'r')[0]
+                                                                        clu_c_F=clusterSupVis2(sorted(abInfF.keys()), clu_b_F, [caf+10 for caf in clu_a_F],'right')
+                                                                        if not clu_c_F=={}:
+                                                                                for key2 in clu_c_F.keys():
+                                                                                        key2b=key2-10
+                                                                                        record=0
+                                                                                        record2=0
+                                                                                        for key3 in clu_c_F[key2]:
+                                                                                                if not key3 >key2b:
+                                                                                                        record+=sum(abInfF[key3][:3])
+                                                                                                if abs(key2b-key3)<SPCluLen:
+                                                                                                        record2+=abInfF[key3][3]
+                                                                                        if not record+record2<LinkCluMin:
+                                                                                                tempIL[key2b]=[[record,record2,'f'],clu_c_F[key2]]
+                                                                                        del clu_c_F[key2]
+                                                        if not abInfR=={}:
+                                                                clu_a_R=clusterNums(abInfR.keys(), ClusterLen, 'r')[0]
+                                                                if not clu_a_R==[]:
+                                                                        clu_b_R=clusterNums(abInfR.keys(), ClusterLen, 'f')[0]
+                                                                        clu_c_R=clusterSupVis2(sorted(abInfR.keys()), [car-10 for car in clu_a_R], clu_b_R,'left')
+                                                                        if not clu_c_R=={}:
+                                                                                for key2 in clu_c_R.keys():  
+                                                                                        key2b=key2+10
+                                                                                        record=0
+                                                                                        record2=0
+                                                                                        for key3 in clu_c_R[key2]:
+                                                                                                if not key3<key2b:
+                                                                                                        record+= sum(abInfR[key3][:3])   
+                                                                                                if abs(key3-key2b)<SPCluLen:
+                                                                                                        record2+=abInfR[key3][3]
+                                                                                        if not record+record2<LinkCluMin:
+                                                                                                tempIL[key2b]=[[record,record2,'r'],clu_c_R[key2]]
+                                                                                        del clu_c_R[key2]
+                                                        if not tempIL=={}:
+                                                            for aqb in tempIL.keys():
+                                                                if aqb<BPAlignQCFlank:
+                                                                    del tempIL[aqb]
+                                                                    continue
+                                                                if align_QCflag==1:
+                                                                    LNSPFR_aqb=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,aqb-BPAlignQCFlank,aqb+BPAlignQCFlank))
+                                                                    tPairF_b=float(LNSPFR_aqb.read().strip()) 
+                                                                    if tPairF_b<float(BPAlignQC):
                                                                         del tempIL[aqb]
-                                                                        continue
-                                                                    if align_QCflag==1:
-                                                                        LNSPFR_aqb=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,aqb-BPAlignQCFlank,aqb+BPAlignQCFlank))
-                                                                        tPairF_b=float(LNSPFR_aqb.read().strip()) 
-                                                                        if tPairF_b<float(BPAlignQC):
-                                                                            del tempIL[aqb]
-                                                            LinkIL={}
-                                                            for k1 in tempIL.keys():
-                                                                temp_mate_F={}
-                                                                temp_mate_R={}
-                                                                info_mate=0
-                                                                if tempIL[k1][0][2]=='f':
-                                                                    for k2 in tempIL[k1][1]:
-                                                                        if k2 in LinkFF.keys():
-                                                                            for k3 in LinkFF[k2]:
-                                                                                if k3 in abInfF.keys():
-                                                                                    temp_mate_F[k3]=sum(abInfF[k3])
-                                                                                    #info_mate+=sum(abInfF[k3])
-                                                                        if k2 in LinkFR.keys():
-                                                                            for k3 in LinkFR[k2]:
-                                                                                if k3 in abInfR.keys():
-                                                                                    temp_mate_R[k3]=sum(abInfR[k3])
-                                                                                    #info_mate+=sum(abInfR[k3])
-                                                                elif tempIL[k1][0][2]=='r':
-                                                                    for k2 in tempIL[k1][1]:
-                                                                        if k2 in LinkRF.keys():
-                                                                            for k3 in LinkRF[k2]:
-                                                                                if k3 in abInfF.keys():
-                                                                                    temp_mate_F[k3]=sum(abInfF[k3])
-                                                                                    #info_mate+=sum(abInfF[k3])
-                                                                        if k2 in LinkRR.keys():
-                                                                            for k3 in LinkRR[k2]:
-                                                                                if k3 in abInfR.keys():
-                                                                                    temp_mate_R[k3]=sum(abInfR[k3])
-                                                                                    #info_mate+=sum(abInfR[k3])
-                                                                for k1x in temp_mate_F.keys():
-                                                                    info_mate+=temp_mate_F[k1x]
-                                                                for k1x in temp_mate_R.keys():
-                                                                    info_mate+=temp_mate_R[k1x]
-                                                                if not info_mate<LinkCluMin:
-                                                                    LinkIL[k1]=[[],[]]
-                                                                    if not temp_mate_F=={}:
-                                                                        LinkIL[k1][0]=clusterQC(clusterNums4(temp_mate_F, ClusterLen, 'f'),LinkCluMin)
-                                                                    if not temp_mate_R=={}:
-                                                                        LinkIL[k1][1]=clusterQC(clusterNums4(temp_mate_R, ClusterLen, 'r'),LinkCluMin)
-                                                                    else:continue
-                                                            for k1 in LinkIL.keys():
-                                                                    for k2 in LinkIL[k1]:
-                                                                            for k3 in k2:
-                                                                                if k3>BPAlignQCFlank:
-                                                                                    if align_QCflag==1:
-                                                                                        tPairF_QC=0
-                                                                                        tPairF_a=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,k3-BPAlignQCFlank,k3+BPAlignQCFlank))
-                                                                                        tPairF_b=float(tPairF_a.read().strip())  
-                                                                                        if not tPairF_b<float(BPAlignQC):
-                                                                                                if not [min([k3,k1]),max([k3,k1])] in out_pair_bp and not k1==k3:
-                                                                                                    out_pair_bp.append([min([k3,k1]),max([k3,k1])])
-                                                                                                elif k1==k3:
-                                                                                                    out_single_bp.append(k1)
-                                                                                    else:
-                                                                                                if not [min([k3,k1]),max([k3,k1])] in out_pair_bp and not k1==k3:
-                                                                                                        out_pair_bp.append([min([k3,k1]),max([k3,k1])])        
-                                                                                                elif  k1==k3:     
-                                                                                                    out_single_bp.append(k1)                                  
-                                                            if not out_pair_bp==[]:
-                                                                out_pair_bp_temp=out_pair_bp_check(out_pair_bp,3)
-                                                                out_pair_bp=out_pair_bp_temp
-                                                                temp_out_pair_bp=[]
-                                                                out_BPmodify={}
-                                                                for k1 in out_pair_bp:
-                                                                    for k2 in k1:
-                                                                        out_BPmodify[k2]=[]
-                                                                if not SP4S==[]:
-                                                                    LBSP_tempIL=clusterSupVis3(sorted(SP4S),sorted(out_BPmodify.keys()))
-                                                                    for k1 in out_pair_bp:
-                                                                        temp_k1=[]
-                                                                        for k2 in k1:
-                                                                            k3=LBSP_tempIL[k2]
-                                                                            if abs(k2-k3)<ClusterLen:
-                                                                                temp_k1.append(k3)
-                                                                            else:
-                                                                                temp_k1.append(k2)
-                                                                        temp_out_pair_bp.append(temp_k1)
-                                                                out_pair_bp=temp_out_pair_bp
-                                                                for k1 in out_pair_bp:
-                                                                    for k2 in k1:
-                                                                        if k2 in SP4S:
-                                                                            del SP4S[SP4S.index(k2)]
-                                                                out_pair_modify={}
-                                                                for i in out_pair_bp:
-                                                                    if not i[0] in out_pair_modify.keys():
-                                                                        out_pair_modify[i[0]]=[]
-                                                                    if not i[1] in out_pair_modify[i[0]]:
-                                                                        out_pair_modify[i[0]].append(i[1])
-                                                                if len(out_pair_modify)>1:
-                                                                    while True: 
-                                                                        if len(out_pair_modify)==1: break
-                                                                        out_pair_qc=[]
-                                                                        for i in range(len(sorted(out_pair_modify.keys()))-1):
-                                                                            out_pair_qc.append(sorted(out_pair_modify.keys())[i+1]-sorted(out_pair_modify.keys())[i])
-                                                                        if min(out_pair_qc)>50:break
-                                                                        else:
-                                                                            out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))+1]]+=out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
-                                                                            del out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
-                                                                for k1 in out_pair_modify.keys():
-                                                                    while True:
-                                                                        if len(out_pair_modify[k1])==1: break
-                                                                        out_pair_modify[k1].sort()
-                                                                        out_pair_qc=[]
-                                                                        for i in range(len(out_pair_modify[k1])-1):
-                                                                            out_pair_qc.append(out_pair_modify[k1][i+1]-out_pair_modify[k1][i])
-                                                                        if min(out_pair_qc)>50:break
-                                                                        else:
-                                                                            out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))+1]=out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))]
-                                                                        for i in out_pair_modify[k1]:
-                                                                            if out_pair_modify[k1].count(i)>1:
-                                                                                for j in range(out_pair_modify[k1].count(i)-1):
-                                                                                    del out_pair_modify[k1][out_pair_modify[k1].index(i)]
-                                                                out_pair_numrec={}
-                                                                for k1 in out_pair_modify.keys():
-                                                                    out_pair_numrec[k1]=[]
-                                                                    for k2 in [k1]+out_pair_modify[k1]:
-                                                                        if k2 in tempIL.keys() and not k2 in LinkSP.keys():
-                                                                            out_pair_numrec[k1].append(len(tempIL[k2][1]))
-                                                                        elif k2 in LinkSP.keys() and not k2 in tempIL.keys():
-                                                                            out_pair_numrec[k1].append(LinkSP[k2])
-                                                                        elif k2 in LinkSP.keys() and k2 in tempIL.keys():
-                                                                            out_pair_numrec[k1].append(LinkSP[k2]+len(tempIL[k2][1]))
-                                                                        else:
-                                                                            out_pair_numrec[k1].append(0)
-                                                                fout=open(BPOutputb,'a')
-                                                                out_pair_modify_check(out_pair_modify,3)
-                                                                for i in sorted(out_pair_modify.keys()):
-                                                                    for j in out_pair_modify[i]:                            
-                                                                        print >>fout, ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
-                                                                        #print ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
-                                                                        if i in tempIL.keys():
-                                                                            del tempIL[i]
-                                                                        if j in tempIL.keys():
-                                                                            del tempIL[j]
-                                                                fout.close()
-                                                                fout=open(BPOutputa,'a')
-                                                                for i in sorted(out_single_bp+LinkSP_To_Link.keys()):
-                                                                    num=0
-                                                                    if i in abInfF.keys():
-                                                                        num+=sum(abInfF[i])
-                                                                    if i in abInfR.keys():
-                                                                        num+=sum(abInfR[i])
-                                                                    print >>fout, ' '.join([str(j) for j in [i,num]])
-                                                                    #print ' '.join([str(j) for j in [i,num]])
-                                                                fout.close()
-                                                            for i in tempIL.keys():
-                                                                temp_IL_Rec[i]=tempIL[i]
-                                                                temp_mate_F=[]
-                                                                temp_mate_R=[]
-                                                                for k2 in tempIL[i][1]:
+                                                        LinkIL={}
+                                                        for k1 in tempIL.keys():
+                                                            temp_mate_F={}
+                                                            temp_mate_R={}
+                                                            info_mate=0
+                                                            if tempIL[k1][0][2]=='f':
+                                                                for k2 in tempIL[k1][1]:
                                                                     if k2 in LinkFF.keys():
-                                                                            temp_mate_F+=LinkFF[k2]
+                                                                        for k3 in LinkFF[k2]:
+                                                                            if k3 in abInfF.keys():
+                                                                                temp_mate_F[k3]=sum(abInfF[k3])
+                                                                                #info_mate+=sum(abInfF[k3])
                                                                     if k2 in LinkFR.keys():
-                                                                            temp_mate_R+=LinkFR[k2]
-                                                                temp_IL_Rec[i].append(temp_mate_F) 
-                                                                temp_IL_Rec[i].append(temp_mate_R) 
-                                                            tempLNF=[]
-                                                            tempLNR=[]
-                                                            for key in abLink.keys():
-                                                                    for key2 in range(len(abLink[key])/3):
-                                                                            if abLink[key][3*key2]=='f':
-                                                                                    tempLNF.append(key)
-                                                                            else:
-                                                                                    tempLNR.append(key)
-                                                            for key in abLinkSP.keys():
-                                                                    for key2 in range(len(abLinkSP[key])/3):
-                                                                            if abLinkSP[key][3*key2]=='f':
-                                                                                    tempLNF.append(key)
-                                                                            else:
-                                                                                    tempLNR.append(key)
-                                                            FtLNFR=clusterNums(tempLNF+tempLNR,ClusterLen,'f')[0]
-                                                            RtLNFR=clusterNums(tempLNF+tempLNR,ClusterLen,'r')[0]
-                                                            FRtLNFR=clusterSupVis2(sorted(tempLNF+tempLNR),RtLNFR,FtLNFR,'left')
-                                                            for key1 in FRtLNFR.keys():
-                                                                    t_LNFR=[]
-                                                                    for key2 in FRtLNFR[key1]:
-                                                                            if key2 in abLink.keys():
-                                                                                    t_LNFR+=abLink[key2]
-                                                                            else:
-                                                                                    if abs(key2-key1)<SPCluLen or abs(key2-max(FRtLNFR[key1]))<SPCluLen:
-                                                                                            t_LNFR+=abLinkSP[key2]
-                                                                    if len(t_LNFR)/3<LinkCluMin:
-                                                                            del FRtLNFR[key1]
+                                                                        for k3 in LinkFR[k2]:
+                                                                            if k3 in abInfR.keys():
+                                                                                temp_mate_R[k3]=sum(abInfR[k3])
+                                                                                #info_mate+=sum(abInfR[k3])
+                                                            elif tempIL[k1][0][2]=='r':
+                                                                for k2 in tempIL[k1][1]:
+                                                                    if k2 in LinkRF.keys():
+                                                                        for k3 in LinkRF[k2]:
+                                                                            if k3 in abInfF.keys():
+                                                                                temp_mate_F[k3]=sum(abInfF[k3])
+                                                                                #info_mate+=sum(abInfF[k3])
+                                                                    if k2 in LinkRR.keys():
+                                                                        for k3 in LinkRR[k2]:
+                                                                            if k3 in abInfR.keys():
+                                                                                temp_mate_R[k3]=sum(abInfR[k3])
+                                                                                #info_mate+=sum(abInfR[k3])
+                                                            for k1x in temp_mate_F.keys():
+                                                                info_mate+=temp_mate_F[k1x]
+                                                            for k1x in temp_mate_R.keys():
+                                                                info_mate+=temp_mate_R[k1x]
+                                                            if not info_mate<LinkCluMin:
+                                                                LinkIL[k1]=[[],[]]
+                                                                if not temp_mate_F=={}:
+                                                                    LinkIL[k1][0]=clusterQC(clusterNums4(temp_mate_F, ClusterLen, 'f'),LinkCluMin)
+                                                                if not temp_mate_R=={}:
+                                                                    LinkIL[k1][1]=clusterQC(clusterNums4(temp_mate_R, ClusterLen, 'r'),LinkCluMin)
+                                                                else:continue
+                                                        for k1 in LinkIL.keys():
+                                                                for k2 in LinkIL[k1]:
+                                                                        for k3 in k2:
+                                                                            if k3>BPAlignQCFlank:
+                                                                                if align_QCflag==1:
+                                                                                    tPairF_QC=0
+                                                                                    tPairF_a=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,k3-BPAlignQCFlank,k3+BPAlignQCFlank))
+                                                                                    tPairF_b=float(tPairF_a.read().strip())  
+                                                                                    if not tPairF_b<float(BPAlignQC):
+                                                                                            if not [min([k3,k1]),max([k3,k1])] in out_pair_bp and not k1==k3:
+                                                                                                out_pair_bp.append([min([k3,k1]),max([k3,k1])])
+                                                                                            elif k1==k3:
+                                                                                                out_single_bp.append(k1)
+                                                                                else:
+                                                                                            if not [min([k3,k1]),max([k3,k1])] in out_pair_bp and not k1==k3:
+                                                                                                    out_pair_bp.append([min([k3,k1]),max([k3,k1])])        
+                                                                                            elif  k1==k3:     
+                                                                                                out_single_bp.append(k1)                                  
+                                                        if not out_pair_bp==[]:
+                                                            out_pair_bp_temp=out_pair_bp_check(out_pair_bp,3)
+                                                            out_pair_bp=out_pair_bp_temp
+                                                            temp_out_pair_bp=[]
+                                                            out_BPmodify={}
+                                                            for k1 in out_pair_bp:
+                                                                for k2 in k1:
+                                                                    out_BPmodify[k2]=[]
+                                                            if not SP4S==[]:
+                                                                LBSP_tempIL=clusterSupVis3(sorted(SP4S),sorted(out_BPmodify.keys()))
+                                                                for k1 in out_pair_bp:
+                                                                    temp_k1=[]
+                                                                    for k2 in k1:
+                                                                        k3=LBSP_tempIL[k2]
+                                                                        if abs(k2-k3)<ClusterLen:
+                                                                            temp_k1.append(k3)
+                                                                        else:
+                                                                            temp_k1.append(k2)
+                                                                    temp_out_pair_bp.append(temp_k1)
+                                                            out_pair_bp=temp_out_pair_bp
+                                                            for k1 in out_pair_bp:
+                                                                for k2 in k1:
+                                                                    if k2 in SP4S:
+                                                                        del SP4S[SP4S.index(k2)]
+                                                            out_pair_modify={}
+                                                            for i in out_pair_bp:
+                                                                if not i[0] in out_pair_modify.keys():
+                                                                    out_pair_modify[i[0]]=[]
+                                                                if not i[1] in out_pair_modify[i[0]]:
+                                                                    out_pair_modify[i[0]].append(i[1])
+                                                            if len(out_pair_modify)>1:
+                                                                while True: 
+                                                                    if len(out_pair_modify)==1: break
+                                                                    out_pair_qc=[]
+                                                                    for i in range(len(sorted(out_pair_modify.keys()))-1):
+                                                                        out_pair_qc.append(sorted(out_pair_modify.keys())[i+1]-sorted(out_pair_modify.keys())[i])
+                                                                    if min(out_pair_qc)>50:break
                                                                     else:
-                                                                        if not t_LNFR in FRtLNFR[key1]:
-                                                                            FRtLNFR[key1].append(t_LNFR)
-                                                            FRtLNFRb=[]
-                                                            for key1 in FRtLNFR.keys():
-                                                                t1_LN=[]
-                                                                t2_LN=[] 
-                                                                t3_LN={}
-                                                                t4out=[]
-                                                                for key2 in FRtLNFR[key1][:-1]:
+                                                                        out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))+1]]+=out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
+                                                                        del out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
+                                                            for k1 in out_pair_modify.keys():
+                                                                while True:
+                                                                    if len(out_pair_modify[k1])==1: break
+                                                                    out_pair_modify[k1].sort()
+                                                                    out_pair_qc=[]
+                                                                    for i in range(len(out_pair_modify[k1])-1):
+                                                                        out_pair_qc.append(out_pair_modify[k1][i+1]-out_pair_modify[k1][i])
+                                                                    if min(out_pair_qc)>50:break
+                                                                    else:
+                                                                        out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))+1]=out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))]
+                                                                    for i in out_pair_modify[k1]:
+                                                                        if out_pair_modify[k1].count(i)>1:
+                                                                            for j in range(out_pair_modify[k1].count(i)-1):
+                                                                                del out_pair_modify[k1][out_pair_modify[k1].index(i)]
+                                                            out_pair_numrec={}
+                                                            for k1 in out_pair_modify.keys():
+                                                                out_pair_numrec[k1]=[]
+                                                                for k2 in [k1]+out_pair_modify[k1]:
+                                                                    if k2 in tempIL.keys() and not k2 in LinkSP.keys():
+                                                                        out_pair_numrec[k1].append(len(tempIL[k2][1]))
+                                                                    elif k2 in LinkSP.keys() and not k2 in tempIL.keys():
+                                                                        out_pair_numrec[k1].append(LinkSP[k2])
+                                                                    elif k2 in LinkSP.keys() and k2 in tempIL.keys():
+                                                                        out_pair_numrec[k1].append(LinkSP[k2]+len(tempIL[k2][1]))
+                                                                    else:
+                                                                        out_pair_numrec[k1].append(0)
+                                                            fout=open(BPOutputb,'a')
+                                                            out_pair_modify_check(out_pair_modify,3)
+                                                            for i in sorted(out_pair_modify.keys()):
+                                                                for j in out_pair_modify[i]:                            
+                                                                    print >>fout, ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
+                                                                    #print ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
+                                                                    if i in tempIL.keys():
+                                                                        del tempIL[i]
+                                                                    if j in tempIL.keys():
+                                                                        del tempIL[j]
+                                                            fout.close()
+                                                            fout=open(BPOutputa,'a')
+                                                            for i in sorted(out_single_bp+LinkSP_To_Link.keys()):
+                                                                num=0
+                                                                if i in abInfF.keys():
+                                                                    num+=sum(abInfF[i])
+                                                                if i in abInfR.keys():
+                                                                    num+=sum(abInfR[i])
+                                                                print >>fout, ' '.join([str(j) for j in [i,num]])
+                                                                #print ' '.join([str(j) for j in [i,num]])
+                                                            fout.close()
+                                                        for i in tempIL.keys():
+                                                            temp_IL_Rec[i]=tempIL[i]
+                                                            temp_mate_F=[]
+                                                            temp_mate_R=[]
+                                                            for k2 in tempIL[i][1]:
+                                                                if k2 in LinkFF.keys():
+                                                                        temp_mate_F+=LinkFF[k2]
+                                                                if k2 in LinkFR.keys():
+                                                                        temp_mate_R+=LinkFR[k2]
+                                                            temp_IL_Rec[i].append(temp_mate_F) 
+                                                            temp_IL_Rec[i].append(temp_mate_R) 
+                                                        tempLNF=[]
+                                                        tempLNR=[]
+                                                        for key in abLink.keys():
+                                                                for key2 in range(len(abLink[key])/3):
+                                                                        if abLink[key][3*key2]=='f':
+                                                                                tempLNF.append(key)
+                                                                        else:
+                                                                                tempLNR.append(key)
+                                                        for key in abLinkSP.keys():
+                                                                for key2 in range(len(abLinkSP[key])/3):
+                                                                        if abLinkSP[key][3*key2]=='f':
+                                                                                tempLNF.append(key)
+                                                                        else:
+                                                                                tempLNR.append(key)
+                                                        FtLNFR=clusterNums(tempLNF+tempLNR,ClusterLen,'f')[0]
+                                                        RtLNFR=clusterNums(tempLNF+tempLNR,ClusterLen,'r')[0]
+                                                        FRtLNFR=clusterSupVis2(sorted(tempLNF+tempLNR),RtLNFR,FtLNFR,'left')
+                                                        for key1 in FRtLNFR.keys():
+                                                                t_LNFR=[]
+                                                                for key2 in FRtLNFR[key1]:
                                                                         if key2 in abLink.keys():
-                                                                            if not key2 in t1_LN:
-                                                                                for key3 in range(len(abLink[key2])/3):
-                                                                                    if not abLink[key2][3*key3:3*(key3+1)] in t2_LN:
-                                                                                        t2_LN.append(abLink[key2][3*key3:3*(key3+1)])
-                                                                                        t1_LN.append(key2)
-                                                                for key2 in t2_LN:
-                                                                        if not key2[-1].split('_')[0] in t3_LN.keys():
-                                                                                t3_LN[key2[-1].split('_')[0]]={}
-                                                                                t3_LN[key2[-1].split('_')[0]]['a']=[]
-                                                                                t3_LN[key2[-1].split('_')[0]]['b']=[]
-                                                                                t3_LN[key2[-1].split('_')[0]]['c']=[]
-                                                                                t3_LN[key2[-1].split('_')[0]]['d']=[]
-                                                                        t3_LN[key2[-1].split('_')[0]]['a'].append(key2[0])
-                                                                        t3_LN[key2[-1].split('_')[0]]['b'].append(key2[1])
-                                                                        t3_LN[key2[-1].split('_')[0]]['c'].append(key2[-1].split('_')[1])
-                                                                        t3_LN[key2[-1].split('_')[0]]['d'].append(key2)                    
-                                                                for key2 in t3_LN.keys():
-                                                                    if clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'f'), LinkCluMin)==[]:
-                                                                            del t3_LN[key2]
-                                                                    else:
-                                                                            t4LN=clusterSupVis2(t3_LN[key2]['b'],clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'r'), LinkCluMin),clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'f'), LinkCluMin), 'left')                               
-                                                                            for key5 in t4LN.keys():
-                                                                                    t4LNa=[]
-                                                                                    t4LNb=[]
-                                                                                    t4LNc=[]
-                                                                                    t4LNd=[]
-                                                                                    t4out=[]
-                                                                                    for key6 in t4LN[key5]:
-                                                                                            t4LNa.append(t3_LN[key2]['a'][t3_LN[key2]['b'].index(key6)])
-                                                                                            t4LNc.append(t3_LN[key2]['c'][t3_LN[key2]['b'].index(key6)])
-                                                                                            t4LNd.append(key6)
-                                                                                            t4LNb.append(t1_LN[t2_LN.index(t3_LN[key2]['d'][t3_LN[key2]['b'].index(key6)])])
-                                                                                    if not 'f' in t4LNa or float(t4LNa.count('r'))/float(t4LNa.count('f'))>5:
-                                                                                            t4out+=[chrom,'r',min(t4LNb)]
-                                                                                    elif not 'r' in t4LNa or float(t4LNa.count('f'))/float(t4LNa.count('r'))>5:
-                                                                                            t4out+=[chrom,'f',max(t4LNb)]
-                                                                                    else:
-                                                                                            t4out+=[chrom,min(t4LNb),max(t4LNb)]
-                                                                                    if not '+' in t4LNc or float(t4LNc.count('-'))/float(t4LNc.count('+'))>5:
-                                                                                            t4out+=[key2,'-',min(t4LNd)]
-                                                                                    elif not '-' in t4LNc or float(t4LNc.count('+'))/float(t4LNc.count('-'))>5:
-                                                                                            t4out+=[key2,'+',max(t4LNd)]
-                                                                                    else:
-                                                                                            t4out+=[key2,min(t4LNd),max(t4LNd)]
-                                                                if not t4out==[] and not t4out in FRtLNFRb:
-                                                                        FRtLNFRb.append(t4out)             
-                                                            if not FRtLNFRb==[]:
-                                                                    fout=open(BPOutputd,'a')
-                                                                    for keyfrt in FRtLNFRb:
-                                                                            print >>fout, ' '.join([str(keyfr2) for keyfr2 in keyfrt])
-                                                                    fout.close()
-                                                Link_IL_Rec={}
-                                                for k1 in temp_IL_Rec.keys():
-                                                    temp_mate_F=temp_IL_Rec[k1][2]
-                                                    temp_mate_R=temp_IL_Rec[k1][3]
-                                                    if not len(temp_IL_Rec[k1][1])+len(temp_IL_Rec[k1][2])+len(temp_IL_Rec[k1][3])<LnCluMin:
-                                                        Link_IL_Rec[k1]=[clusterQC(clusterNums(temp_mate_F, ClusterLen, 'f'),LinkCluMin),
-                                                                        clusterQC(clusterNums(temp_mate_R, ClusterLen, 'r'),LinkCluMin)]
-                                                        #del temp_IL_Rec[k1]
-                                                    else:continue
-                                                for k1 in Link_IL_Rec.keys():
-                                                    for k2 in Link_IL_Rec[k1]:
-                                                            for k3 in k2:
-                                                                if k3>BPAlignQCFlank:
-                                                                    if align_QCflag==1:
-                                                                        tPairF_QC=0
-                                                                        tPairF_a=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,k3-BPAlignQCFlank,k3+BPAlignQCFlank))
-                                                                        tPairF_b=float(tPairF_a.read().strip())  
-                                                                        if not tPairF_b<float(BPAlignQC):
-                                                                                if not [min([k3,k1]),max([k3,k1])] in out_pair_bp:
-                                                                                        out_pair_bp.append([min([k3,k1]),max([k3,k1])])
-                                                                    else:
-                                                                                if not [min([k3,k1]),max([k3,k1])] in out_pair_bp:
-                                                                                        out_pair_bp.append([min([k3,k1]),max([k3,k1])])
-                                                if not out_pair_bp==[]:
-                                                    temp_out_pair_bp=[]
-                                                    out_BPmodify={}
-                                                    for k1 in out_pair_bp:
-                                                        for k2 in k1:
-                                                            out_BPmodify[k2]=[]
-                                                    if not SP4S==[]:
-                                                        LBSP_tempIL=clusterSupVis3(sorted(SP4S),sorted(out_BPmodify.keys()))
-                                                        for k1 in out_pair_bp:
-                                                            temp_k1=[]
-                                                            for k2 in k1:
-                                                                k3=LBSP_tempIL[k2]
-                                                                if abs(k2-k3)<ClusterLen:
-                                                                    temp_k1.append(k3)
+                                                                                t_LNFR+=abLink[key2]
+                                                                        else:
+                                                                                if abs(key2-key1)<SPCluLen or abs(key2-max(FRtLNFR[key1]))<SPCluLen:
+                                                                                        t_LNFR+=abLinkSP[key2]
+                                                                if len(t_LNFR)/3<LinkCluMin:
+                                                                        del FRtLNFR[key1]
                                                                 else:
-                                                                    temp_k1.append(k2)
-                                                            temp_out_pair_bp.append(temp_k1)
-                                                    out_pair_bp=temp_out_pair_bp
+                                                                    if not t_LNFR in FRtLNFR[key1]:
+                                                                        FRtLNFR[key1].append(t_LNFR)
+                                                        FRtLNFRb=[]
+                                                        for key1 in FRtLNFR.keys():
+                                                            t1_LN=[]
+                                                            t2_LN=[] 
+                                                            t3_LN={}
+                                                            t4out=[]
+                                                            for key2 in FRtLNFR[key1][:-1]:
+                                                                    if key2 in abLink.keys():
+                                                                        if not key2 in t1_LN:
+                                                                            for key3 in range(len(abLink[key2])/3):
+                                                                                if not abLink[key2][3*key3:3*(key3+1)] in t2_LN:
+                                                                                    t2_LN.append(abLink[key2][3*key3:3*(key3+1)])
+                                                                                    t1_LN.append(key2)
+                                                            for key2 in t2_LN:
+                                                                    if not key2[-1].split('_')[0] in t3_LN.keys():
+                                                                            t3_LN[key2[-1].split('_')[0]]={}
+                                                                            t3_LN[key2[-1].split('_')[0]]['a']=[]
+                                                                            t3_LN[key2[-1].split('_')[0]]['b']=[]
+                                                                            t3_LN[key2[-1].split('_')[0]]['c']=[]
+                                                                            t3_LN[key2[-1].split('_')[0]]['d']=[]
+                                                                    t3_LN[key2[-1].split('_')[0]]['a'].append(key2[0])
+                                                                    t3_LN[key2[-1].split('_')[0]]['b'].append(key2[1])
+                                                                    t3_LN[key2[-1].split('_')[0]]['c'].append(key2[-1].split('_')[1])
+                                                                    t3_LN[key2[-1].split('_')[0]]['d'].append(key2)                    
+                                                            for key2 in t3_LN.keys():
+                                                                if clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'f'), LinkCluMin)==[]:
+                                                                        del t3_LN[key2]
+                                                                else:
+                                                                        t4LN=clusterSupVis2(t3_LN[key2]['b'],clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'r'), LinkCluMin),clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'f'), LinkCluMin), 'left')                               
+                                                                        for key5 in t4LN.keys():
+                                                                                t4LNa=[]
+                                                                                t4LNb=[]
+                                                                                t4LNc=[]
+                                                                                t4LNd=[]
+                                                                                t4out=[]
+                                                                                for key6 in t4LN[key5]:
+                                                                                        t4LNa.append(t3_LN[key2]['a'][t3_LN[key2]['b'].index(key6)])
+                                                                                        t4LNc.append(t3_LN[key2]['c'][t3_LN[key2]['b'].index(key6)])
+                                                                                        t4LNd.append(key6)
+                                                                                        t4LNb.append(t1_LN[t2_LN.index(t3_LN[key2]['d'][t3_LN[key2]['b'].index(key6)])])
+                                                                                if not 'f' in t4LNa or float(t4LNa.count('r'))/float(t4LNa.count('f'))>5:
+                                                                                        t4out+=[chrom,'r',min(t4LNb)]
+                                                                                elif not 'r' in t4LNa or float(t4LNa.count('f'))/float(t4LNa.count('r'))>5:
+                                                                                        t4out+=[chrom,'f',max(t4LNb)]
+                                                                                else:
+                                                                                        t4out+=[chrom,min(t4LNb),max(t4LNb)]
+                                                                                if not '+' in t4LNc or float(t4LNc.count('-'))/float(t4LNc.count('+'))>5:
+                                                                                        t4out+=[key2,'-',min(t4LNd)]
+                                                                                elif not '-' in t4LNc or float(t4LNc.count('+'))/float(t4LNc.count('-'))>5:
+                                                                                        t4out+=[key2,'+',max(t4LNd)]
+                                                                                else:
+                                                                                        t4out+=[key2,min(t4LNd),max(t4LNd)]
+                                                            if not t4out==[] and not t4out in FRtLNFRb:
+                                                                    FRtLNFRb.append(t4out)             
+                                                        if not FRtLNFRb==[]:
+                                                                fout=open(BPOutputd,'a')
+                                                                for keyfrt in FRtLNFRb:
+                                                                        print >>fout, ' '.join([str(keyfr2) for keyfr2 in keyfrt])
+                                                                fout.close()
+                                            Link_IL_Rec={}
+                                            for k1 in temp_IL_Rec.keys():
+                                                temp_mate_F=temp_IL_Rec[k1][2]
+                                                temp_mate_R=temp_IL_Rec[k1][3]
+                                                if not len(temp_IL_Rec[k1][1])+len(temp_IL_Rec[k1][2])+len(temp_IL_Rec[k1][3])<LnCluMin:
+                                                    Link_IL_Rec[k1]=[clusterQC(clusterNums(temp_mate_F, ClusterLen, 'f'),LinkCluMin),
+                                                                    clusterQC(clusterNums(temp_mate_R, ClusterLen, 'r'),LinkCluMin)]
+                                                    del temp_IL_Rec[k1]
+                                                else:continue
+                                            for k1 in Link_IL_Rec.keys():
+                                                for k2 in Link_IL_Rec[k1]:
+                                                        for k3 in k2:
+                                                            if k3>BPAlignQCFlank:
+                                                                if align_QCflag==1:
+                                                                    tPairF_QC=0
+                                                                    tPairF_a=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,k3-BPAlignQCFlank,k3+BPAlignQCFlank))
+                                                                    tPairF_b=float(tPairF_a.read().strip())  
+                                                                    if not tPairF_b<float(BPAlignQC):
+                                                                            if not [min([k3,k1]),max([k3,k1])] in out_pair_bp:
+                                                                                    out_pair_bp.append([min([k3,k1]),max([k3,k1])])
+                                                                else:
+                                                                            if not [min([k3,k1]),max([k3,k1])] in out_pair_bp:
+                                                                                    out_pair_bp.append([min([k3,k1]),max([k3,k1])])
+                                            if not out_pair_bp==[]:
+                                                temp_out_pair_bp=[]
+                                                out_BPmodify={}
+                                                for k1 in out_pair_bp:
+                                                    for k2 in k1:
+                                                        out_BPmodify[k2]=[]
+                                                if not SP4S==[]:
+                                                    LBSP_tempIL=clusterSupVis3(sorted(SP4S),sorted(out_BPmodify.keys()))
                                                     for k1 in out_pair_bp:
+                                                        temp_k1=[]
                                                         for k2 in k1:
-                                                            if k2 in SP4S:
-                                                                del SP4S[SP4S.index(k2)]
-                                                    out_pair_modify={}
-                                                    for i in out_pair_bp:
-                                                        if not i[0] in out_pair_modify.keys():
-                                                            out_pair_modify[i[0]]=[]
-                                                        if not i[1] in out_pair_modify[i[0]]:
-                                                            out_pair_modify[i[0]].append(i[1])
-                                                    if len(out_pair_modify)>1:
-                                                        while True: 
-                                                            if len(out_pair_modify)==1: break
-                                                            out_pair_qc=[]
-                                                            for i in range(len(sorted(out_pair_modify.keys()))-1):
-                                                                out_pair_qc.append(sorted(out_pair_modify.keys())[i+1]-sorted(out_pair_modify.keys())[i])
-                                                            if min(out_pair_qc)>50:break
+                                                            k3=LBSP_tempIL[k2]
+                                                            if abs(k2-k3)<ClusterLen:
+                                                                temp_k1.append(k3)
                                                             else:
-                                                                out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))+1]]+=out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
-                                                                del out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
-                                                    for k1 in out_pair_modify.keys():
-                                                        while True:
-                                                            if len(out_pair_modify[k1])==1: break
-                                                            out_pair_modify[k1].sort()
-                                                            out_pair_qc=[]
-                                                            for i in range(len(out_pair_modify[k1])-1):
-                                                                out_pair_qc.append(out_pair_modify[k1][i+1]-out_pair_modify[k1][i])
-                                                            if min(out_pair_qc)>50:break
-                                                            else:
-                                                                out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))+1]=out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))]
-                                                            for i in out_pair_modify[k1]:
-                                                                if out_pair_modify[k1].count(i)>1:
-                                                                    for j in range(out_pair_modify[k1].count(i)-1):
-                                                                        del out_pair_modify[k1][out_pair_modify[k1].index(i)]
-                                                    out_pair_numrec={}
-                                                    for k1 in out_pair_modify.keys():
-                                                        out_pair_numrec[k1]=[]
-                                                        for k2 in [k1]+out_pair_modify[k1]:
-                                                            if k2 in tempIL.keys() and not k2 in LinkSP.keys():
-                                                                out_pair_numrec[k1].append(len(tempIL[k2][1]))
-                                                            elif k2 in LinkSP.keys() and not k2 in tempIL.keys():
-                                                                out_pair_numrec[k1].append(LinkSP[k2])
-                                                            elif k2 in LinkSP.keys() and k2 in tempIL.keys():
-                                                                out_pair_numrec[k1].append(LinkSP[k2]+len(tempIL[k2][1]))
-                                                            else:
-                                                                out_pair_numrec[k1].append(0)
-                                                    fout=open(BPOutputb,'a')
-                                                    for i in sorted(out_pair_modify.keys()):
-                                                        for j in out_pair_modify[i]:                            
-                                                            print >>fout, ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
-                                                            #print ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
-                                                            if i in tempIL.keys():
-                                                                del tempIL[i]
-                                                            if j in tempIL.keys():
-                                                                del tempIL[j]
-                                                    fout.close()
-                                                fout=open(BPOutputa,'a')
-                                                for i in sorted(temp_IL_Rec.keys()):
-                                                    print >>fout, ' '.join([str(i),str(sum(temp_IL_Rec[i][0][:2]))])    
+                                                                temp_k1.append(k2)
+                                                        temp_out_pair_bp.append(temp_k1)
+                                                out_pair_bp=temp_out_pair_bp
+                                                for k1 in out_pair_bp:
+                                                    for k2 in k1:
+                                                        if k2 in SP4S:
+                                                            del SP4S[SP4S.index(k2)]
+                                                out_pair_modify={}
+                                                for i in out_pair_bp:
+                                                    if not i[0] in out_pair_modify.keys():
+                                                        out_pair_modify[i[0]]=[]
+                                                    if not i[1] in out_pair_modify[i[0]]:
+                                                        out_pair_modify[i[0]].append(i[1])
+                                                if len(out_pair_modify)>1:
+                                                    while True: 
+                                                        if len(out_pair_modify)==1: break
+                                                        out_pair_qc=[]
+                                                        for i in range(len(sorted(out_pair_modify.keys()))-1):
+                                                            out_pair_qc.append(sorted(out_pair_modify.keys())[i+1]-sorted(out_pair_modify.keys())[i])
+                                                        if min(out_pair_qc)>50:break
+                                                        else:
+                                                            out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))+1]]+=out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
+                                                            del out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
+                                                for k1 in out_pair_modify.keys():
+                                                    while True:
+                                                        if len(out_pair_modify[k1])==1: break
+                                                        out_pair_modify[k1].sort()
+                                                        out_pair_qc=[]
+                                                        for i in range(len(out_pair_modify[k1])-1):
+                                                            out_pair_qc.append(out_pair_modify[k1][i+1]-out_pair_modify[k1][i])
+                                                        if min(out_pair_qc)>50:break
+                                                        else:
+                                                            out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))+1]=out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))]
+                                                        for i in out_pair_modify[k1]:
+                                                            if out_pair_modify[k1].count(i)>1:
+                                                                for j in range(out_pair_modify[k1].count(i)-1):
+                                                                    del out_pair_modify[k1][out_pair_modify[k1].index(i)]
+                                                out_pair_numrec={}
+                                                for k1 in out_pair_modify.keys():
+                                                    out_pair_numrec[k1]=[]
+                                                    for k2 in [k1]+out_pair_modify[k1]:
+                                                        if k2 in tempIL.keys() and not k2 in LinkSP.keys():
+                                                            out_pair_numrec[k1].append(len(tempIL[k2][1]))
+                                                        elif k2 in LinkSP.keys() and not k2 in tempIL.keys():
+                                                            out_pair_numrec[k1].append(LinkSP[k2])
+                                                        elif k2 in LinkSP.keys() and k2 in tempIL.keys():
+                                                            out_pair_numrec[k1].append(LinkSP[k2]+len(tempIL[k2][1]))
+                                                        else:
+                                                            out_pair_numrec[k1].append(0)
+                                                fout=open(BPOutputb,'a')
+                                                for i in sorted(out_pair_modify.keys()):
+                                                    for j in out_pair_modify[i]:                            
+                                                        print >>fout, ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
+                                                        #print ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
+                                                        if i in tempIL.keys():
+                                                            del tempIL[i]
+                                                        if j in tempIL.keys():
+                                                            del tempIL[j]
                                                 fout.close()
-                                                time2=time.time()
-                                                os.system(r'''cat %s >> %s'''%(BPOutputd,BPOutpute))
-                                                os.system(r'''rm %s'''%(BPOutputd))
-                                                print 'BPSearch Complete for '+bamF+'.'+chrF
+                                            fout=open(BPOutputa,'a')
+                                            for i in sorted(temp_IL_Rec.keys()):
+                                                print >>fout, ' '.join([str(i),str(sum(temp_IL_Rec[i][0][:2]))])    
+                                            fout.close()
+                                            time2=time.time()
+                                            LN_Filter(BPOutputb,BPOutputa,workdir)
+                                            os.system(r'''cat %s >> %s'''%(BPOutputd,BPOutpute))
+                                            os.system(r'''rm %s'''%(BPOutputd))
+                                            print 'BPSearch Complete for '+bamF+'.'+chrF
                                             print 'Time Consuming: '+str(time2-time1)
     if function_name=='BPIntegrate':
         import glob
@@ -3972,7 +4062,7 @@ else:
                     if not tempall==[]:
                         out[k1]=tempall
                 return out
-            def LNd_hash_pair(LNd_hash):
+            def LNd_hash_pair(LNd_hash,SP_Info):
                 out={}
                 for k1 in LNd_hash.keys():
                     if k1.split('_')[0] in SP_Info.keys() and k1.split('_')[1] in SP_Info.keys():
@@ -4032,7 +4122,7 @@ else:
                         bpClu2=[]
                 del bpCluster
                 del bpClu2
-            def SP_info_ReadIn(bps_hash,bps_in_path):
+            def SP_info_ReadIn_pre(bps_hash,bps_in_path):
                 single_chromos=bps_hash[S_Sample][S_Para].keys()
                 SP_links={}
                 SP_Link1={}
@@ -4449,6 +4539,42 @@ else:
                         print >>fo, ' '.join(k1)
                         print >>fo, ' '
                     fo.close()
+            def write_bp_1a(LN_LN_Merge):
+                fout_rec=[]
+                fout=para_sample_bps_fold+S_Sample+'.txt'
+                if not os.path.isfile(fout):
+                    fo=open(fout,'w')
+                else:
+                    fo=open(fout,'a')
+                for x in LN_LN_Merge:
+                    print >>fo, ' '.join([chromo_name]+[str(i) for i in sorted(numpy.unique(x))])
+                    print >>fo, ' '
+                fo.close()
+            def write_bp_2a(LN_LN_Merge):
+                fout=para_sample_bps_fold+S_Sample+'.'+str(chromo_name)+'.txt'
+                if not os.path.isfile(fout):
+                    fo=open(fout,'w')
+                else:
+                    fo=open(fout,'a')
+                for x in LN_LN_Merge:
+                    print >>fo, ' '.join([chromo_name]+[str(i) for i in sorted(numpy.unique(x))])
+                    print >>fo, ' '
+                fo.close()
+            def write_bp_3a(LN_LN_Merge,file_index):
+                out_list=[[]]
+                for x in LN_LN_Merge:
+                    if len(out_list[-1])<file_length:
+                        out_list[-1].append(x)
+                    else:
+                        out_list.append([x])
+                for x in out_list:
+                    file_index+=1
+                    fout=para_sample_bps_fold+S_Sample+'.'+str(chromo_name)+'.'+str(file_index)+'.txt'
+                    fo=open(fout,'w')
+                    for y in x:
+                        print >>fo, ' '.join([chromo_name]+[str(i) for i in sorted(numpy.unique(y))])
+                        print >>fo, ' '
+                    fo.close()
             def missed_pair_check(SP_Check,SP_link3):
                 out={}
                 out2={}
@@ -4663,6 +4789,311 @@ else:
                                                 temp2.append(temp[rec1])
                                 rec1+=1
                     SP_link4[x]+=temp2
+            def SP_info_ReadIn(bps_hash,bps_in_path,chromo_name):
+                SP_links={}
+                SP_Link1={}
+                SP_Info={}
+                SP_Link2={}
+                SP_Link3={}
+                for S_Chr in [chromo_name]:
+                    SP_links[S_Chr]={}
+                    SP_Link1[S_Chr]=[]
+                    SP_Info[S_Chr]={}
+                    filein1=bps_hash[S_Sample][S_Para][S_Chr][0]
+                    fin=open(bps_in_path+filein1)
+                    for line in fin:
+                        pin=line.strip().split()
+                        if not int(pin[0]) in SP_Info[S_Chr].keys():
+                            SP_Info[S_Chr][int(pin[0])]=int(pin[1])
+                        else:
+                            SP_Info[S_Chr][int(pin[0])]=max(int(pin[1]),SP_Info[S_Chr][int(pin[0])])
+                        if not int(pin[2]) in SP_Info[S_Chr].keys():
+                            SP_Info[S_Chr][int(pin[2])]=int(pin[3])
+                        else:
+                            SP_Info[S_Chr][int(pin[2])]=max(int(pin[3]),SP_Info[S_Chr][int(pin[2])])
+                        if not pin[0]==pin[2]:
+                            SP_Link1[S_Chr]+=[pin[0],pin[2]]
+                    fin.close()
+                    filein1=bps_hash[S_Sample][S_Para][S_Chr][1]
+                    fin=open(bps_in_path+filein1)
+                    for line in fin:
+                            pin=line.strip().split()
+                            if not int(pin[0]) in SP_Info[S_Chr].keys():
+                                SP_Info[S_Chr][int(pin[0])]=int(pin[1])
+                            else:
+                                SP_Info[S_Chr][int(pin[0])]=max(int(pin[1]),SP_Info[S_Chr][int(pin[0])])
+                    fin.close()
+                SP_Info_Cluster(SP_Info)
+                for S_Chr in SP_Link1.keys():
+                    SP_Link2[S_Chr]=[int(i) for i in SP_Link1[S_Chr]]
+                for S_Chr in single_chromos:
+                    bpCluster=clusterSupVis(SP_Info[S_Chr].keys(),SP_Link2[S_Chr],10)
+                    SP_Link3[S_Chr]=[]
+                    for k1 in bpCluster.keys():
+                        if len(bpCluster[k1])==1 and bpCluster[k1][0]==k1:
+                            del bpCluster[k1]
+                    for k1 in range(len(SP_Link2[S_Chr])):
+                        k2=SP_Link2[S_Chr][k1]
+                        if k2 in bpCluster.keys():
+                            if len(bpCluster[k2])==1 and bpCluster[k2][0]==k2:
+                                SP_Link3[S_Chr]+=[k2]
+                            else:
+                                if len(bpCluster[k2])==1:
+                                    SP_Link3[S_Chr]+=[bpCluster[k2][0]]
+                                else:
+                                    temp=[]
+                                    for k3 in bpCluster[k2]:
+                                        temp.append(SP_Info[S_Chr][k3])
+                                    k1_replace=bpCluster[k2][temp.index(max(temp))]
+                                    SP_Link3[S_Chr]+=[k1_replace]
+                        else:
+                            SP_Link3[S_Chr]+=[k2]
+                    SP_links[S_Chr]={}
+                    for k1 in range(len(SP_Link3[S_Chr])/2):
+                        minNum=min([SP_Link3[S_Chr][2*k1],SP_Link3[S_Chr][2*k1+1]])
+                        maxNum=max([SP_Link3[S_Chr][2*k1],SP_Link3[S_Chr][2*k1+1]])
+                        if not minNum in SP_links[S_Chr].keys():
+                            SP_links[S_Chr][minNum]=[]
+                        SP_links[S_Chr][minNum]+=[maxNum]
+                return [SP_links,SP_Info,SP_Link3]
+            def SP_LN_info_ReadIn(bps_hash,bps_in_path,chromo_name):
+                LN_filein=bps_in_path+bps_hash[S_Sample][S_Para][chromo_name][0]
+                SP_filein=bps_in_path+bps_hash[S_Sample][S_Para][chromo_name][1]
+                all_SPs={}
+                LN_Links={}
+                fin=open(LN_filein)
+                for line in fin:
+                    pin=line.strip().split()
+                    if not int(pin[0]) in LN_Links.keys():
+                        LN_Links[int(pin[0])]=[]
+                    if not int(pin[2]) in LN_Links[int(pin[0])]:
+                        LN_Links[int(pin[0])].append(int(pin[2]))
+                    if not int(pin[0]) in all_SPs.keys():
+                        all_SPs[int(pin[0])]=int(pin[1])
+                    else:
+                        all_SPs[int(pin[0])]=max([all_SPs[int(pin[0])],int(pin[1])])
+                    if not int(pin[2]) in all_SPs.keys():
+                        all_SPs[int(pin[2])]=int(pin[3])
+                    else:
+                        all_SPs[int(pin[2])]=max([all_SPs[int(pin[2])],int(pin[3])])
+                fin.close()
+                fin=open(SP_filein)
+                for line in fin:
+                    pin=line.strip().split()
+                    if not int(pin[0]) in all_SPs.keys():
+                        all_SPs[int(pin[0])]=int(pin[1])
+                    else:
+                        all_SPs[int(pin[0])]=max([all_SPs[int(pin[0])],int(pin[1])])
+                fin.close()         
+                LN_list=[]
+                for k1 in sorted(LN_Links.keys()):
+                    for k2 in sorted(LN_Links[k1]):
+                        LN_list.append([k1,k2])
+                return [LN_list,all_SPs]
+            def SP_Info_Merge(SP_hash):
+                #eg of SP_hash: SP_hash=SP_LN_Info[1]
+                SP_pos=sorted(SP_hash.keys())
+                SP_step=[SP_pos[i+1]-SP_pos[i] for i in range(len(SP_pos)-1)]
+                min_step=min(SP_step)
+                while True:
+                    if min(SP_step)>60: break
+                    min_index=[i for i in range(len(SP_step)) if SP_step[i]==min_step]
+                    for x in min_index:
+                        if SP_pos[x] in SP_hash.keys() and SP_pos[x+1] in SP_hash.keys():
+                            if SP_hash[SP_pos[x]]>SP_hash[SP_pos[x+1]]:
+                                del SP_hash[SP_pos[x+1]]
+                            else:
+                                del SP_hash[SP_pos[x]]
+                    SP_pos=sorted(SP_hash.keys())
+                    SP_step=[SP_pos[i+1]-SP_pos[i] for i in range(len(SP_pos)-1)]
+                    min_step=min(SP_step)
+                return SP_pos
+            def LN_Info_Correct(LN_hash,unique_SPs):
+                #eg of LN_hash: LN_hash=SP_LN_Info[0]
+                out=[]
+                for k1 in LN_hash:
+                    out.append([])
+                    for k2 in k1:
+                        if not k2 in unique_SPs:
+                            temp=[i for i in unique_SPs if i<k2+200 and i>k2-200]
+                            if temp==[]:
+                                out[-1].append(k2)
+                            else:
+                                diff=[abs(i-k2) for i in temp]
+                                new_k2=temp[diff.index(min(diff))]
+                                out[-1].append(new_k2)
+                        else:
+                            out[-1].append(k2)
+                return out
+            def unify_list(list):
+                out=[i for i in numpy.unique(list)]
+                out.sort()
+                return out
+                #out=[]
+                #for x in list:
+                #    if not x in out:
+                #        out.append(x)
+                #out.sort()
+                #return out
+            def merge_SPs_into_LNs(unique_SPs,multi_removed_LNs):
+                unique_SPs.sort()
+                rec1=0
+                rec2=0
+                out=[]
+                while True:
+                    if rec1==len(unique_SPs):
+                        if rec2<len(multi_removed_LNs):
+                            out.append(multi_removed_LNs[rec2+1:])
+                            break
+                        else:
+                            break
+                    elif rec2==len(multi_removed_LNs):
+                        if rec1<len(unique_SPs):
+                            out.append(unique_SPs[rec1+1:])
+                            break
+                        else:break
+                    elif multi_removed_LNs[rec2][1]-multi_removed_LNs[rec2][0]>10**5:
+                        out.append(multi_removed_LNs[rec2])
+                        rec2+=1
+                    elif unique_SPs[rec1]>multi_removed_LNs[rec2][0]-1 and unique_SPs[rec1]<multi_removed_LNs[rec2][1]+1:
+                        multi_removed_LNs[rec2].append([unique_SPs[rec1]])
+                        rec1+=1
+                    elif unique_SPs[rec1]<multi_removed_LNs[rec2][0]:
+                        out.append([unique_SPs[rec1]])
+                        rec1+=1
+                    elif unique_SPs[rec1]>multi_removed_LNs[rec2][1]:
+                        out.append(multi_removed_LNs[rec2])
+                        rec2+=1
+                out2=[unify_list(i) for i in out]
+                out3=[i for i in out2 if not len(i)==1]
+                return out3
+            def merge_LNs_overlap_unit(out2):
+                #merge LNs  units that overlap with eacg other
+                out3=[]
+                for k1 in out2:
+                    if max(k1)-min(k1)<10**6:
+                        if out3==[]:
+                            out3.append([k1])
+                        if k1[0]<max([max(i) for i in out3[-1]]):
+                            out3[-1].append(k1)
+                        else:
+                            out3.append([k1])
+                    else:
+                        out3.append([k1])
+                return out3            
+            def length_control(out3):
+                #control length of each cluster
+                out=[]
+                for x in out3:
+                    if sum([len(y) for y in x])==1: continue
+                    else:
+                        if sum([len(y) for y in x])>10:
+                            for y in x:
+                                if len(y)>1:
+                                    out.append(y)
+                        else:
+                            out.append([])
+                            for y in x:
+                                out[-1]+=y
+                return out
+            def merge_LNs_into_LNs(multi_removed_LNs):
+                out=[]
+                for k1 in multi_removed_LNs:
+                    if out==[]:
+                        out.append(k1)
+                    if k1[0] in out[-1] or k1[1] in out[-1]:
+                        out[-1]+=k1
+                    else:
+                        out.append(k1)
+                out2=[unify_list(i) for i in out]
+                out3=merge_LNs_overlap_unit(out2)
+                out4=length_control(out3)
+                return out4
+            def multi_trans_detect(modified_LNs):
+                #remove bps with >10 mate bps, which might be ploy A/ T tails of mobile elements
+                number,counts=numpy.unique(modified_LNs,return_counts=True)
+                remove=number[counts>10]
+                out=[]
+                for x in modified_LNs:
+                    if not x[0] in remove and not x[1] in remove:
+                        out.append(x)
+                return out
+            def LN_bps_write(S_Sample,S_Para):
+                SP_LI_in=SP_info_ReadIn_pre(bps_hash,bps_in_path)
+                SP_links=SP_LI_in[0]
+                SP_Info=SP_LI_in[1]
+                SP_Check=SP_LI_in[2]
+                S_Chr=bps_hash[S_Sample][S_Para].keys()[0] 
+                chrom_LN=bps_hash[S_Sample][S_Para][S_Chr][1].replace('.'+S_Chr+'.SPCff','.SPCff').replace('SPs','chromLNs')
+                LNall_hash=LNd_hash_readin(chrom_LN)
+                LNd_hash=LNall_hash[0]
+                LNe_hash=LNe_hash_Filter(LNall_hash[1])
+                LNd_hash=LNd_hash_pair(LNd_hash,SP_Info)
+                LN_out=[]
+                for k1 in LNe_hash.keys():
+                    for k2 in LNe_hash[k1]:
+                        temp=[]
+                        for k3 in k2:
+                            if k3 in chromos:
+                                temp.append([k3])
+                            else:
+                                if not temp==[]:
+                                    temp[-1].append(str(k3))
+                        LN_out.append(temp)
+                for k1 in LNd_hash.keys():
+                    for k2 in LNd_hash[k1]:
+                        temp=[]
+                        for k3 in k2:
+                            if k3 in chromos:
+                                temp.append([k3])
+                            else:
+                                if not temp==[]:
+                                    temp[-1].append(str(k3))
+                        LN_out.append(temp)
+                if not '--batch' in dict_opts.keys():
+                    fout=para_sample_bps_fold+S_Sample+'.txt'
+                    if not os.path.isfile(fout):
+                        fo=open(fout,'w')
+                    else:
+                        fo=open(fout,'a')
+                    for k1 in LN_out:
+                        for k2 in k1:
+                            print >>fo, ' '.join(k2)
+                        print >>fo, ' '
+                    fo.close()
+                else:
+                    if dict_opts['--batch']=='0':
+                        fout=para_sample_bps_fold+S_Sample+'.'+'LN'+'.'+'txt'
+                        if not os.path.isfile(fout):
+                            fo=open(fout,'w')
+                        else:
+                            fo=open(fout,'a')
+                        for k1 in LN_out:
+                            for k2 in k1:
+                                print >>fo, ' '.join(k2)
+                            print >>fo, ' '
+                        fo.close()
+                    else:
+                        max_num=int(dict_opts['--batch'])
+                        LN_out2=[[]]
+                        for k1 in LN_out:
+                            if len(LN_out2[-1])<max_num:
+                                LN_out2[-1].append(k1)
+                            else:
+                                LN_out2.append([])
+                                LN_out2[-1].append(k1)
+                        for k1 in LN_out2:
+                            rec+=1
+                            fout=para_sample_bps_fold+S_Sample+'.'+str(rec)+'.'+'txt'
+                            if not os.path.isfile(fout):
+                                fo=open(fout,'w')
+                            else:
+                                fo=open(fout,'a')
+                            for k2 in k1:
+                                for k3 in k2:
+                                    print >>fo, ' '.join(k3)
+                                print >>fo, ' '
+                            fo.close()
             import numpy
             import scipy
             import math
@@ -4737,6 +5168,29 @@ else:
                                 for S_Para in para_filter:
                                     rec=0
                                     para_sample_bps_fold=bps_folder+S_Sample+'/'+S_Para+'/'
+                                    global chromo_name
+                                    for chromo_name in bps_hash[S_Sample][S_Para].keys():
+                                        SP_LN_Info=SP_LN_info_ReadIn(bps_hash,bps_in_path,chromo_name)
+                                        if not SP_LN_Info[1]=={} and not SP_LN_Info[0]==[]:
+                                            unique_SPs=SP_Info_Merge(SP_LN_Info[1])
+                                            modified_LNs=LN_Info_Correct(SP_LN_Info[0],unique_SPs)
+                                            multi_removed_LNs=multi_trans_detect(modified_LNs)
+                                            LN_LN_Merge=merge_LNs_into_LNs(multi_removed_LNs)
+                                            #not include SP info for now
+                                            #SP_LN_Merge_1=merge_SPs_into_LNs(unique_SPs,LN_LN_Merge)
+                                            if not '--batch' in dict_opts.keys():
+                                                write_bp_1a(LN_LN_Merge)
+                                            else:
+                                                if dict_opts['--batch']=='0':
+                                                    write_bp_2a(LN_LN_Merge)
+                                                else:
+                                                    global file_length
+                                                    file_length=int(dict_opts['--batch'])
+                                                    global file_index
+                                                    file_index=0
+                                                    write_bp_3a(LN_LN_Merge,file_index)
+                                    LN_bps_write(S_Sample,S_Para)
+                                    '''
                                     SP_LI_in=SP_info_ReadIn(bps_hash,bps_in_path)
                                     SP_links=SP_LI_in[0]
                                     SP_Info=SP_LI_in[1]
@@ -4828,6 +5282,7 @@ else:
                                                         print >>fo, ' '.join(k3)
                                                     print >>fo, ' '
                                                 fo.close()
+                                    '''
                             time2=time.time()
                             print 'BPIntegrate Complete !'
                             print 'Time Consuming: '+str(time2-time1)
@@ -5062,7 +5517,7 @@ else:
                 Double_Read_ThroughBP=[]
                 Single_Read_ThroughBP=[]
                 blackList=[]
-                fbam=os.popen(r'''samtools view %s %s:%d-%d'''%(Initial_Bam,bamChr,target_region[0]-flank,target_region[-1]+flank))
+                fbam=os.popen(r'''samtools view -F 256 %s %s:%d-%d'''%(Initial_Bam,bamChr,target_region[0]-flank,target_region[-1]+flank))
                 num_of_reads=0
                 while True:
                     pbam=fbam.readline().strip().split()
@@ -5191,7 +5646,7 @@ else:
                 Double_Read_ThroughBP=[]
                 Single_Read_ThroughBP=[]
                 blackList=[]
-                fbam=os.popen(r'''samtools view %s %s:%d-%d'''%(Initial_Bam,bamChr,bps[0]-flank,bps[-1]+flank))
+                fbam=os.popen(r'''samtools view -F 256 %s %s:%d-%d'''%(Initial_Bam,bamChr,bps[0]-flank,bps[-1]+flank))
                 #   chr_link={}
                 #   num_of_reads=0
                 while True:
@@ -5331,7 +5786,7 @@ else:
                         pos1=int(Letter_Double_rec[key][0][3]) 
                         pos2=int(Letter_Double_rec[key][0][7])
                         bamChr=Letter_Double_rec[key][0][2]
-                        fbamtemp=os.popen(r'''samtools view %s %s:%d-%d'''%(Initial_Bam,bamChr,pos2,pos2+ReadLength))
+                        fbamtemp=os.popen(r'''samtools view -F 256 %s %s:%d-%d'''%(Initial_Bam,bamChr,pos2,pos2+ReadLength))
                         while True:
                             pbam=fbamtemp.readline().strip().split()
                             if not pbam: break
@@ -5613,7 +6068,7 @@ else:
                                     k2a.append(k3)
                                 else:
                                     k2b.append(k3)
-                            fbam=os.popen(r'''samtools view %s %s:%d-%d'''%(Initial_Bam,k1,min(k2a)-flank,max(k2a)+flank))
+                            fbam=os.popen(r'''samtools view -F 256 %s %s:%d-%d'''%(Initial_Bam,k1,min(k2a)-flank,max(k2a)+flank))
                             blackList=[]
                             temp_rec={} 
                             temp_rec_LowQual={}     
@@ -7888,13 +8343,13 @@ else:
                         if Uniparental_disomy_check(original_letters,bestletter)=='Pass':
                             print >>fo, ' '.join([str(bp_ele) for bp_ele in bps3])
                             print >>fo, '/'.join([''.join(bestletter[0]),''.join(bestletter[1])])
-                            #print  ' '.join([str(bp_ele) for bp_ele in bps3])
-                            #print  '/'.join([''.join(bestletter[0]),''.join(bestletter[1])])
+                            print  ' '.join([str(bp_ele) for bp_ele in bps3])
+                            print  '/'.join([''.join(bestletter[0]),''.join(bestletter[1])])
                             print >>fo, 'Theoretical Best Score: '+str(Best_IL_Score+Best_RD_Score+20)
                             if Best_Score_Rec>80:
                                 Best_Score_Rec=80
                             print >>fo, 'Current Best Scure: '+str(Best_Score_Rec+20)
-                            print >>fo, 'Time Consuming:'+str(datetime.timedelta(seconds=(time2-time1)))
+                            print>>fo, 'Time Consuming:'+str(datetime.timedelta(seconds=(time2-time1)))
                 fo.close()
             def Uniparental_disomy_check(original_letters,bestletter):
                 flag_out=0
@@ -8656,6 +9111,19 @@ else:
                 for k1 in sorted(GC_Median_Num.keys()):
                     if GC_Median_Num[k1]==0.0:
                         GC_Median_Num[k1]=Median_Pick(numbers)
+            def LN_bps2_Modify(bps2):
+                out=[]
+                for x in bps2:
+                    for y in x:
+                        if y in chromos_all:
+                            out.append([y])
+                        else:
+                            out[-1].append(y)
+                out2=[]
+                for x in out:
+                    if len(x)>1:
+                        out2.append(x)
+                return out2
             Define_Default_SVPredict()
             if not '--workdir' in dict_opts.keys():
                 print 'Error: please specify working directory using: --workdir'
@@ -8675,7 +9143,6 @@ else:
                     ref_prefix='.'.join(ref_file.split('.')[:-1])
                     global GC_hash
                     GC_hash=GC_Index_Readin(ref_prefix+'.GC_Content')
-                    chromos_all=[]
                     refFile=ref_file
                     if not os.path.isfile(ref_file):
                         print 'Error: wrong reference genome provided'
@@ -8683,6 +9150,7 @@ else:
                         if not os.path.isfile(ref_index):
                             print 'Error: reference genome not indexed'
                         else:
+                            global chromos_all
                             chromos_all=chromos_readin(ref_file)
                             if not '--sample' in dict_opts.keys():
                                 print 'Error: please specify either input file using --sample'
@@ -8814,8 +9282,9 @@ else:
                                                     ChrN_Median_Coverage[j]+=[GC_Median_Coverage[i][j]]
                                         GC_RD_Info_Complete(ref_file)
                                         for bpsk1 in sorted(bps_hash.keys()):
-                                            for bps2 in bps_hash[bpsk1]:
-                                                #print bps2
+                                            for bps2_new in bps_hash[bpsk1]:
+                                                bps2=LN_bps2_Modify(bps2_new)
+                                                print bps2
                                                 if qual_check_bps2(bps2)=='right':
                                                     Chromo=bps2[0][0]
                                                     K_RD=GC_Std_Coverage[str(Chromo)]/GC_Mean_Coverage[str(Chromo)]
@@ -8969,6 +9438,7 @@ else:
                                                             if len(Full_Info[9])==1:
                                                                 if Full_Info[1]['a']<GC_Mean_Coverage[Chr]/4 and Full_Info[2]<3:
                                                                     Run_Result=zero_RD_Process(run_flag)
+                                                                    if Run_Result=='Error': continue
                                                                     Best_Letter_Rec=Run_Result[0]
                                                                     Best_Score_Rec=Run_Result[1]
                                                                     run_flag=Run_Result[2]
@@ -8976,6 +9446,7 @@ else:
                                                                 else:
                                                                     if Full_Info[1]['a']<GC_Mean_Coverage[Chr]:
                                                                         Run_Result=one_RD_Process(run_flag,Score_rec_hash)
+                                                                        if Run_Result=='Error': continue
                                                                         Best_Letter_Rec=Run_Result[0]
                                                                         Best_Score_Rec=Run_Result[1]
                                                                         run_flag=Run_Result[2]
@@ -8984,6 +9455,7 @@ else:
                                                                     else:
                                                                         if Full_Info[1]['a']<2*GC_Mean_Coverage[Chr]:
                                                                             Run_Result=two_RD_Process(run_flag,Score_rec_hash)
+                                                                            if Run_Result=='Error': continue
                                                                             Best_Letter_Rec=Run_Result[0]
                                                                             Best_Score_Rec=Run_Result[1]
                                                                             run_flag=Run_Result[2]
@@ -8994,6 +9466,7 @@ else:
                                                                             copy_num_b=int(float(Full_Info[1]['a'])/(float(GC_Mean_Coverage[Chr])/2))+1
                                                                             if copy_num_b<4:
                                                                                 Run_Result=few_RD_Process(run_flag,Score_rec_hash)
+                                                                                if Run_Result=='Error': continue
                                                                                 Best_Letter_Rec=Run_Result[0]
                                                                                 Best_Score_Rec=Run_Result[1]
                                                                                 run_flag=Run_Result[2]
@@ -9001,6 +9474,7 @@ else:
                                                                                 #Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
                                                                             else:
                                                                                 Run_Result=many_RD_Process(run_flag)
+                                                                                if Run_Result=='Error': continue
                                                                                 Best_Letter_Rec=Run_Result[0]
                                                                                 Best_Score_Rec=Run_Result[1]
                                                                                 run_flag=Run_Result[2]
@@ -11663,7 +12137,7 @@ else:
                 if '--keep-temp-figs' in dict_opts.keys():
                     KeepFigure=dict_opts['--keep-temp-figs']
                 else:
-                    KeepFigure='Yes'
+                    KeepFigure='No'
                 global Trail_Number
                 if '--num-iteration' in dict_opts.keys():
                     Trail_Number=int(dict_opts['--num-iteration'])
@@ -11986,3 +12460,4 @@ else:
                             os.system(r'''rm -r %s'''%(NullPath))
                             os.system(r'''rm -r %s'''%(BPPath))
                             os.system(r'''rm -r %s'''%(TXTPath))
+
