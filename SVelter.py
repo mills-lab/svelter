@@ -2666,14 +2666,15 @@ else:
                 fo.close()
             def LN_Filter(LN_filein,SP_filein,workdir):
                 filein=workdir+'reference_SVelter/Segdup.bed'
-                chromo_name=LN_filein.split('.')[-6]
-                segdup_list=Segdup_readin(filein,chromo_name)
-                LN_list=LN_file_readin(LN_filein)
-                LN_keep_list=Compare_LN_list_against_Segdup_list(segdup_list,LN_list,chromo_name)
-                SP_list=SP_file_readin(SP_filein)
-                SP_keep_list=Compare_SP_list_against_Segdup_list(segdup_list,SP_list,chromo_name)
-                Write_filtered_LN_list(LN_keep_list,LN_filein)
-                Write_filtered_SP_list(SP_keep_list,SP_filein)
+                if os.path.isfile(filein):
+                    chromo_name=LN_filein.split('.')[-6]
+                    segdup_list=Segdup_readin(filein,chromo_name)
+                    LN_list=LN_file_readin(LN_filein)
+                    LN_keep_list=Compare_LN_list_against_Segdup_list(segdup_list,LN_list,chromo_name)
+                    SP_list=SP_file_readin(SP_filein)
+                    SP_keep_list=Compare_SP_list_against_Segdup_list(segdup_list,SP_list,chromo_name)
+                    Write_filtered_LN_list(LN_keep_list,LN_filein)
+                    Write_filtered_SP_list(SP_keep_list,SP_filein)
             import numpy
             import scipy
             import math
@@ -3714,7 +3715,7 @@ else:
                                             os.system(r'''cat %s >> %s'''%(BPOutputd,BPOutpute))
                                             os.system(r'''rm %s'''%(BPOutputd))
                                             print 'BPSearch Complete for '+bamF+'.'+chrF
-                                        print 'Time Consuming: '+str(time2-time1)
+                                            print 'Time Consuming: '+str(time2-time1)
     if function_name=='BPIntegrate':
         import glob
         import getopt
@@ -4061,7 +4062,7 @@ else:
                     if not tempall==[]:
                         out[k1]=tempall
                 return out
-            def LNd_hash_pair(LNd_hash):
+            def LNd_hash_pair(LNd_hash,SP_Info):
                 out={}
                 for k1 in LNd_hash.keys():
                     if k1.split('_')[0] in SP_Info.keys() and k1.split('_')[1] in SP_Info.keys():
@@ -4121,7 +4122,7 @@ else:
                         bpClu2=[]
                 del bpCluster
                 del bpClu2
-            def SP_info_ReadIn(bps_hash,bps_in_path):
+            def SP_info_ReadIn_pre(bps_hash,bps_in_path):
                 single_chromos=bps_hash[S_Sample][S_Para].keys()
                 SP_links={}
                 SP_Link1={}
@@ -5017,6 +5018,82 @@ else:
                     if not x[0] in remove and not x[1] in remove:
                         out.append(x)
                 return out
+            def LN_bps_write(S_Sample,S_Para):
+                SP_LI_in=SP_info_ReadIn_pre(bps_hash,bps_in_path)
+                SP_links=SP_LI_in[0]
+                SP_Info=SP_LI_in[1]
+                SP_Check=SP_LI_in[2]
+                S_Chr=bps_hash[S_Sample][S_Para].keys()[0] 
+                chrom_LN=bps_hash[S_Sample][S_Para][S_Chr][1].replace('.'+S_Chr+'.SPCff','.SPCff').replace('SPs','chromLNs')
+                LNall_hash=LNd_hash_readin(chrom_LN)
+                LNd_hash=LNall_hash[0]
+                LNe_hash=LNe_hash_Filter(LNall_hash[1])
+                LNd_hash=LNd_hash_pair(LNd_hash,SP_Info)
+                LN_out=[]
+                for k1 in LNe_hash.keys():
+                    for k2 in LNe_hash[k1]:
+                        temp=[]
+                        for k3 in k2:
+                            if k3 in chromos:
+                                temp.append([k3])
+                            else:
+                                if not temp==[]:
+                                    temp[-1].append(str(k3))
+                        LN_out.append(temp)
+                for k1 in LNd_hash.keys():
+                    for k2 in LNd_hash[k1]:
+                        temp=[]
+                        for k3 in k2:
+                            if k3 in chromos:
+                                temp.append([k3])
+                            else:
+                                if not temp==[]:
+                                    temp[-1].append(str(k3))
+                        LN_out.append(temp)
+                if not '--batch' in dict_opts.keys():
+                    fout=para_sample_bps_fold+S_Sample+'.txt'
+                    if not os.path.isfile(fout):
+                        fo=open(fout,'w')
+                    else:
+                        fo=open(fout,'a')
+                    for k1 in LN_out:
+                        for k2 in k1:
+                            print >>fo, ' '.join(k2)
+                        print >>fo, ' '
+                    fo.close()
+                else:
+                    if dict_opts['--batch']=='0':
+                        fout=para_sample_bps_fold+S_Sample+'.'+'LN'+'.'+'txt'
+                        if not os.path.isfile(fout):
+                            fo=open(fout,'w')
+                        else:
+                            fo=open(fout,'a')
+                        for k1 in LN_out:
+                            for k2 in k1:
+                                print >>fo, ' '.join(k2)
+                            print >>fo, ' '
+                        fo.close()
+                    else:
+                        max_num=int(dict_opts['--batch'])
+                        LN_out2=[[]]
+                        for k1 in LN_out:
+                            if len(LN_out2[-1])<max_num:
+                                LN_out2[-1].append(k1)
+                            else:
+                                LN_out2.append([])
+                                LN_out2[-1].append(k1)
+                        for k1 in LN_out2:
+                            rec+=1
+                            fout=para_sample_bps_fold+S_Sample+'.'+str(rec)+'.'+'txt'
+                            if not os.path.isfile(fout):
+                                fo=open(fout,'w')
+                            else:
+                                fo=open(fout,'a')
+                            for k2 in k1:
+                                for k3 in k2:
+                                    print >>fo, ' '.join(k3)
+                                print >>fo, ' '
+                            fo.close()
             import numpy
             import scipy
             import math
@@ -5093,25 +5170,26 @@ else:
                                     para_sample_bps_fold=bps_folder+S_Sample+'/'+S_Para+'/'
                                     global chromo_name
                                     for chromo_name in bps_hash[S_Sample][S_Para].keys():
-                                        print chromo_name
                                         SP_LN_Info=SP_LN_info_ReadIn(bps_hash,bps_in_path,chromo_name)
-                                        unique_SPs=SP_Info_Merge(SP_LN_Info[1])
-                                        modified_LNs=LN_Info_Correct(SP_LN_Info[0],unique_SPs)
-                                        multi_removed_LNs=multi_trans_detect(modified_LNs)
-                                        LN_LN_Merge=merge_LNs_into_LNs(multi_removed_LNs)
-                                        #not include SP info for now
-                                        #SP_LN_Merge_1=merge_SPs_into_LNs(unique_SPs,LN_LN_Merge)
-                                        if not '--batch' in dict_opts.keys():
-                                            write_bp_1a(LN_LN_Merge)
-                                        else:
-                                            if dict_opts['--batch']=='0':
-                                                write_bp_2a(LN_LN_Merge)
+                                        if not SP_LN_Info[1]=={} and not SP_LN_Info[0]==[]:
+                                            unique_SPs=SP_Info_Merge(SP_LN_Info[1])
+                                            modified_LNs=LN_Info_Correct(SP_LN_Info[0],unique_SPs)
+                                            multi_removed_LNs=multi_trans_detect(modified_LNs)
+                                            LN_LN_Merge=merge_LNs_into_LNs(multi_removed_LNs)
+                                            #not include SP info for now
+                                            #SP_LN_Merge_1=merge_SPs_into_LNs(unique_SPs,LN_LN_Merge)
+                                            if not '--batch' in dict_opts.keys():
+                                                write_bp_1a(LN_LN_Merge)
                                             else:
-                                                global file_length
-                                                file_length=int(dict_opts['--batch'])
-                                                global file_index
-                                                file_index=0
-                                                write_bp_3a(LN_LN_Merge,file_index)
+                                                if dict_opts['--batch']=='0':
+                                                    write_bp_2a(LN_LN_Merge)
+                                                else:
+                                                    global file_length
+                                                    file_length=int(dict_opts['--batch'])
+                                                    global file_index
+                                                    file_index=0
+                                                    write_bp_3a(LN_LN_Merge,file_index)
+                                    LN_bps_write(S_Sample,S_Para)
                                     '''
                                     SP_LI_in=SP_info_ReadIn(bps_hash,bps_in_path)
                                     SP_links=SP_LI_in[0]
@@ -9065,7 +9143,6 @@ else:
                     ref_prefix='.'.join(ref_file.split('.')[:-1])
                     global GC_hash
                     GC_hash=GC_Index_Readin(ref_prefix+'.GC_Content')
-                    chromos_all=[]
                     refFile=ref_file
                     if not os.path.isfile(ref_file):
                         print 'Error: wrong reference genome provided'
