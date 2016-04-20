@@ -21,7 +21,7 @@ git clone git@github.com:mills-lab/svelter.git
 
 recompile might be necessary
 ```
-python setup.py build_ext --inplace
+python setup.py install
 ```
 
 
