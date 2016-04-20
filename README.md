@@ -17,10 +17,14 @@ samtools: [http://samtools.sourceforge.net/](http://samtools.sourceforge.net/)
 Download and Install
 ```
 git clone git@github.com:mills-lab/svelter.git
-cd svelter
-chmod +x SVelter.py
-cp SVelter.py your/bin/directory/
 ```
+
+recompile might be necessary
+```
+python setup.py build_ext --inplace
+```
+
+
 Index Reference genome
 ``` 
 SVelter.py Setup --reference reference.fa --workdir /working/directory --exclude exclude.ref.bed --copyneutral CN2.ref.bed --ref-index indexed-ref/ --svelter-path SVelter/ 
@@ -37,7 +41,7 @@ Pre-indexed files for certain references are also available from [the box linked
 
 Index Reference genome
 ``` 
-SVelter.py Setup --reference hg19.fa --workdir /working/directory/ --exclude ../svelter/Support/Exclude.hg19.bed --copyneutral ../svelter/Support/CN2.hg19.bed --svelter-path ../svelter/  --ref-index ..Index.Reference/
+SVelter.py Setup --reference hg19.fa --workdir /working/directory/ --exclude ../svelter/Support/Exclude.hg19.bed --copyneutral ../svelter/Support/CN2.hg19.bed --svelter-path ../svelter/ --segdup ../svelter/Support/Segdup.hg19.bed --ref-index ..Index.Reference/
 ```
 Run SVelter with its default setting:
 ```
@@ -45,7 +49,8 @@ SVelter.py --sample sample.bam --workdir /working/directory/
 ```
 
 ###Required files:
-`exclude.ref.bed` and `CN2.ref.bed` are available from the folder *Support* for some versions of reference genome. Users could replace with their custom version as long as both are in bed format. For more details, please see *Support*. 
+`exclude.ref.bed` , `CN2.ref.bed`  and `Segdup.ref.bed`  are available from the folder *Support* for some versions of reference genome. Users could replace with their custom version as long as both are in bed format. For more details, please see *Support*. 
+
 
 *Pre-indexed* files of certain reference genomes have been produced through [box link](https://umich.box.com/s/t9kefajmkmsb6ajgaawo0erxosf32r2m). For specific reference, if not *pre-indexed* files provided, the optional parameter '--ref-index' could be omit and the indexed files would be produced through the setup step. 
 
