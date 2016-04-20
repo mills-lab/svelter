@@ -85,6 +85,7 @@ SVelter.py  [options]  [parameters]
 ```
 #####Optional Parameters:
 ```
+--segdup, absolute path of bed file indicating segmental duplications in genome, that would be excluded from analysis
 --ref-index, folders containin pre-indexed files, if applicable. For certain versions of human genome, the indexed files are availabel from https://github.com/mills-lab/svelter.
 ```
 ####For other step:
