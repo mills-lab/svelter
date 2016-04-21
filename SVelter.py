@@ -1220,7 +1220,7 @@ else:
                                                                     signIL+=1
                                                             if not pbam[5].find('S')==-1 or not pbam[5].find('H')==-1:
                                                                 ClippedLen=cigar2splitlen(pbam[5])
-                                                                ClippedPos=cigar2split_bpsearch(pbam[5])
+                                                                ClippedPos=cigar2split(pbam[5])
                                                                 ClippedQual=cigar2splitqual(pbam[5],pbam[10])
                                                                 if ClippedQual>QCSplit:
                                                                         ClipAbsPos=[]
@@ -3557,11 +3557,9 @@ else:
                 global Local_Minumum_Number
                 Local_Minumum_Number=100
                 global IL_Weight
-                global RD_Weight
                 global DR_Weight
                 global TB_Weight
                 IL_Weight=1
-                RD_Weight=1
                 DR_Weight=5
                 TB_Weight=5
             def Full_Info_of_Reads_Product(Initial_Bam,bps,total_bps,total_letters,bamChr,flank,QCAlign,ReadLength,chr_link):
@@ -4687,6 +4685,10 @@ else:
                                     if NullPath[0]=='/':
                                         NullPath=NullPath[1:]
                                 Insert_Len_Stat=NullPath+'ILNull.'+BamN+'.'+genome_name+'.Bimodal'
+                                RD_NB_Stat=NullPath+'RDNull.'+BamN+'.'+genome_name+'.NegativeBinomial'
+                                global RD_Weight
+                                RD_Weight=Insert_len_stat_readin(Insert_Len_Stat)/RD_NB_stat_readin(RD_NB_Stat)
+                                print 'RD_Weight: '+str(RD_Weight)
                                 if not os.path.isfile(Insert_Len_Stat):
                                     print 'Error: cannot access file: '+Insert_Len_Stat
                                 else:
@@ -5193,7 +5195,7 @@ else:
                                                                                     else:
                                                                                             if Best_Score<Best_Score_Rec:
                                                                                                     break_Iteration_Flag=1
-                                                                                                    print 'final best structure:'+str(Best_Score_Rec)
+                                                                                                    #print 'final best structure:'+str(Best_Score_Rec)
                                                                                             elif Best_Score==Best_Score_Rec:
                                                                                                     break_Iteration_Flag=1
                                                                                                     for i in Best_Letter:

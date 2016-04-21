@@ -13,6 +13,7 @@ import time
 import datetime
 import itertools
 import random
+from scipy.stats import norm
 def Af_Letter_QC(Af_Letter,Copy_num_estimate):
     Copy_Num_Real={}
     for i in Copy_num_estimate.keys():
@@ -646,7 +647,7 @@ def cigar2split(cigar):
     for n in cigars[1:]:
         if n[1]=='M' or n[1]=='D' or n[1]=='N':
             maplen+=int(n[0])
-        if n[1]=='S': 
+        if n[1] in ['S','H']: 
             MapLen.append(maplen-1)
     return MapLen
 def cigar2splitlength(cigar):
@@ -656,7 +657,7 @@ def cigar2splitlength(cigar):
         cigars.append((m.groups()[0],m.groups()[1]))
     splitlen=[]
     for i in cigars:
-        if i[1]=='S':
+        if i[1] in ['S','H']:
             splitlen.append(int(i[0]))
     return splitlen
 def cigar2splitlen(cigar):
@@ -1525,10 +1526,10 @@ def GC_RD_Adj_hash(GC_Median_Num,GC_Overall_Median_Num,Chromo,GC_Content,Coverag
             Be_Adj_RD=Coverage[key_1]
             GC_Con=int(round(GC_Content[key_1]*100))
             if GC_Con in GC_Median_Num.keys():
-                    Median_Coverage=GC_Median_Num[GC_Con]
-                    Af_Adj_RD=Be_Adj_RD*Overall_Median_Coverage/Median_Coverage
-            elif not GC_Con in GC_Median_Num.keys():
-                    Af_Adj_RD=Overall_Median_Coverage
+                Median_Coverage=GC_Median_Num[GC_Con]
+            else:
+                Median_Coverage=Overall_Median_Coverage
+            Af_Adj_RD=Be_Adj_RD*Overall_Median_Coverage/Median_Coverage
             Coverage_af_Adj[key_1]=Af_Adj_RD
     return  Coverage_af_Adj
 def GC_RD_Info_Complete(ref_file,GC_Median_Coverage,ChrN_Median_Coverage,GC_Overall_Median_Coverage,GC_Var_Coverage,GC_Mean_Coverage,GC_Std_Coverage,Chromosome):
@@ -3978,19 +3979,6 @@ def GC_index(ref_prefix,chrbam):
         if pref1[0]==chrbam: 
             Cov.append([int(pref1[1]),int(pref1[2])]+pref2)
     return Cov
-def GC_RD_Adj_hash(GC_Median_Num,GC_Overall_Median_Num,Chromo,GC_Content,Coverage):
-    Coverage_af_Adj={}
-    Overall_Median_Coverage=float(GC_Overall_Median_Num)
-    for key_1 in GC_Content.keys():
-            Be_Adj_RD=Coverage[key_1]
-            GC_Con=int(round(GC_Content[key_1]*100))
-            if GC_Con in GC_Median_Num.keys():
-                    Median_Coverage=GC_Median_Num[GC_Con]
-                    Af_Adj_RD=Be_Adj_RD*Overall_Median_Coverage/Median_Coverage
-            elif not GC_Con in GC_Median_Num.keys():
-                    Af_Adj_RD=Overall_Median_Coverage
-            Coverage_af_Adj[key_1]=Af_Adj_RD
-    return  Coverage_af_Adj
 def GC_Stat_ReadIn(BamN,GC_Stat_Path,genome_name,affix):
     GC_Stat_File=GC_Stat_Path+'/'+BamN+'.'+genome_name+affix
     f_GC_stat=open(GC_Stat_File)
@@ -4774,7 +4762,26 @@ def ori_let_Modi(Be_Info, ori_let2):
         else:
             out+=x
     return out
-
+def Insert_len_stat_readin(Insert_Len_Stat):
+    if os.path.isfile(Insert_Len_Stat):
+        fin=open(Insert_Len_Stat)
+        for line in fin:
+            pin=line.strip().split()
+        fin.close()
+        pdf_exp=norm.pdf(float(pin[1]),float(pin[1]),float(pin[2]))
+        return numpy.log(pdf_exp)
+    else:
+        return 1
+def RD_NB_stat_readin(RD_NB_Stat):
+    if os.path.isfile(RD_NB_Stat):
+        fin=open(RD_NB_Stat)
+        for line in fin:
+            pin=line.strip().split()
+        fin.close()
+        pdf_exp=norm.pdf(float(pin[1]),float(pin[1]),float(pin[2]))
+        return numpy.log(pdf_exp)
+    else:
+        return 1
 def RD_within_B_calcu(GC_Mean_Coverage,Full_Info,bps2):
     RD_within_B=Full_Info[0]
     RD_within_B['left']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
