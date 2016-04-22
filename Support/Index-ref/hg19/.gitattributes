@@ -1,1 +1,0 @@
-genome.GC_Content filter=lfs diff=lfs merge=lfs -text

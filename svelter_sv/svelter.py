@@ -4722,7 +4722,6 @@ else:
                                 RD_NB_Stat=NullPath+'RDNull.'+BamN+'.'+genome_name+'.NegativeBinomial'
                                 global RD_Weight
                                 RD_Weight=Insert_len_stat_readin(Insert_Len_Stat)/RD_NB_stat_readin(RD_NB_Stat)
-                                print 'RD_Weight: '+str(RD_Weight)
                                 if not os.path.isfile(Insert_Len_Stat):
                                     print 'Error: cannot access file: '+Insert_Len_Stat
                                 else:
@@ -4844,9 +4843,10 @@ else:
                                         [chrom_N,chrom_X,chrom_Y,GC_Median_Coverage,GC_Overall_Median_Coverage,GC_Var_Coverage,GC_Mean_Coverage,GC_Std_Coverage]=GC_RD_Info_Complete(ref_file,GC_Median_Coverage,ChrN_Median_Coverage,GC_Overall_Median_Coverage,GC_Var_Coverage,GC_Mean_Coverage,GC_Std_Coverage,Chromosome)
                                         GC_para_dict={'IL_Statistics':IL_Statistics,'GC_Overall_Median_Coverage':GC_Overall_Median_Coverage,'GC_Overall_Median_Num':GC_Overall_Median_Num,'GC_Median_Coverage':GC_Median_Coverage,'GC_Median_Num':GC_Median_Num,'GC_Mean_Coverage':GC_Mean_Coverage,'GC_Std_Coverage':GC_Std_Coverage,'GC_Var_Coverage':GC_Var_Coverage,'Coverage':Coverage}
                                         for bpsk1 in sorted(bps_hash.keys()):
+                                            if bpsk1>50: continue
                                             for bps2_new in bps_hash[bpsk1]:
                                                 bps2=LN_bps2_Modify(bps2_new,chromos_all)
-                                                #print bps2
+                                                print bps2
                                                 if len(bps2)>0 and qual_check_bps2(bps2)=='right':
                                                     Chromo=bps2[0][0]
                                                     if not str(Chromo) in GC_Std_Coverage.keys(): continue
