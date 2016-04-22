@@ -1,0 +1,7 @@
+CSV_type 'DUP_INV' 'DEL_INV' 'DEL_DUP' 'DEL_DUP_INV' 
+CSV_example  ab/aba^  ab/a^  abc/aba  abc/aba^
+disperse_dup ab/ab_ab/aba
+CSV_type_1	ab/ab_ab/aba^	 ab/ab_ab/b^ab   ab/ab_ab/b^a^b 
+CSV_type_2  abc/abc_abc/b^   abc/abc_abc/ac^    abc/abc_abc/a^c    abc/abc_abc/a^c^    abc/abc_abc/c^a^ 
+CSV_type_3  abc/abc_abc/aba    abc/abc_abc/cbc  
+CSV_type_4  abc/abc_abc/aba^    abc/abc_abc/c^bc    abc/abc_abc/aca^  

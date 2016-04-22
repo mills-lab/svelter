@@ -1,0 +1,180 @@
+#Delly
+Comp.Compare.Delly.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -p Delly/ --ref simulate/comp_het.SV.rec
+
+#Lumpy
+Comp.Compare.Lumpy.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -p Lumpy/ --ref simulate/comp_het.SV.rec
+
+#Pindel
+vcf.size.filter.py -i Pindel.het.RD.10.vcf --size 100
+vcf.size.filter.py -i Pindel.het.RD.20.vcf --size 100
+vcf.size.filter.py -i Pindel.het.RD.30.vcf --size 100
+vcf.size.filter.py -i Pindel.het.RD.40.vcf --size 100
+vcf.size.filter.py -i Pindel.het.RD.50.vcf --size 100
+
+Comp.Compare.Pindel.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -p Pindel/ --ref simulate/comp_het.SV.rec
+
+#erds:
+cp comp.het.RD10.RG.sorted.bam/20.del.events erds_comp_het_RD10.DEL.bed
+cp comp.het.RD10.RG.sorted.bam/20.dup.events erds_comp_het_RD10.DUP.bed
+cp comp.het.RD20.RG.sorted.bam/20.del.events erds_comp_het_RD20.DEL.bed
+cp comp.het.RD20.RG.sorted.bam/20.dup.events erds_comp_het_RD20.DUP.bed
+cp comp.het.RD30.RG.sorted.bam/20.del.events erds_comp_het_RD30.DEL.bed
+cp comp.het.RD30.RG.sorted.bam/20.dup.events erds_comp_het_RD30.DUP.bed
+cp comp.het.RD40.RG.sorted.bam/20.del.events erds_comp_het_RD40.DEL.bed
+cp comp.het.RD40.RG.sorted.bam/20.dup.events erds_comp_het_RD40.DUP.bed
+cp comp.het.RD50.RG.sorted.bam/20.del.events erds_comp_het_RD50.DEL.bed
+cp comp.het.RD50.RG.sorted.bam/20.dup.events erds_comp_het_RD50.DUP.bed
+
+cp comp.het.RD10.RG.sorted.bam/20.erds.vcf erds_comp_het_RD10.vcf
+cp comp.het.RD20.RG.sorted.bam/20.erds.vcf erds_comp_het_RD20.vcf
+cp comp.het.RD30.RG.sorted.bam/20.erds.vcf erds_comp_het_RD30.vcf
+cp comp.het.RD40.RG.sorted.bam/20.erds.vcf erds_comp_het_RD40.vcf
+cp comp.het.RD50.RG.sorted.bam/20.erds.vcf erds_comp_het_RD50.vcf
+
+Comp.Compare.erds.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -p erds/ --ref simulate/comp_het.SV.rec
+
+#SVelter
+cat comp.het.RD10.RG.sorted.realigned.*.svelter > comp.het.RD10.RG.sorted.realigned.svelter
+cat comp.het.RD20.RG.sorted.realigned.*.svelter > comp.het.RD20.RG.sorted.realigned.svelter
+cat comp.het.RD30.RG.sorted.realigned.*.svelter > comp.het.RD30.RG.sorted.realigned.svelter
+cat comp.het.RD40.RG.sorted.realigned.*.svelter > comp.het.RD40.RG.sorted.realigned.svelter
+cat comp.het.RD50.RG.sorted.realigned.*.svelter > comp.het.RD50.RG.sorted.realigned.svelter
+Comp.Compare.SVelter.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -i SVelter/comp.het.RD10.RG.sorted.realigned.svelter --ref simulate/comp_het.SV.rec --score_cff -20
+Comp.Compare.SVelter.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -i SVelter/comp.het.RD20.RG.sorted.realigned.svelter --ref simulate/comp_het.SV.rec --score_cff -20
+Comp.Compare.SVelter.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -i SVelter/comp.het.RD30.RG.sorted.realigned.svelter --ref simulate/comp_het.SV.rec --score_cff -20
+Comp.Compare.SVelter.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -i SVelter/comp.het.RD40.RG.sorted.realigned.svelter --ref simulate/comp_het.SV.rec --score_cff -20
+Comp.Compare.SVelter.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -i SVelter/comp.het.RD50.RG.sorted.realigned.svelter --ref simulate/comp_het.SV.rec --score_cff -20
+
+```/
+Comp.Compare.SVelter.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -p SVelter/bp_files.comp.het.RD10.RG.sorted.bam --ref simulate/comp_het.SV.rec
+Comp.Compare.SVelter.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -p SVelter/bp_files.comp.het.RD20.RG.sorted.bam --ref simulate/comp_het.SV.rec
+Comp.Compare.SVelter.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -p SVelter/bp_files.comp.het.RD30.RG.sorted.bam --ref simulate/comp_het.SV.rec
+Comp.Compare.SVelter.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -p SVelter/bp_files.comp.het.RD40.RG.sorted.bam --ref simulate/comp_het.SV.rec
+Comp.Compare.SVelter.py --ref_genome /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -p SVelter/bp_files.comp.het.RD50.RG.sorted.bam --ref simulate/comp_het.SV.rec
+/````
+
+
+###Move all .report to ./Stat.compare/
+... ...
+
+###Produce pbs scripts to analyze report
+
+
+#python
+import os
+def write_axiom_pbs_header(fout,JobToDo):
+        fo=open(fout,'w')
+        print >>fo, '#!/bin/bash'
+        print >>fo, ' '
+        print >>fo, '#PBS -N '+JobToDo
+        print >>fo, '#PBS -l mem=8gb,walltime=100:0:0,nodes=compute-4-3'
+        print >>fo, '#PBS -m a'
+        print >>fo, '#PBS -M xuefzhao@umich.edu'
+        print >>fo, '#PBS -o '+JobToDo+'.log'
+        print >>fo, '#PBS -e '+JobToDo+'.err'
+        print >>fo, '#PBS -V'
+        print >>fo, '#PBS -d .'
+        fo.close()
+
+def write_flux_pbs_header(fout,JobToDo):
+        fo=open(fout,'w')#!/bin/bash
+        print >>fo, ' '
+        print >>fo, '#PBS -N '+JobToDo
+        print >>fo, '#PBS -l mem=24gb,walltime=100:0:0,nodes=flux'
+        print >>fo, '#PBS -q flux'
+        print >>fo, '#PBS -m a'
+        print >>fo, '#PBS -M xuefzhao@umich.edu'
+        print >>fo, '#PBS -o '+JobToDo+'.log'
+        print >>fo, '#PBS -e '+JobToDo+'.err'
+        print >>fo, '#PBS -A remills_flux'
+        print >>fo, '#PBS -V'
+        print >>fo, '#PBS -d .'
+        fo.close()
+
+def write_flux_new_pbs_header(fout,JobToDo):
+        fo=open(fout,'w')#!/bin/bash
+        print >>fo, ' '
+        print >>fo, '#PBS -N '+JobToDo
+        print >>fo, '#PBS -l mem=8gb,walltime=300:0:0,nodes=flux'
+        print >>fo, '#PBS -q fluxod'
+        print >>fo, '#PBS -m a'
+        print >>fo, '#PBS -M xuefzhao@umich.edu'
+        print >>fo, '#PBS -o '+JobToDo+'.log'
+        print >>fo, '#PBS -e '+JobToDo+'.err'
+        print >>fo, '#PBS -A remills_fluxod'
+        print >>fo, '#PBS -V'
+        print >>fo, '#PBS -d .'
+        fo.close()
+
+def chromos_readin(ref):
+        fin=open(ref+'.fai')
+        chromos=[]
+        for line in fin:
+                pin=line.strip().split()
+                chromos.append(pin[0])
+        fin.close()
+        return chromos
+
+def path_mkdir(path):
+        if not os.path.isdir(path):
+                os.system(r'''mkdir %s'''%(path))
+
+ppre='/scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.FussyJunc/Simulate.comp.het/Stat.compare/'
+ref='/scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta'
+pbs_path=ppre+'pbs_Report.BPLink.pbs.py/'
+path_mkdir(pbs_path)
+command='Report.BPLink.Compare.2.py'
+import os
+for k1 in os.listdir(ppre):
+        if k1.split('.')[-1]=='report':
+                fpbs=pbs_path+k1+'.pbs'
+                JobToDo=k1
+                write_flux_new_pbs_header(fpbs,JobToDo)
+                fo=open(fpbs,'a')
+                print >>fo, ' '.join([command,'--ref',ref,'-i',ppre+k1])
+                fo.close()
+
+
+eg:Report.BPLink.Compare.2.py --ref /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta -i Stat.compare/erds.RD50.comp.het.SV.compare.report
+
+
+import os
+for k1 in os.listdir('./'):
+        if k1.split('.')[-1]=='Stat':
+                os.system(r'''cp %s %s'''%(k1,'stats/'+k1.replace('.Stat','.stat')))
+
+
+#chage_name:
+mv      SVelter.comp.het.RD10.RG.sorted.realigned.compare.2.stat        SVelter.RD10.comp.het.RG.sorted.realigned.compare.2.stat
+mv      SVelter.comp.het.RD20.RG.sorted.realigned.compare.2.stat        SVelter.RD20.comp.het.RG.sorted.realigned.compare.2.stat
+mv      SVelter.comp.het.RD30.RG.sorted.realigned.compare.2.stat        SVelter.RD30.comp.het.RG.sorted.realigned.compare.2.stat
+mv      SVelter.comp.het.RD40.RG.sorted.realigned.compare.2.stat        SVelter.RD40.comp.het.RG.sorted.realigned.compare.2.stat
+mv      SVelter.comp.het.RD50.RG.sorted.realigned.compare.2.stat        SVelter.RD50.comp.het.RG.sorted.realigned.compare.2.stat
+
+
+BPvcf.Stat.Analysis.py -i Delly.RD10.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Delly.RD20.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Delly.RD30.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Delly.RD40.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Delly.RD50.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Lumpy.RD10.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Lumpy.RD20.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Lumpy.RD30.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Lumpy.RD40.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Lumpy.RD50.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Pindel.RD10.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Pindel.RD20.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Pindel.RD30.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Pindel.RD40.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i Pindel.RD50.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i SVelter.RD10.comp.het.RG.sorted.realigned.compare.2.stat
+BPvcf.Stat.Analysis.py -i SVelter.RD20.comp.het.RG.sorted.realigned.compare.2.stat
+BPvcf.Stat.Analysis.py -i SVelter.RD30.comp.het.RG.sorted.realigned.compare.2.stat
+BPvcf.Stat.Analysis.py -i SVelter.RD40.comp.het.RG.sorted.realigned.compare.2.stat
+BPvcf.Stat.Analysis.py -i SVelter.RD50.comp.het.RG.sorted.realigned.compare.2.stat
+BPvcf.Stat.Analysis.py -i erds.RD10.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i erds.RD20.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i erds.RD30.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i erds.RD40.comp.het.SV.compare.2.stat
+BPvcf.Stat.Analysis.py -i erds.RD50.comp.het.SV.compare.2.stat
+

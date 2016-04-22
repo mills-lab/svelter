@@ -1,0 +1,375 @@
+#Het
+#SVelter:
+mv het.RD10.RG.sorted.vcf SVelter_het_RD10.RG.sorted.vcf
+mv het.RD20.RG.sorted.vcf SVelter_het_RD20.RG.sorted.vcf
+mv het.RD30.RG.sorted.vcf SVelter_het_RD30.RG.sorted.vcf
+mv het.RD40.RG.sorted.vcf SVelter_het_RD40.RG.sorted.vcf
+mv het.RD50.RG.sorted.vcf SVelter_het_RD50.RG.sorted.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input SVelter_het_RD10.RG.sorted.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input SVelter_het_RD20.RG.sorted.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input SVelter_het_RD30.RG.sorted.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input SVelter_het_RD40.RG.sorted.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input SVelter_het_RD50.RG.sorted.vcf
+
+
+#Delly:
+mv het_RD30_TRA.vcf Delly_het_RD30_TRA.vcf
+mv het_RD40_DEL.vcf Delly_het_RD40_DEL.vcf
+mv het_RD20_TRA.vcf Delly_het_RD20_TRA.vcf
+mv het_RD40_TRA.vcf Delly_het_RD40_TRA.vcf
+mv het_RD40_DUP.vcf Delly_het_RD40_DUP.vcf
+mv het_RD40_INV.vcf Delly_het_RD40_INV.vcf
+mv het_RD10_TRA.vcf Delly_het_RD10_TRA.vcf
+mv het_RD10_DUP.vcf Delly_het_RD10_DUP.vcf
+mv het_RD50_DEL.vcf Delly_het_RD50_DEL.vcf
+mv het_RD50_TRA.vcf Delly_het_RD50_TRA.vcf
+mv het_RD20_DUP.vcf Delly_het_RD20_DUP.vcf
+mv het_RD30_DUP.vcf Delly_het_RD30_DUP.vcf
+mv het_RD50_DUP.vcf Delly_het_RD50_DUP.vcf
+mv het_RD20_DEL.vcf Delly_het_RD20_DEL.vcf
+mv het_RD10_DEL.vcf Delly_het_RD10_DEL.vcf
+mv het_RD50_INV.vcf Delly_het_RD50_INV.vcf
+mv het_RD30_INV.vcf Delly_het_RD30_INV.vcf
+mv het_RD30_DEL.vcf Delly_het_RD30_DEL.vcf
+mv het_RD10_INV.vcf Delly_het_RD10_INV.vcf
+mv het_RD20_INV.vcf Delly_het_RD20_INV.vcf
+
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD50_INV.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD20_DEL.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD50_DEL.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD50_TRA.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD40_INV.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD10_INV.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD30_DEL.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD20_DUP.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD30_TRA.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD10_DUP.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD40_TRA.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD40_DEL.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD30_INV.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD20_TRA.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD50_DUP.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD10_TRA.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD10_DEL.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD30_DUP.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD40_DUP.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_het_RD20_INV.vcf
+
+
+#Delly_RP:
+mv het_RD30_TRA.vcf Delly_RP_het_RD30_TRA.vcf
+mv het_RD40_DEL.vcf Delly_RP_het_RD40_DEL.vcf
+mv het_RD20_TRA.vcf Delly_RP_het_RD20_TRA.vcf
+mv het_RD40_TRA.vcf Delly_RP_het_RD40_TRA.vcf
+mv het_RD40_DUP.vcf Delly_RP_het_RD40_DUP.vcf
+mv het_RD40_INV.vcf Delly_RP_het_RD40_INV.vcf
+mv het_RD10_TRA.vcf Delly_RP_het_RD10_TRA.vcf
+mv het_RD10_DUP.vcf Delly_RP_het_RD10_DUP.vcf
+mv het_RD50_DEL.vcf Delly_RP_het_RD50_DEL.vcf
+mv het_RD50_TRA.vcf Delly_RP_het_RD50_TRA.vcf
+mv het_RD20_DUP.vcf Delly_RP_het_RD20_DUP.vcf
+mv het_RD30_DUP.vcf Delly_RP_het_RD30_DUP.vcf
+mv het_RD50_DUP.vcf Delly_RP_het_RD50_DUP.vcf
+mv het_RD20_DEL.vcf Delly_RP_het_RD20_DEL.vcf
+mv het_RD10_DEL.vcf Delly_RP_het_RD10_DEL.vcf
+mv het_RD50_INV.vcf Delly_RP_het_RD50_INV.vcf
+mv het_RD30_INV.vcf Delly_RP_het_RD30_INV.vcf
+mv het_RD30_DEL.vcf Delly_RP_het_RD30_DEL.vcf
+mv het_RD10_INV.vcf Delly_RP_het_RD10_INV.vcf
+mv het_RD20_INV.vcf Delly_RP_het_RD20_INV.vcf
+
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD50_INV.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD20_DEL.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD50_DEL.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD50_TRA.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD40_INV.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD10_INV.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD30_DEL.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD20_DUP.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD30_TRA.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD10_DUP.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD40_TRA.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD40_DEL.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD30_INV.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD20_TRA.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD50_DUP.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD10_TRA.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD10_DEL.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD30_DUP.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD40_DUP.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Delly_RP_het_RD20_INV.vcf
+
+
+Lumpy:
+mv het.RD10.RG.pesr.bedpe Lumpy_het_RD10.RG.pesr.bedpe
+mv het.RD20.RG.pesr.bedpe Lumpy_het_RD20.RG.pesr.bedpe
+mv het.RD30.RG.pesr.bedpe Lumpy_het_RD30.RG.pesr.bedpe
+mv het.RD40.RG.pesr.bedpe Lumpy_het_RD40.RG.pesr.bedpe
+mv het.RD50.RG.pesr.bedpe Lumpy_het_RD50.RG.pesr.bedpe
+SV.Simple.Output.Process.py bedpe-to-bed --input Lumpy_het_RD10.RG.pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
+SV.Simple.Output.Process.py bedpe-to-bed --input Lumpy_het_RD20.RG.pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
+SV.Simple.Output.Process.py bedpe-to-bed --input Lumpy_het_RD30.RG.pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
+SV.Simple.Output.Process.py bedpe-to-bed --input Lumpy_het_RD40.RG.pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
+SV.Simple.Output.Process.py bedpe-to-bed --input Lumpy_het_RD50.RG.pesr.bedpe --reference /scratch/remills_flux/xuefzhao/reference/GRCh37/human_g1k_v37.fasta
+
+Pindel:
+vcf.size.filter.py -i Pindel.het.RD.10.vcf --size 100
+vcf.size.filter.py -i Pindel.het.RD.20.vcf --size 100
+vcf.size.filter.py -i Pindel.het.RD.30.vcf --size 100
+vcf.size.filter.py -i Pindel.het.RD.40.vcf --size 100
+vcf.size.filter.py -i Pindel.het.RD.50.vcf --size 100
+
+mv Pindel.het.RD.10.LargerThan100.vcf Pindel_het_RD10.LargerThan100.vcf
+mv Pindel.het.RD.20.LargerThan100.vcf Pindel_het_RD20.LargerThan100.vcf
+mv Pindel.het.RD.30.LargerThan100.vcf Pindel_het_RD30.LargerThan100.vcf
+mv Pindel.het.RD.40.LargerThan100.vcf Pindel_het_RD40.LargerThan100.vcf
+mv Pindel.het.RD.50.LargerThan100.vcf Pindel_het_RD50.LargerThan100.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Pindel_het_RD10.LargerThan100.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Pindel_het_RD20.LargerThan100.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Pindel_het_RD30.LargerThan100.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Pindel_het_RD40.LargerThan100.vcf
+SV.Simple.Output.Process.py vcf-to-bed --input Pindel_het_RD50.LargerThan100.vcf
+
+erds:
+awk {'print $1,$2,$3'}  het.RD10.RG.sorted.bam/20.del.events > erds_het_RD10.DEL.bed
+awk {'print $1,$2,$3'}  het.RD10.RG.sorted.bam/20.dup.events > erds_het_RD10.DUP.bed
+awk {'print $1,$2,$3'}  het.RD20.RG.sorted.bam/20.del.events > erds_het_RD20.DEL.bed
+awk {'print $1,$2,$3'}  het.RD20.RG.sorted.bam/20.dup.events > erds_het_RD20.DUP.bed
+awk {'print $1,$2,$3'}  het.RD30.RG.sorted.bam/20.del.events > erds_het_RD30.DEL.bed
+awk {'print $1,$2,$3'}  het.RD30.RG.sorted.bam/20.dup.events > erds_het_RD30.DUP.bed
+awk {'print $1,$2,$3'}  het.RD40.RG.sorted.bam/20.del.events > erds_het_RD40.DEL.bed
+awk {'print $1,$2,$3'}  het.RD40.RG.sorted.bam/20.dup.events > erds_het_RD40.DUP.bed
+awk {'print $1,$2,$3'}  het.RD50.RG.sorted.bam/20.del.events > erds_het_RD50.DEL.bed
+awk {'print $1,$2,$3'}  het.RD50.RG.sorted.bam/20.dup.events > erds_het_RD50.DUP.bed
+
+#alt_bed:
+cp Delly_het_RD10_DUP.DUP.bed Delly_het_RD10_DUP_TANDEM.DUP_TANDEM.bed
+cp Delly_het_RD20_DUP.DUP.bed Delly_het_RD20_DUP_TANDEM.DUP_TANDEM.bed
+cp Delly_het_RD30_DUP.DUP.bed Delly_het_RD30_DUP_TANDEM.DUP_TANDEM.bed
+cp Delly_het_RD40_DUP.DUP.bed Delly_het_RD40_DUP_TANDEM.DUP_TANDEM.bed
+cp Delly_het_RD50_DUP.DUP.bed Delly_het_RD50_DUP_TANDEM.DUP_TANDEM.bed
+cp Delly_RP_het_RD10_DUP.DUP.bed Delly_het_RD10_DUP_TANDEM.DUP_TANDEM.bed
+cp Delly_RP_het_RD20_DUP.DUP.bed Delly_het_RD20_DUP_TANDEM.DUP_TANDEM.bed
+cp Delly_RP_het_RD30_DUP.DUP.bed Delly_het_RD30_DUP_TANDEM.DUP_TANDEM.bed
+cp Delly_RP_het_RD40_DUP.DUP.bed Delly_het_RD40_DUP_TANDEM.DUP_TANDEM.bed
+cp Delly_RP_het_RD50_DUP.DUP.bed Delly_het_RD50_DUP_TANDEM.DUP_TANDEM.bed
+
+awk '{print $1,$2,$3,"het\t"}' erds_het_RD10.DEL.bed > erds_het_RD10.DEL.geno.bed
+awk '{print $1,$2,$3,"het\t"}' erds_het_RD10.DUP.bed > erds_het_RD10.DUP.geno.bed
+mv erds_het_RD10.DEL.geno.bed erds_het_RD10.DEL.bed
+mv erds_het_RD10.DUP.geno.bed erds_het_RD10.DUP.bed
+
+awk '{print $1,$2,$3,"het\t"}' erds_het_RD20.DEL.bed > erds_het_RD20.DEL.geno.bed
+awk '{print $1,$2,$3,"het\t"}' erds_het_RD20.DUP.bed > erds_het_RD20.DUP.geno.bed
+mv erds_het_RD20.DEL.geno.bed erds_het_RD20.DEL.bed
+mv erds_het_RD20.DUP.geno.bed erds_het_RD20.DUP.bed
+
+awk '{print $1,$2,$3,"het\t"}' erds_het_RD30.DEL.bed > erds_het_RD30.DEL.geno.bed
+awk '{print $1,$2,$3,"het\t"}' erds_het_RD30.DUP.bed > erds_het_RD30.DUP.geno.bed
+mv erds_het_RD30.DEL.geno.bed erds_het_RD30.DEL.bed
+mv erds_het_RD30.DUP.geno.bed erds_het_RD30.DUP.bed
+
+awk '{print $1,$2,$3,"het\t"}' erds_het_RD40.DEL.bed > erds_het_RD40.DEL.geno.bed
+awk '{print $1,$2,$3,"het\t"}' erds_het_RD40.DUP.bed > erds_het_RD40.DUP.geno.bed
+mv erds_het_RD40.DEL.geno.bed erds_het_RD40.DEL.bed
+mv erds_het_RD40.DUP.geno.bed erds_het_RD40.DUP.bed
+
+awk '{print $1,$2,$3,"het\t"}' erds_het_RD50.DEL.bed > erds_het_RD50.DEL.geno.bed
+awk '{print $1,$2,$3,"het\t"}' erds_het_RD50.DUP.bed > erds_het_RD50.DUP.geno.bed
+mv erds_het_RD50.DEL.geno.bed erds_het_RD50.DEL.bed
+mv erds_het_RD50.DUP.geno.bed erds_het_RD50.DUP.bed
+
+cp erds_het_RD10.DUP.bed erds_het_RD10.DUP_TANDEM.bed
+cp erds_het_RD20.DUP.bed erds_het_RD20.DUP_TANDEM.bed
+cp erds_het_RD30.DUP.bed erds_het_RD30.DUP_TANDEM.bed
+cp erds_het_RD40.DUP.bed erds_het_RD40.DUP_TANDEM.bed
+cp erds_het_RD50.DUP.bed erds_het_RD50.DUP_TANDEM.bed
+
+cp Lumpy_het_RD10.RG.pesr.DUP.bed Lumpy_het_RD10.RG.pesr.DUP_TANDEM.bed
+cp Lumpy_het_RD20.RG.pesr.DUP.bed Lumpy_het_RD20.RG.pesr.DUP_TANDEM.bed
+cp Lumpy_het_RD30.RG.pesr.DUP.bed Lumpy_het_RD30.RG.pesr.DUP_TANDEM.bed
+cp Lumpy_het_RD40.RG.pesr.DUP.bed Lumpy_het_RD40.RG.pesr.DUP_TANDEM.bed
+cp Lumpy_het_RD50.RG.pesr.DUP.bed Lumpy_het_RD50.RG.pesr.DUP_TANDEM.bed
+
+cp Pindel_het_RD20.LargerThan100.DUP_TANDEM.bed Pindel_het_RD20.LargerThan100.DUP.bed
+cp Pindel_het_RD10.LargerThan100.DUP_TANDEM.bed Pindel_het_RD10.LargerThan100.DUP.bed
+cp Pindel_het_RD30.LargerThan100.DUP_TANDEM.bed Pindel_het_RD30.LargerThan100.DUP.bed
+cp Pindel_het_RD40.LargerThan100.DUP_TANDEM.bed Pindel_het_RD40.LargerThan100.DUP.bed
+cp Pindel_het_RD50.LargerThan100.DUP_TANDEM.bed Pindel_het_RD50.LargerThan100.DUP.bed
+
+#python
+import os
+ppre='/scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.FussyJunc/Simulate.het/comparison/alt_bed/'
+ref_prefix='/scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.FussyJunc/Simulate.het/SVelter/reference_SVelter/genome.Mappable.bed'
+for k1 in os.listdir(ppre):
+ if k1.split('.')[-1]=='bed':
+  if not 'Mappable.' in k1:
+   os.system(r'''SV.Simple.Output.Process.py Mappable-Control --input %s --ref-prefix %s'''%(ppre+k1,ref_prefix))
+
+TRA_rec='/scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.FussyJunc/Simulate.het/sv_rec/het.het.TRA.rec'
+for k1 in os.listdir(ppre):
+ if k1.split('.')[-1]=='bed' and k1.split('.')[-2]=='Mappable':
+  os.system(r'''SV.Simple.Output.Process.py TRA-Control --TRA-rec %s --input %s'''%(TRA_rec,ppre+k1))
+
+pre='SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input'
+for k1 in os.listdir(ppre):
+ if k1.split('.')[-1]=='bed' and k1.split('.')[-3]=='Mappable':
+  os.system(r'''%s %s'''%(pre,ppre+k1))
+
+
+
+#ref_bed
+awk '{print $1,$2,$3,"het\t"}' het.DEL.bed > het.DEL.geno.bed
+awk '{print $1,$2,$3,"het\t"}' het.DUP.bed > het.DUP.geno.bed
+awk '{print $1,$2,$3,"het\t"}' het.DUP_TANDEM.bed > het.DUP_TANDEM.geno.bed
+awk '{print $1,$2,$3,"het\t"}' het.INV.bed > het.INV.geno.bed
+mv het.DEL.geno.bed  het.DEL.bed
+mv het.DUP.geno.bed  het.DUP.bed
+mv het.DUP_TANDEM.geno.bed  het.DUP_TANDEM.bed
+mv het.INV.geno.bed  het.INV.bed
+
+import os
+ppre='/scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.FussyJunc/Simulate.het/comparison/ref_bed/'
+ref_prefix='/scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.FussyJunc/Simulate.het/SVelter/reference_SVelter/genome.Mappable.bed'
+for k1 in os.listdir(ppre):
+ if k1.split('.')[-1]=='bed':
+  if not 'Mappable.' in k1:
+   os.system(r'''SV.Simple.Output.Process.py Mappable-Control --input %s --ref-prefix %s'''%(ppre+k1,ref_prefix))
+
+TRA_rec='/scratch/remills_flux/xuefzhao/Simulation.Xuefang/Simulate.FussyJunc/Simulate.het/sv_rec/het.het.TRA.rec'
+for k1 in os.listdir(ppre):
+ if k1.split('.')[-1]=='bed' and k1.split('.')[-2]=='Mappable':
+  os.system(r'''SV.Simple.Output.Process.py TRA-Control --TRA-rec %s --input %s'''%(TRA_rec,ppre+k1))
+
+pre='SV.Simple.Output.Process.py Size-Control --min-size 100 --max-size 1000000000 --input'
+for k1 in os.listdir(ppre):
+ if k1.split('.')[-1]=='bed' and k1.split('.')[-3]=='Mappable':
+  os.system(r'''%s %s'''%(pre,ppre+k1))
+
+
+
+ 
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD10_DEL.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD20_DEL.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD30_DEL.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD40_DEL.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD50_DEL.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD10.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD20.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD30.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD40.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD50.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD10.RG.pesr.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD20.RG.pesr.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD30.RG.pesr.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD40.RG.pesr.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD50.RG.pesr.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD10.LargerThan100.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD20.LargerThan100.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD30.LargerThan100.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD40.LargerThan100.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD50.LargerThan100.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD10.RG.sorted.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD20.RG.sorted.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD30.RG.sorted.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD40.RG.sorted.DEL.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DEL.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD50.RG.sorted.DEL.Mappable.TRAFree.min100.max1000000000.bed
+  
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD10_DUP.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD20_DUP.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD30_DUP.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD40_DUP.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD50_DUP.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD10.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD20.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD30.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD40.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD50.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD10.RG.pesr.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD20.RG.pesr.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD30.RG.pesr.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD40.RG.pesr.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD50.RG.pesr.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD10.LargerThan100.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD20.LargerThan100.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD30.LargerThan100.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD40.LargerThan100.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD50.LargerThan100.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD10.RG.sorted.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD20.RG.sorted.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD30.RG.sorted.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD40.RG.sorted.DUP.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD50.RG.sorted.DUP.Mappable.TRAFree.min100.max1000000000.bed
+
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD10_DUP_TANDEM.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD20_DUP_TANDEM.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD30_DUP_TANDEM.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD40_DUP_TANDEM.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD50_DUP_TANDEM.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD10.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD20.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD30.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD40.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed erds_het_RD50.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD10.LargerThan100.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD20.LargerThan100.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD30.LargerThan100.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD40.LargerThan100.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD50.LargerThan100.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD10.RG.sorted.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD20.RG.sorted.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD30.RG.sorted.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD40.RG.sorted.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD50.RG.sorted.DUP_TANDEM.Mappable.TRAFree.min100.max1000000000.bed
+
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD10_INV.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD20_INV.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD30_INV.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD40_INV.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Delly_het_RD50_INV.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD10.RG.pesr.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD20.RG.pesr.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD30.RG.pesr.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD40.RG.pesr.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Lumpy_het_RD50.RG.pesr.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD10.LargerThan100.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD20.LargerThan100.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD30.LargerThan100.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD40.LargerThan100.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed Pindel_het_RD50.LargerThan100.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD10.RG.sorted.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD20.RG.sorted.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD30.RG.sorted.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD40.RG.sorted.INV.Mappable.TRAFree.min100.max1000000000.bed
+ln -s het.INV.Mappable.TRAFree.min100.max1000000000.bed SVelter_het_RD50.RG.sorted.INV.Mappable.TRAFree.min100.max1000000000.bed
+
+
+
+
+
+
+
+Produce.Pseudo.ROC.stats.py  --path_ref ref_bed/ --path_in alt_bed/ --appdix .Mappable.TRAFree.min100.max1000000000.bed --RO_cff 0.5
+
+
+#R
+data=read.table('Pseudo.ROC.Mappable.TRAFree.min100.max1000000000.Stats',header=T)
+data2=data[1,]
+rec=0
+for(x in sort(unique(data$sample))){
+for (y in sort(unique(data$sv))){
+ rec=rec+1
+ temp=data[data[,1]==x & data[,2]==y,]
+ data2[rec,1]=x
+ data2[rec,2]=y
+ data2[rec,4]=sum(temp[,4])
+ data2[rec,5]=sum(temp[,5])
+ data2[rec,6]=sum(temp[,6])
+ data2[rec,7]=data2[rec,4]/data2[rec,5]
+ data2[rec,8]=data2[rec,4]/data2[rec,6]
+}}
+data2=data2[data2[,5]>0,]
+data2=data2[,-3]
+write.table(data2,'Simp.Het.Pseudo.ROC.Mappable.TRAFree.min100.max1000000000.Barplot.Stats',quote=F,col.names=T,row.names=F)
+
+
