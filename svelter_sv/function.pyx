@@ -1927,6 +1927,20 @@ def LN_Info_Correct(LN_hash,unique_SPs):
             else:
                 out[-1].append(k2)
     return out
+def unify_list(list):
+    out=[]
+    for x in list:
+        if not x in out:
+            out.append(x)
+    return out
+def order_int_list(list):
+    out1=[int(i) for i in list]
+    out1.sort()
+    out2=[]
+    for x in out1:
+        if not x in out2:
+            out2.append(x)
+    return out2
 def LN_bps_write(bps_hash,bps_folder,S_Sample,dict_opts,chromos,allchromos,bps_in_path):
     SP_LI_in=SP_info_ReadIn_pre(bps_hash,S_Sample,bps_in_path)
     SP_links=SP_LI_in[0]
@@ -1993,13 +2007,34 @@ def LN_bps_write(bps_hash,bps_folder,S_Sample,dict_opts,chromos,allchromos,bps_i
                         else:
                             LN_out2.append([])
                             LN_out2[-1].append(k1)
+                    LN_out3=[[[i for i in j if len(i)>1]for j in k]for k in LN_out2]
+                    LN_out4=[[j for j in k if len(j)>0]for k in LN_out3] 
+                    LN_out2=[] 
+                    for x in LN_out4:
+                        LN_out2.append([])
+                        for y in x:
+                            test={}
+                            for z in y:
+                                test_flag=0
+                                for u in z[1:]:
+                                    if not u.isdigit():
+                                        test_flag+=1
+                                if test_flag>0:continue
+                                if not z[0] in test.keys():
+                                    test[z[0]]=[]
+                                test[z[0]]+=z[1:]
+                            for z in test.keys():
+                                test[z]=order_int_list(test[z])
+                            if len(test)>0:
+                                LN_out2[-1].append([])
+                                for z in test.keys():
+                                    LN_out2[-1][-1].append([z]+[str(i) for i in test[z]])
+                    rec=0
                     for k1 in LN_out2:
                         rec+=1
-                        fout=bps_folder+S_Sample+'.'+str(rec)+'.'+'txt'
-                        if not os.path.isfile(fout):
-                            fo=open(fout,'w')
-                        else:
-                            fo=open(fout,'a')
+                        fout=bps_folder+S_Sample+'.LN.'+str(rec)+'.'+'txt'
+                        file_setup(fout)
+                        fo=open(fout,'a')
                         for k2 in k1:
                             for k3 in k2:
                                 print >>fo, ' '.join(k3)
@@ -2825,10 +2860,8 @@ def SP_Links_Info_Comple(SP_links,SP_link4):
                                     temp2.append(temp[rec1])
                     rec1+=1
         SP_link4[x]+=temp2
-def SP_LN_info_ReadIn(LN_filein,SP_filein):
+def SP_LN_info_ReadIn(LN_list,all_SPs,LN_filein,SP_filein):
     LN_Links={}
-    LN_list={}
-    all_SPs={}
     fin=open(LN_filein)
     for line in fin:
         pin=line.strip().split()
@@ -3556,8 +3589,9 @@ def write_bp_2a(LN_LN_Merge,bps_folder,chromo_name,S_Sample):
         print >>fo, ' '.join([chromo_name]+[str(i) for i in sorted(numpy.unique(x))])
         print >>fo, ' '
     fo.close()
-def write_bp_3a(LN_LN_Merge,file_index,bps_folder,file_length,chromo_name,S_Sample):
+def write_bp_3a(LN_LN_Merge,bps_folder,file_length,chromo_name,S_Sample):
     out_list=[[]]
+    file_index=0
     for x in LN_LN_Merge:
         if len(out_list[-1])<file_length:
             out_list[-1].append(x)
