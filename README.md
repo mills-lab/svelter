@@ -19,7 +19,7 @@ pip install . --user
 ```
 Setup working directory:
 ``` 
-svelter.py Setup --reference reference.fa --workdir /working/directory/ --support /folder/containing/supportive/files/ --ref-index /folder/containing/preindexed/files/
+svelter.py Setup --reference reference.fa --workdir /working/directory/ --support ../Support/hg19/ --ref-index ../Support/ref-index/hg19/
 ```
 Run svelter with its default setting:
 ```

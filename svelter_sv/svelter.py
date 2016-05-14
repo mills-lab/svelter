@@ -7399,7 +7399,7 @@ else:
     if not function_name in ['BPSearch_Predefined','PredefinedBP','Setup','NullModel','BPSearch','BPIntegrate','SVPredict','SVIntegrate','Clean']:
         import glob
         import getopt
-        opts,args=getopt.getopt(sys.argv[1:],'o:h:S:',['deterministic-flag=','help=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
+        opts,args=getopt.getopt(sys.argv[1:],'o:h:S:',['deterministic-flag=','help=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration=','keep-interval-files='])
         dict_opts=dict(opts)
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
             readme.print_default_parameters()
@@ -7693,6 +7693,11 @@ else:
                         NullPath=workdir+'NullModel.'+dict_opts['--sample'].split('/')[-1]
                         BPPath=workdir+'BreakPoints.'+dict_opts['--sample'].split('/')[-1]
                         TXTPath=workdir+'bp_files.'+dict_opts['--sample'].split('/')[-1]
-                        clean_path(NullPath)
-                        clean_path(BPPath)
-                        clean_path(TXTPath)
+                        if not '--keep-interval-files' in dict_opts.keys():
+                            clean_path(NullPath)
+                            clean_path(BPPath)
+                            clean_path(TXTPath)
+                        elif dict_opts['--keep-interval-files']=='FALSE':
+                            clean_path(NullPath)
+                            clean_path(BPPath)
+                            clean_path(TXTPath)                            
