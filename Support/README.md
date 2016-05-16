@@ -15,6 +15,8 @@ _SVelter.*.r_
 
 folder *ref-index* contains pre-indexed files for human reference hg19 and hg38. Feeding the path would accelerate svelter Setup.
 
+Please be aware that files named 'genome.GC_Content' under *ref-index* are restored through large file resources on github, which might require manually download.
+
 ####example of setting up working directory with all supportive files feeded:
 ```
 svelter.py Setup --workdir ./workdir/ --reference ref.fa --support ../Support/hg19/ --ref-index ../Support/ref-index/hg19/

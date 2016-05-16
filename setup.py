@@ -11,7 +11,7 @@ setup(
     author_email='xuefzhao@umich.edu',
     version='1.1.0',
     packages=['svelter_sv'],
-    scripts=["svelter_sv/svelter.py", "svelter_sv/SVelter.py"],
+    scripts=["svelter_sv/svelter.py"],
     ext_modules=cythonize("svelter_sv/*.pyx"),
     package_data={
         "SVelter": [
