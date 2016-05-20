@@ -13,7 +13,7 @@ samtools: http://samtools.sourceforge.net/
 ## Quick Start
 Download and Install
 ```
-git clone https://github.com/xuefzhao/svelter.git
+git clone https://github.com/mills-lab/svelter.git
 cd svelter
 pip install . --user
 ```
