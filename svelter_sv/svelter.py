@@ -1061,6 +1061,7 @@ else:
                                         InsertLen={}
                                         pAllS1=fAllS.readline().strip().split()
                                         pAllS2=fAllS.readline().strip().split()
+                                        [InsertLenMin,SplitMin,DRMin,BPSPCff,BPLNCff,SPCluLen]=[5,5,5,3,3,5]
                                         for i in range(len(pAllS1)):
                                                 InsertLen[pAllS1[i]]=pAllS2[i]
                                         for i in range(len(pAllS1)):
@@ -4843,7 +4844,8 @@ else:
                                         for bpsk1 in sorted(bps_hash.keys()):
                                             if bpsk1>50: continue
                                             for bps2_new in bps_hash[bpsk1]:
-                                                bps2=LN_bps2_Modify(bps2_new,chromos_all)
+                                                bps2_new_2=modify_bps2_new(bps2_new)
+                                                bps2=LN_bps2_Modify(bps2_new_2,chromos_all)
                                                 if len(bps2)>0 and qual_check_bps2(bps2)=='right':
                                                     Chromo=bps2[0][0]
                                                     if not str(Chromo) in GC_Std_Coverage.keys(): continue
@@ -4905,7 +4907,7 @@ else:
                                                                     if bps3[k1][sorted(bps3[k1].keys())[k2+1]][0]==bps3[k1][sorted(bps3[k1].keys())[k2]][-1]:
                                                                         bps4[k1][-1]+=[bps3[k1][sorted(bps3[k1].keys())[k2+1]][-1]]
                                                                     else:
-                                                                        bps4[k1].append([bps3[k1][sorted(bps3[k1].keys())[k2+1]]])
+                                                                        bps4[k1].append(bps3[k1][sorted(bps3[k1].keys())[k2+1]])
                                                         bps2=bps4_to_bps2(bps4)
                                                         Chr=bps2[0][0]
                                                         Flank_para_dict={'flank':flank,'Cut_Lower':Cut_Lower,'Cut_Upper':Cut_Upper,'ReadLength':ReadLength}
@@ -5226,7 +5228,6 @@ else:
                                                                                     else:
                                                                                             if Best_Score<Best_Score_Rec:
                                                                                                     break_Iteration_Flag=1
-                                                                                                    #print 'final best structure:'+str(Best_Score_Rec)
                                                                                             elif Best_Score==Best_Score_Rec:
                                                                                                     break_Iteration_Flag=1
                                                                                                     for i in Best_Letter:
@@ -5304,7 +5305,6 @@ else:
                                                                                         DECISION=DECISION_Score[0]
                                                                                         S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
                                                                                         Be_Letter=Letter_Rec[DECISION]
-                                                                                        #print Be_Letter
                                                                                         Be_BP=BP_Rec[DECISION]
                                                                                         if not S_DECISION in Score_rec_hash.keys():
                                                                                             Score_rec_hash[S_DECISION]=[Be_Letter]
@@ -5425,7 +5425,6 @@ else:
                                                                     speed_test=10
                                                                     t1_sptest=time.time()
                                                                     while True:
-                                                                        print Be_Letter
                                                                         if Move_Step>speed_test: break
                                                                         Move_Step+=1
                                                                         M_Key_0='_'.join(['Step',str(Move_Step),'M'])
@@ -5578,7 +5577,6 @@ else:
                                                                     t2_sptest=time.time()
                                                                     if t2_sptest-t1_sptest<10 or bpsk1<4:
                                                                         while True:
-                                                                                print Be_Letter
                                                                                 if Move_Step>Trail_Number: break
                                                                                 if best_iterations>Local_Minumum_Number: 
                                                                                     break_Iteration_Flag=1
@@ -5650,7 +5648,6 @@ else:
                                                                                     DECISION=DECISION_Score[0]
                                                                                     S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
                                                                                     Be_Letter=Letter_Rec[DECISION]
-                                                                                    #print Be_Letter
                                                                                     Be_BP=BP_Rec[DECISION]
                                                                                     if not S_DECISION in Score_rec_hash.keys():
                                                                                         Score_rec_hash[S_DECISION]=[Be_Letter]

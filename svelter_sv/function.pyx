@@ -2072,6 +2072,20 @@ def LN_Merge_Final_Check(LN_LN_Merge):
     for x in out:
         out2.append(list_unify(x))
     return out2
+def modify_bps2_new(bps2_new):
+    if len(bps2_new)>0:
+        out1={}
+        for k2 in bps2_new:
+            if not k2[0] in out1.keys():
+                out1[k2[0]]=[]
+            out1[k2[0]]+=k2[1:]
+        out=[]
+        for x in out1.keys():
+            out_temp=sorted([int(i) for i in out1[x]])
+            out.append([x]+[str(i) for i in out_temp])
+        return out
+    else:
+        return bps2_new
 def list_unify(list):
     out=[]
     list.sort()
