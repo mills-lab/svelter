@@ -1,7 +1,7 @@
 #SVelter
 
 ##Description
-This software is designed to identify both simple and complex rearrangements from paired-end sequencing data. Specific information regarding the methodology can be found in the respective publciation: 
+This software is designed to identify both simple and complex rearrangements from paired-end sequencing data. Specific information regarding the methodology can be found in the respective publication: 
 
 Zhao X, Emery SB, Myers B, Kidd JM, and Mills RE. Resolving complex strucural genomic rearrangements using a randomized approach. Genome Biology 2016 Jun 10;17:126
 
