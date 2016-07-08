@@ -1415,6 +1415,17 @@ def random_pick_cn2_region(cn2_file,whole_genome,chromos,len_genome,dict_opts):
                  out.append([i,str(j),str(j+dict_opts['--null-random-length']-1)])
     SamplingPercentage=1
     return out
+def end_cordi_calcu(pin):
+    chromo=pin[0]
+    start=int(pin[1])
+    end=0
+    for x in pin[7].split(';'):
+        if 'END' in x.split('='):
+            end=int(x.split('=')[1])
+    if not end==0:
+        return [chromo,start,end]
+    else:
+        return 'Error!'
 def file_setup(file):
     fin=open(file,'w')
     fin.close()
@@ -4057,17 +4068,6 @@ def GC_Median_Num_Correct(GC_Median_Num):
         if GC_Median_Num[k1]==0.0:
             GC_Median_Num[k1]=Median_Pick(numbers)
     return GC_Median_Num
-def end_cordi_calcu(pin):
-    chromo=pin[0]
-    start=int(pin[1])
-    end=0
-    for x in pin[7].split(';'):
-        if 'END' in x.split('='):
-            end=int(x.split('=')[1])
-    if not end==0:
-        return [chromo,start,end]
-    else:
-        return 'Error!'
 def inv_flag(k1,k2):
     if '^' in k2:
         return 1
@@ -4246,6 +4246,34 @@ def ref_base_readin(ref,chromo,pos):
         return REF_AL[0]
     else:
         return 'N'
+def RD_NB_stat_readin(RD_NB_Stat):
+    if os.path.isfile(RD_NB_Stat):
+        fin=open(RD_NB_Stat)
+        for line in fin:
+            pin=line.strip().split()
+        fin.close()
+        pdf_exp=norm.pdf(float(pin[1]),float(pin[1]),float(pin[2]))
+        return numpy.log(pdf_exp)
+    else:
+        return 1
+def RD_within_B_calcu(GC_Mean_Coverage,Full_Info,bps2):
+    RD_within_B=Full_Info[0]
+    RD_within_B['left']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
+    RD_within_B['right']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
+    for i in RD_within_B.keys():
+        RD_within_B[i+'^']=RD_within_B[i]
+    return RD_within_B
+def samtools_sort_process(mini_fout_N2,mini_fout_N3,mini_fout_N4):
+    import subprocess
+    try: subprocess.check_output("samtools", stderr=subprocess.STDOUT)
+    except Exception, e: x= e.output
+    samtools_type_decide=x.split('\n')
+    version=samtools_type_decide[2].split(' ')[1].split('.')[0]
+    if version=='0':
+        os.system(r'''samtools sort %s %s'''%(mini_fout_N2,mini_fout_N3))
+    else:
+        os.system(r'''samtools sort %s -T %s -o %s'''%(mini_fout_N2,mini_fout_N3,mini_fout_N3+'.bam'))
+    os.system(r'''samtools index %s '''%(mini_fout_N4))
 def simple_DEL_decide(k1,k2):
     out='Not_Simple_DEL' 
     if not k2==k1:
@@ -4675,11 +4703,27 @@ def Uniparental_disomy_check(original_letters,bestletter):
         return 'Uniparental_disomy'
     else:
         return 'Pass'
-def write_VCF_header(output_file,time):
+def chromo_contig_prepare(workdir):
+    out=[]
+    ppre=path_modify(workdir)
+    ref_file=workdir+'reference_SVelter/genome.fa'
+    out.append('##reference='+ref_file)
+    if os.path.isfile(ref_file+'.fai'):
+        fin=open(ref_file+'.fai')
+        for line in fin:
+            pin=line.strip().split()
+            if not '_' in pin[0] and not '-' in pin[0]:
+                out.append('##contig=<ID='+pin[0]+',length='+pin[1]+'>')
+        fin.close()
+    return out
+def write_VCF_header(output_file,time,workdir):
     fo=open(output_file,'w')
     print>>fo, '##fileformat=VCFv4.1'
     print>>fo,'##fileDate='+time.strftime("%Y%m%d")
-    print>>fo,'##reference=hg19'
+    ref_info=chromo_contig_prepare(workdir)
+    for x in ref_info:
+        print >>fo,x
+    #print>>fo,'##reference=hg19'
     print>>fo,'##INFO=<ID=BKPTID,Number=.,Type=String,Description="ID of the assembled alternate allele in the assembly file">'
     print>>fo,'##INFO=<ID=CIEND,Number=2,Type=Integer,Description="Confidence interval around END for imprecise variants">'
     print>>fo,'##INFO=<ID=CIPOS,Number=2,Type=Integer,Description="Confidence interval around POS for imprecise variants">'
@@ -4690,6 +4734,7 @@ def write_VCF_header(output_file,time):
     print>>fo,'##INFO=<ID=MEINFO,Number=4,Type=String,Description="Mobile element info of the form NAME,START,END,POLARITY">'
     print>>fo,'##INFO=<ID=SVLEN,Number=.,Type=Integer,Description="Difference in length between REF and ALT alleles">'
     print>>fo,'##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of structural variant">'
+    print>>fo,'##INFO=<ID=SVCLASS,Number=1,Type=String,Description="Classification of structural variant">'
     print>>fo,'##FILTER=<ID=LowQual,Description="Score of final structural - Theoretical Score <-50">'
     print>>fo,'##ALT=<ID=DEL,Description="Deletion">'
     print>>fo,'##ALT=<ID=DUP,Description="Duplication">'
@@ -4702,7 +4747,20 @@ def write_VCF_header(output_file,time):
     print>>fo,'##FORMAT=<ID=CNQ,Number=1,Type=Float,Description="Copy number genotype quality for imprecise events">'
     print>>fo,'\t'.join(['#CHROM','POS','ID','REF','ALT','QUAL','FILTER','INFO','FORMAT',output_file.split('/')[-1].replace('.vcf','')])
     fo.close()
-def write_VCF_main(output_file,sv_out,chromos,ref):
+def sv_reorganize_reorder(sv_reorganize):
+    out={}
+    for k1 in sv_reorganize.keys():
+        out[k1]={}
+        for k2 in sv_reorganize[k1].keys():
+            for k3 in sv_reorganize[k1][k2].keys():
+                for k4 in sv_reorganize[k1][k2][k3]:
+                    if not k4[1] in out[k1].keys():
+                        out[k1][k4[1]]={}
+                    if not k4[2] in out[k1][k4[1]].keys():
+                        out[k1][k4[1]][k4[2]]=[]
+                    out[k1][k4[1]][k4[2]].append(k4[:10])
+    return out
+def write_VCF_main(output_file,sv_out,chromos,ref,sv_type_record):
     fo=open(output_file,'a')
     sv_reorganize={}
     for k1 in sv_out.keys():
@@ -4727,6 +4785,15 @@ def write_VCF_main(output_file,sv_out,chromos,ref):
             for k3 in range(len(SVtemp_a)):
                 for k4 in SVtemp_b[k3]:
                     sv_reorganize[k1][start][k2].append(SVtemp_a[k3]+[k4])
+    for k1 in sv_reorganize.keys():
+        for k2 in sv_reorganize[k1].keys():
+            for k3 in sv_reorganize[k1][k2].keys():
+                for k4 in sv_reorganize[k1][k2][k3]:
+                    if k4[5]>0: continue
+                    else:
+                        k4[5]=0.0
+                        k4[6]='LowQual'
+    sv_reorganize=sv_reorganize_reorder(sv_reorganize)
     for k1 in chromos:
         if k1 in sv_reorganize.keys():
             for k2 in sorted(sv_reorganize[k1].keys()):
@@ -4734,6 +4801,11 @@ def write_VCF_main(output_file,sv_out,chromos,ref):
                     for k4 in sv_reorganize[k1][k2][k3]:
                         if k4[3]=='N':
                             k4[3]=ref_base_readin(ref,k4[0],k4[1])
+                        if ':'.join(k4[2].split(';')[:-1]) in sv_type_record.keys():
+                            SV_type=sv_type_record[':'.join(k4[2].split(';')[:-1])]
+                        else:
+                            SV_type=['unclassified/unclassified']
+                        k4[7]+=';SVCLASS='+SV_type[0]
                         print >>fo, '\t'.join([str(i) for i in k4])
     fo.close()
 def zero_RD_Process(original_bp_list,run_flag,Best_IL_Score,Best_RD_Score):
@@ -4820,20 +4892,31 @@ def Insert_len_stat_readin(Insert_Len_Stat):
         return numpy.log(pdf_exp)
     else:
         return 1
-def RD_NB_stat_readin(RD_NB_Stat):
-    if os.path.isfile(RD_NB_Stat):
-        fin=open(RD_NB_Stat)
-        for line in fin:
-            pin=line.strip().split()
-        fin.close()
-        pdf_exp=norm.pdf(float(pin[1]),float(pin[1]),float(pin[2]))
-        return numpy.log(pdf_exp)
-    else:
-        return 1
-def RD_within_B_calcu(GC_Mean_Coverage,Full_Info,bps2):
-    RD_within_B=Full_Info[0]
-    RD_within_B['left']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
-    RD_within_B['right']=numpy.mean([GC_Mean_Coverage[key_chr[0]] for key_chr in bps2])
-    for i in RD_within_B.keys():
-        RD_within_B[i+'^']=RD_within_B[i]
-    return RD_within_B
+def sv_info_score_modify(sv_info):
+    all_scores_pos=0
+    all_scores_neg=0
+    for x in sv_info.keys():
+        for y in sv_info[x].keys():
+            if y.split('/')[0].count('a')>2 or y.split('/')[1].count('a')>2:
+                for z in sv_info[x][y]:
+                    z[-1]=0
+            elif y=='/':
+                for z in sv_info[x][y]:
+                    z[-1]=100
+            else:
+                for z in sv_info[x][y]:
+                    if z[-1]>0:
+                        if z[-1]>all_scores_pos:
+                            all_scores_pos=z[-1]
+                    elif z[-1]<0:
+                        if z[-1]<all_scores_neg:
+                            all_scores_neg=z[-1]
+    for x in sv_info.keys():
+        for y in sv_info[x].keys():
+            if not y=='/':
+                for z in sv_info[x][y]:
+                    if z[-1]>0:
+                        z[-1]=int(float(z[-1])/float(all_scores_pos)*100)
+                    elif z[-1]<0:
+                        z[-1]=int(float(z[-1])/float(-all_scores_neg)*100)
+    return sv_info

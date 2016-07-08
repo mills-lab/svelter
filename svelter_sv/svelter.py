@@ -35,7 +35,7 @@ if len(sys.argv)<2:
     readme.print_default_parameters()
 else:
     from svelter_sv.function import *
-    function_name=sys.argv[1]    
+    function_name=sys.argv[1]
     if function_name=='Clean':
         import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','ref-index=','help=','batch=','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','segdup=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
@@ -1216,8 +1216,9 @@ else:
                                                         print >>fRDind, ' '.join(RD_RealRegion)
                                                         fRDind.close()
                                                 os.system(r'''samtools view -h -Sb -F 256 %s -o %s'''%(mini_fout_Name,mini_fout_N2))
-                                                os.system(r'''samtools sort %s %s'''%(mini_fout_N2,mini_fout_N3))
-                                                os.system(r'''samtools index %s '''%(mini_fout_N4))
+                                                samtools_sort_process(mini_fout_N2,mini_fout_N3,mini_fout_N4)
+                                                #os.system(r'''samtools sort %s %s'''%(mini_fout_N2,mini_fout_N3))
+                                                #os.system(r'''samtools index %s '''%(mini_fout_N4))
                                                 os.system(r'''rm %s'''%(mini_fout_N2))
                                                 os.system(r'''rm %s'''%(mini_fout_Name))
                                             temp_IL_Rec={}
@@ -6403,6 +6404,7 @@ else:
                 fin.close()
             def SV_Info_Write_svelter(sv_info):
                 temp1={}
+                sv_type_record={}
                 for k1 in sv_info.keys():
                     for k2 in sv_info[k1].keys():
                         for k3 in sv_info[k1][k2]:
@@ -6414,21 +6416,28 @@ else:
                                 temp1[k3[0]][int(k3[1])][int(k3[-2])]=[]
                             temp1[k3[0]][int(k3[1])][int(k3[-2])].append(k3+[k1,k2])
                 fo=open(output_file.replace('.vcf','.svelter'),'w')
-                print >>fo, '\t'.join(['chr','start','end','bp_info','ref','alt','score'])
+                print >>fo, '\t'.join(['chr','start','end','bp_info','ref','alt','alt_type','score'])
                 for k1 in chromos:
                     if k1 in temp1.keys():
                         for k2 in sorted(temp1[k1].keys()):
                             for k3 in sorted(temp1[k1][k2].keys()):
                                 for k4 in temp1[k1][k2][k3]:
-                                    chrom_svelter=k1
-                                    bp_start_svelter=k2
-                                    bp_end_svelter=k3
-                                    bps_info_svelter=':'.join(k4[:-3])
-                                    struc_ref_svelter=k4[-2]
-                                    struc_alt_svelter=k4[-1]
-                                    score_svelter=k4[-3]
-                                    print >>fo, '\t'.join([str(i) for i in [chrom_svelter,bp_start_svelter,bp_end_svelter,bps_info_svelter,struc_ref_svelter,struc_alt_svelter,score_svelter]])
+                                    if len(k4)<13:
+                                        chrom_svelter=k1
+                                        bp_start_svelter=k2
+                                        bp_end_svelter=k3
+                                        bps_info_svelter=':'.join(k4[:-3])
+                                        struc_ref_svelter=k4[-2]
+                                        struc_alt_svelter=k4[-1]
+                                        score_svelter=k4[-3]
+                                        output_old=[str(i) for i in [chrom_svelter,bp_start_svelter,bp_end_svelter,bps_info_svelter,struc_ref_svelter,struc_alt_svelter,score_svelter]]
+                                        output_new=svc.classify(output_old)
+                                        output_new2=output_new[:-2]+['/'.join(output_new[-2:])]
+                                        if not output_new[3] in sv_type_record.keys():
+                                            sv_type_record[output_new[3]]=[output_new2[-1]]
+                                        print >>fo, '\t'.join(output_new2)
                 fo.close()
+                return sv_type_record
             def sv_rec_2(sv_info):
                 for k1ab in sv_info.keys():
                     for k2ab in sv_info[k1ab].keys():
@@ -7048,6 +7057,7 @@ else:
             import time
             import datetime
             import itertools
+            import svelter_sv.sv_flyer as svc
             Define_Default_SVIntegrate()
             if not '--workdir' in dict_opts.keys():
                 print 'Error: please specify working directory using: --workdir'
@@ -7095,7 +7105,8 @@ else:
                             for k3 in os.listdir(path2):
                                 if k3.split('.')[-1]=='coverge':
                                     read_in_structures(path2+k3)
-                            SV_Info_Write_svelter(sv_info)
+                            sv_info=sv_info_score_modify(sv_info)
+                            sv_type_record=SV_Info_Write_svelter(sv_info)
                             dup1={}
                             disperse_dup={}
                             inv1={}
@@ -7108,8 +7119,8 @@ else:
                             hash_collaps()
                             hash_collaps2()
                             hash_collaps3()
-                            write_VCF_header(output_file,time)
-                            write_VCF_main(output_file,sv_out,chromos,ref)
+                            write_VCF_header(output_file,time,workdir)
+                            write_VCF_main(output_file,sv_out,chromos,ref,sv_type_record)
                         time2=time.time()
                         print 'SVIntegrate Complete !'
                         print 'Time Consuming: '+str(time2-time1)
