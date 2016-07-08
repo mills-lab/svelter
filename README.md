@@ -1,7 +1,9 @@
 #SVelter
 
 ##Description
-This software is designed to identify both simple and complex rearrangements from paired-end sequencing data. Users could ran it easily by just alling *svelter.py* with proper parameters. It's also possible to ran it on multiple cores by calling different sub-functions separately.
+This software is designed to identify both simple and complex rearrangements from paired-end sequencing data. Specific information regarding the methodology can be found in the respective publication: 
+
+Zhao X, Emery SB, Myers B, Kidd JM, and Mills RE. Resolving complex strucural genomic rearrangements using a randomized approach. Genome Biology 2016 Jun 10;17:126
 
 ##Required third-party resources
 ```
@@ -38,7 +40,7 @@ Pre-indexed files of certain reference genomes have been produced and kept under
 
 ###Attention:
 1. reference file should have been indexed by calling samtools first:  `samtools faidx ref.fasta`
-2. working directory is required to be writable for temporal files 
+2. working directory is required to be writable for temporary files 
 3. with large sample size (eg. >50X whole genome sequencing), it is recommended that these parameters `--null-copyneutral-perc 0.01` added to your command; with small ones (eg. <10x), `--null-copyneutral-perc 0.5` is recommended.   This parameter decides the number of CN2 regions extracted for building null model.
 
 
@@ -106,7 +108,7 @@ svelter.py  [options]  [parameters]
 ```
 
 
-###For faster processing, svelter could run with multiple cores:
+###For faster processing, svelter can by run with multiple cores:
 
 ####Step1: Build null models:
 ```
