@@ -3319,10 +3319,10 @@ def print_default_parameters_svintegrate():
     print 'Required Parameters:'
     print '    --sample, input alignment file in bam format'
     print '    --workdir, writable working directory.'
-    print '    --prefix, output prefix for vcf and svelter files'
+    print '    --input-path, path of .coverage files produced by SVelter SVPredict'
     print ' '
     print 'Optional Parameters:'
-    print '    --input-path, path of .coverage files produced by SVelter SVPredict'
+    print '    --prefix, output prefix for vcf and svelter files'
     print '    --qc-structure, minimum quality score of a resolved structure to be considered as PASS and included in the output vcf file'
 def pos_block_assign(block_bps_chr,read_pos,tolerance_bp):
     read_new=[]
