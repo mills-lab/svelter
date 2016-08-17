@@ -6422,6 +6422,7 @@ else:
                         for k2 in sorted(temp1[k1].keys()):
                             for k3 in sorted(temp1[k1][k2].keys()):
                                 for k4 in temp1[k1][k2][k3]:
+                                    if len(k4[-1])/len(k4[-2])>20: continue
                                     chrom_svelter=k1
                                     bp_start_svelter=k2
                                     bp_end_svelter=k3
