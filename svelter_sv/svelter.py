@@ -6422,20 +6422,19 @@ else:
                         for k2 in sorted(temp1[k1].keys()):
                             for k3 in sorted(temp1[k1][k2].keys()):
                                 for k4 in temp1[k1][k2][k3]:
-                                    if len(k4)<13:
-                                        chrom_svelter=k1
-                                        bp_start_svelter=k2
-                                        bp_end_svelter=k3
-                                        bps_info_svelter=':'.join(k4[:-3])
-                                        struc_ref_svelter=k4[-2]
-                                        struc_alt_svelter=k4[-1]
-                                        score_svelter=k4[-3]
-                                        output_old=[str(i) for i in [chrom_svelter,bp_start_svelter,bp_end_svelter,bps_info_svelter,struc_ref_svelter,struc_alt_svelter,score_svelter]]
-                                        output_new=svc.classify(output_old)
-                                        output_new2=output_new[:-2]+['/'.join(output_new[-2:])]
-                                        if not output_new[3] in sv_type_record.keys():
-                                            sv_type_record[output_new[3]]=[output_new2[-1]]
-                                        print >>fo, '\t'.join(output_new2)
+                                    chrom_svelter=k1
+                                    bp_start_svelter=k2
+                                    bp_end_svelter=k3
+                                    bps_info_svelter=':'.join(k4[:-3])
+                                    struc_ref_svelter=k4[-2]
+                                    struc_alt_svelter=k4[-1]
+                                    score_svelter=k4[-3]
+                                    output_old=[str(i) for i in [chrom_svelter,bp_start_svelter,bp_end_svelter,bps_info_svelter,struc_ref_svelter,struc_alt_svelter,score_svelter]]
+                                    output_new=svc.classify(output_old)
+                                    output_new2=output_new[:-2]+['/'.join(output_new[-2:])]
+                                    if not output_new[3] in sv_type_record.keys():
+                                        sv_type_record[output_new[3]]=[output_new2[-1]]
+                                    print >>fo, '\t'.join(output_new2)
                 fo.close()
                 return sv_type_record
             def sv_rec_2(sv_info):
