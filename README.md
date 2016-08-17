@@ -17,7 +17,7 @@ Download and Install
 ```
 git clone https://github.com/mills-lab/svelter.git
 cd svelter
-pip install . --user
+python setup.py install --user
 ```
 Setup working directory:
 ``` 
