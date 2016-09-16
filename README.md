@@ -40,8 +40,10 @@ Pre-indexed files of certain reference genomes have been produced and kept under
 
 ###Attention:
 1. reference file should have been indexed by calling samtools first:  `samtools faidx ref.fasta`
-2. working directory is required to be writable for temporary files 
-3. with large sample size (eg. >50X whole genome sequencing), it is recommended that these parameters `--null-copyneutral-perc 0.01` added to your command; with small ones (eg. <10x), `--null-copyneutral-perc 0.5` is recommended.   This parameter decides the number of CN2 regions extracted for building null model.
+2. in the Setup step, reference file should be specified by absolute path
+3. the pre-indexed files under ./Support/ref-index/ are restored through large file resources on github, which require manual download.
+4. working directory is required to be writable for temporary files 
+5. with large sample size (eg. >50X whole genome sequencing), it is recommended that these parameters `--null-copyneutral-perc 0.01` added to your command; with small ones (eg. <10x), `--null-copyneutral-perc 0.5` is recommended.   This parameter decides the number of CN2 regions extracted for building null model.
 
 
 ##Usage
