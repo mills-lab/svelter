@@ -1107,7 +1107,7 @@ else:
                                         ClusterLen2=int(ClusterLen/Window_Size+1)*Window_Size
                                         Min_Distinguish_Len=Window_Size
                                         subLnClusterLen=ClusterLen/2
-                                        if not '-S' in dict_opts.keys():    dict_opts['-S']=7
+                                        if not '-S' in dict_opts.keys():    dict_opts['-S']=5
                                         ILCffs=IL_CI_Decide(ILStats,int(dict_opts['-S']),model_comp)
                                         BPOutputa=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.SPs'
                                         file_initiate(BPOutputa)
@@ -4390,18 +4390,13 @@ else:
             def one_RD_Process(GC_para_dict,BP_para_dict,run_flag,Score_rec_hash):
                 #Letter_Candidates=[[[],[]],[['a'], []],[['a^'], []],[['a'], ['a']],[['a^'], ['a']],[['a^'], ['a^']],[['a','a^'], []],[['a^','a'], []],[['a^','a^'], []]]
                 Letter_Candidates=[[[],[]],[['a'], []],[['a^'], []],[['a'], ['a']],[['a^'], ['a']],[['a^'], ['a^']]]
-                if Ploidy==2:
-                    Letter_Candidates=Letter_Candidates
-                elif Ploidy==1:
-                    Letter_Candidates=[i for i in Letter_Candidates if i[0]==i[1]]
-                elif Ploidy==0:
-                    Letter_Candidates=[i for i in Letter_Candidates if ['a'] in i]
+                if Ploidy==2:        Letter_Candidates=Letter_Candidates
+                elif Ploidy==1:        Letter_Candidates=[i for i in Letter_Candidates if i[0]==i[1]]
+                elif Ploidy==0:        Letter_Candidates=[i for i in Letter_Candidates if ['a'] in i]
+                if inv_flag_overall<0.1:        Letter_Candidates=[i for i in Letter_Candidates if tag_inv(i)==0]
                 IL_RD_Temp_Info=Af_Rearrange_Info_Collect_2(BP_para_dict,Letter_Candidates)
                 if not IL_RD_Temp_Info=='Error':
-                    ILTemp=IL_RD_Temp_Info[0]
-                    RDTemp=IL_RD_Temp_Info[1]
-                    Letter_Rec=IL_RD_Temp_Info[2]
-                    BP_Rec=IL_RD_Temp_Info[3]
+                    [ILTemp,RDTemp,Letter_Rec,BP_Rec]=[IL_RD_Temp_Info[0],IL_RD_Temp_Info[1],IL_RD_Temp_Info[2],IL_RD_Temp_Info[3]]
                     if not ILTemp==[]:
                         DECISION_Score=Move_Decide_3(ILTemp,RDTemp,GC_para_dict['GC_Var_Coverage'])
                         Best_Letter_Rec=[Letter_Rec[DECISION_Score[0]]]
@@ -4423,22 +4418,15 @@ else:
             def two_RD_Process(GC_para_dict,BP_para_dict,run_flag,Score_rec_hash):
                 Letter_Candidates=struc_propose_single_block(2)+struc_propose_single_block(3)+struc_propose_single_block(4)+struc_propose_single_block(5)   
                 Letter_Candidates=[i for i in Letter_Candidates if not [] in i]
-                if [[], ['a', 'a']] in Letter_Candidates:
-                    del Letter_Candidates[Letter_Candidates.index([[], ['a', 'a']])]
-                if [[], ['a^', 'a^']] in Letter_Candidates:
-                    del Letter_Candidates[Letter_Candidates.index([[], ['a^', 'a^']])]
-                if Ploidy==2:
-                    Letter_Candidates=Letter_Candidates
-                elif Ploidy==1:
-                    Letter_Candidates=[i for i in Letter_Candidates if i[0]==i[1]]
-                elif Ploidy==0:
-                    Letter_Candidates=[i for i in Letter_Candidates if ['a'] in i]
+                if [[], ['a', 'a']] in Letter_Candidates:   del Letter_Candidates[Letter_Candidates.index([[], ['a', 'a']])]
+                if [[], ['a^', 'a^']] in Letter_Candidates:    del Letter_Candidates[Letter_Candidates.index([[], ['a^', 'a^']])]
+                if Ploidy==2:                    Letter_Candidates=Letter_Candidates
+                elif Ploidy==1:                   Letter_Candidates=[i for i in Letter_Candidates if i[0]==i[1]]
+                elif Ploidy==0:                   Letter_Candidates=[i for i in Letter_Candidates if ['a'] in i]
+                if inv_flag_overall<0.1:          Letter_Candidates=[i for i in Letter_Candidates if tag_inv(i)==0]
                 IL_RD_Temp_Info=Af_Rearrange_Info_Collect_2(BP_para_dict,Letter_Candidates)
                 if not IL_RD_Temp_Info=='Error':
-                    ILTemp=IL_RD_Temp_Info[0]
-                    RDTemp=IL_RD_Temp_Info[1]
-                    Letter_Rec=IL_RD_Temp_Info[2]
-                    BP_Rec=IL_RD_Temp_Info[3]
+                    [ILTemp,RDTemp,Letter_Rec,BP_Rec]=[IL_RD_Temp_Info[0],IL_RD_Temp_Info[1],IL_RD_Temp_Info[2],IL_RD_Temp_Info[3]]
                     if not ILTemp==[]:
                         DECISION_Score=Move_Decide_3(ILTemp,RDTemp,GC_para_dict['GC_Var_Coverage'])
                         Best_Letter_Rec=[Letter_Rec[DECISION_Score[0]]]
@@ -4458,18 +4446,13 @@ else:
             def few_RD_Process(GC_para_dict,BP_para_dict,run_flag,Score_rec_hash):
                 Letter_Candidates=struc_propose_single_block(copy_num_a)+struc_propose_single_block(copy_num_b)
                 Letter_Candidates=[i for i in Letter_Candidates if not [] in i]
-                if Ploidy==2:
-                    Letter_Candidates=Letter_Candidates
-                elif Ploidy==1:
-                    Letter_Candidates=[i for i in Letter_Candidates if i[0]==i[1]]
-                elif Ploidy==0:
-                    Letter_Candidates=[i for i in Letter_Candidates if ['a'] in i]
+                if Ploidy==2:   Letter_Candidates=Letter_Candidates
+                elif Ploidy==1:   Letter_Candidates=[i for i in Letter_Candidates if i[0]==i[1]]
+                elif Ploidy==0:   Letter_Candidates=[i for i in Letter_Candidates if ['a'] in i]
+                if inv_flag_overall<0.1:        Letter_Candidates=[i for i in Letter_Candidates if tag_inv(i)==0]
                 IL_RD_Temp_Info=Af_Rearrange_Info_Collect_2(BP_para_dict,Letter_Candidates)
                 if not IL_RD_Temp_Info=='Error':
-                    ILTemp=IL_RD_Temp_Info[0]
-                    RDTemp=IL_RD_Temp_Info[1]
-                    Letter_Rec=IL_RD_Temp_Info[2]
-                    BP_Rec=IL_RD_Temp_Info[3]
+                    [ILTemp,RDTemp,Letter_Rec,BP_Rec]=[IL_RD_Temp_Info[0],IL_RD_Temp_Info[1],IL_RD_Temp_Info[2],IL_RD_Temp_Info[3]]
                     if not ILTemp==[]:
                         DECISION_Score=Move_Decide_3(ILTemp,RDTemp,GC_para_dict['GC_Var_Coverage'])
                         Best_Letter_Rec=[Letter_Rec[DECISION_Score[0]]]
@@ -4488,18 +4471,13 @@ else:
                 else: return 'Error'
             def two_block_RD_Process(GC_para_dict,BP_para_dict,run_flag):
                 Letter_Candidates=struc_produce_two_block(Copy_num_estimate)
-                if Ploidy==2:
-                    Letter_Candidates=Letter_Candidates
-                elif Ploidy==1:
-                    Letter_Candidates=[i for i in Letter_Candidates if i[0]==i[1]]
-                elif Ploidy==0:
-                    Letter_Candidates=[i for i in Letter_Candidates if ['a','b'] in i]
+                if Ploidy==2:   Letter_Candidates=Letter_Candidates
+                elif Ploidy==1:   Letter_Candidates=[i for i in Letter_Candidates if i[0]==i[1]]
+                elif Ploidy==0:   Letter_Candidates=[i for i in Letter_Candidates if ['a','b'] in i]
+                if inv_flag_overall<0.1:        Letter_Candidates=[i for i in Letter_Candidates if tag_inv(i)==0]
                 IL_RD_Temp_Info=Af_Rearrange_Info_Collect_2(BP_para_dict,Letter_Candidates)
                 if not IL_RD_Temp_Info=='Error':
-                    ILTemp=IL_RD_Temp_Info[0]
-                    RDTemp=IL_RD_Temp_Info[1]
-                    Letter_Rec=IL_RD_Temp_Info[2]
-                    BP_Rec=IL_RD_Temp_Info[3]
+                    [ILTemp,RDTemp,Letter_Rec,BP_Rec]=[IL_RD_Temp_Info[0],IL_RD_Temp_Info[1],IL_RD_Temp_Info[2],IL_RD_Temp_Info[3]]
                     if not ILTemp==[]:
                         DECISION_Score=Move_Decide_3(ILTemp,RDTemp,GC_para_dict['GC_Var_Coverage'])
                         Best_Letter_Rec=[Letter_Rec[DECISION_Score[0]]]
@@ -4534,6 +4512,15 @@ else:
                 PC_max=numpy.log(find_max_bimodal(PC_Statistics[0]))  #calculate max_pdf of physical coverage
                 RD_Statistics=RD_Stat_readin(Read_Depth_Stat)
                 RD_max=numpy.log(find_max_negative_binomial(RD_Statistics))
+            def inv_structure_predict(Full_Info):
+                [Pair_Through,Read_Through,SingleR_Through]=[Full_Info[4],Full_Info[5],Full_Info[6]]
+                inv_pairs_count=0
+                all_count=len(Pair_Through)+len(Read_Through)
+                for x in Pair_Through:
+                    if x[-2:] in [['+','+'],['-','-']]: inv_pairs_count+=1
+                for x in Read_Through:
+                    if x[-2:] in [['+','+'],['-','-']]: inv_pairs_count+=1
+                return float(inv_pairs_count)/float(all_count)
             Define_Default_SVPredict()
             if not '--workdir' in dict_opts.keys():
                 print 'Error: please specify working directory using: --workdir'
@@ -4607,36 +4594,24 @@ else:
                                                         bps_hash[bp_key]=[]
                                                     bps_hash[bp_key].append(bps_temp)
                                                     bps_temp=[]
-                                                    if bp_key<3: 
-                                                        print pi
-                                            else:
-                                                bps_temp.append(pi)
+                                            else:       bps_temp.append(pi)
                                         fi.close()
                                         bps_hash_inter={}
                                         for k1 in bps_hash.keys():
                                             bps_hash_inter[k1]=[]
                                             for k2 in bps_hash[k1]:
-                                                if not k2 in bps_hash_inter[k1]:
-                                                    bps_hash_inter[k1].append(k2)
+                                                if not k2 in bps_hash_inter[k1]:        bps_hash_inter[k1].append(k2)
                                         bps_hash=bps_hash_inter
                                         output_Score_File=dict_opts['--out-path']+'_'.join(dict_opts['--bp-file'].split('/')[-1].split('.')[:-1])+'.coverge'
                                         file_setup(output_Score_File)
                                         for bpsk1 in sorted(bps_hash.keys()):
                                             for bps2 in bps_hash[bpsk1]:
                                                 for i in bps2:
-                                                    if len(i)<3:
-                                                        i.append(str(int(i[-1])+Window_Size))
+                                                    if len(i)<3:    i.append(str(int(i[-1])+Window_Size))
                                         GC_Stat_Path=NullPath+'RD_Stat'
                                         Affix_GC_Stat='_MP'+str(QCAlign)+'_GC_Coverage_ReadLength'
                                         [GC_Content_Coverage,Chromosome,Coverage_0]=GC_Stat_ReadIn(BamN,GC_Stat_Path,genome_name,Affix_GC_Stat)
-                                        Coverage=[int(k) for k in Coverage_0]
-                                        GC_Overall_Median_Coverage={}
-                                        GC_Overall_Median_Num=[]
-                                        GC_Median_Coverage={}
-                                        GC_Median_Num={}
-                                        GC_Mean_Coverage={}
-                                        GC_Std_Coverage={}
-                                        GC_Var_Coverage={}
+                                        [Coverage,GC_Overall_Median_Coverage,GC_Overall_Median_Num,GC_Median_Coverage,GC_Median_Num,GC_Mean_Coverage,GC_Std_Coverage,GC_Var_Coverage]=[[int(k) for k in Coverage_0],{},[],{},{},{},{},{}]
                                         for a in Chromosome:
                                             if a in GC_Content_Coverage.keys():
                                                 GC_Overall_temp=[]
@@ -4664,18 +4639,14 @@ else:
                                                         GC_Var_Coverage[a]=(GC_Std_Coverage[a])**2
                                         GC_Overall_Median_Num=Median_Pick([i for i in GC_Overall_Median_Num if not i==0])
                                         for a in GC_Median_Num.keys():
-                                            if GC_Median_Num[a]==[]:
-                                                GC_Median_Num[a]=GC_Overall_Median_Num
-                                            else:
-                                                GC_Median_Num[a]=Median_Pick(GC_Median_Num[a])
+                                            if GC_Median_Num[a]==[]:                        GC_Median_Num[a]=GC_Overall_Median_Num
+                                            else:                                           GC_Median_Num[a]=Median_Pick(GC_Median_Num[a])
                                         GC_Median_Num=GC_Median_Num_Correct(GC_Median_Num)
                                         ChrN_Median_Coverage={}
                                         for i in GC_Median_Coverage.keys():
                                             for j in GC_Median_Coverage[i].keys():
-                                                if not j in ChrN_Median_Coverage.keys():
-                                                    ChrN_Median_Coverage[j]=[GC_Median_Coverage[i][j]]
-                                                else:
-                                                    ChrN_Median_Coverage[j]+=[GC_Median_Coverage[i][j]]
+                                                if not j in ChrN_Median_Coverage.keys():     ChrN_Median_Coverage[j]=[GC_Median_Coverage[i][j]]
+                                                else:                                        ChrN_Median_Coverage[j]+=[GC_Median_Coverage[i][j]]
                                         [chrom_N,chrom_X,chrom_Y,GC_Median_Coverage,GC_Overall_Median_Coverage,GC_Var_Coverage,GC_Mean_Coverage,GC_Std_Coverage]=GC_RD_Info_Complete(ref_file,GC_Median_Coverage,ChrN_Median_Coverage,GC_Overall_Median_Coverage,GC_Var_Coverage,GC_Mean_Coverage,GC_Std_Coverage,Chromosome)
                                         GC_para_dict={'IL_Statistics':IL_Statistics,'GC_Overall_Median_Coverage':GC_Overall_Median_Coverage,'GC_Overall_Median_Num':GC_Overall_Median_Num,'GC_Median_Coverage':GC_Median_Coverage,'GC_Median_Num':GC_Median_Num,'GC_Mean_Coverage':GC_Mean_Coverage,'GC_Std_Coverage':GC_Std_Coverage,'GC_Var_Coverage':GC_Var_Coverage,'Coverage':Coverage}
                                         for bpsk1 in sorted(bps_hash.keys()):
@@ -4715,9 +4686,7 @@ else:
                                                     if letter_tGC=='error': continue
                                                     letter_tRD=letter_RD_ReadIn(chr_letter_tbp)
                                                     if letter_tRD=='error': continue
-                                                    chr_letter_bp={}
-                                                    letter_GC={}
-                                                    letter_RD={}
+                                                    [chr_letter_bp,letter_GC,letter_RD]=[{},{},{}]
                                                     for k1 in chr_letter_tbp.keys():
                                                         chr_letter_bp[k1]={}
                                                         letter_GC[k1]={}
@@ -4755,14 +4724,15 @@ else:
                                                         if Copy_num_Check==[]:
                                                             Full_Info=Full_Info_of_Reads_Integrate(GC_para_dict,Flank_para_dict,bps2)
                                                             RD_within_B=RD_within_B_calcu(GC_Mean_Coverage,Full_Info,bps2)
+                                                            global inv_flag_overall
+                                                            inv_flag_overall=inv_structure_predict(Full_Info)
                                                             for j in range(Cut_Lower,Cut_Upper+1):
                                                                 Single_ILScore=pdf_calculate(j,IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero)
                                                                 Best_IL_Score+=Single_ILScore*exp(Single_ILScore)
                                                             let_chr_rec={}
                                                             for i in chr_letter_bp.keys():
                                                                 for j in chr_letter_bp[i].keys():
-                                                                    if j in left_keys:
-                                                                        let_chr_rec[j]=i
+                                                                    if j in left_keys:      let_chr_rec[j]=i
                                                             for i in let_chr_rec.keys():
                                                                 Theo_RD=GC_Overall_Median_Coverage[str(let_chr_rec[i])]
                                                                 Theo_Var=GC_Var_Coverage[str(let_chr_rec[i])]
@@ -4773,20 +4743,14 @@ else:
                                                             #if Copy_num_Check==[]:
                                                             median_CN=GC_Overall_Median_Coverage[chrom_N]/2
                                                             for key in Initial_GCRD_Adj.keys():
-                                                                if not key in ['left','right']:
-                                                                    Block_CN_Upper[key]=Initial_GCRD_Adj[key]/median_CN+2
-                                                            Initial_DR=Full_Info[2]
-                                                            Initial_IL=Full_Info[3]
-                                                            #Initial_Info=Full_Info[4]+Full_Info[5]+Full_Info[6]
-                                                            BlockGC=Full_Info[7]
+                                                                if not key in ['left','right']:    Block_CN_Upper[key]=Initial_GCRD_Adj[key]/median_CN+2
+                                                            [Initial_DR,Initial_IL,BlockGC,original_bp_list,original_letters]=[Full_Info[2],Full_Info[3],Full_Info[7],Full_Info[8],Full_Info[9]]
                                                             BlockGC['left']=0.476
                                                             BlockGC['right']=0.476
                                                             BlockGC2={}
                                                             for key_B_GC in BlockGC.keys():
                                                                 BlockGC2[key_B_GC]=BlockGC[key_B_GC]
                                                                 BlockGC2[key_B_GC+'^']=BlockGC[key_B_GC]    
-                                                            original_letters=Full_Info[9]
-                                                            original_bp_list=Full_Info[8]
                                                             Be_BP_Letter={}
                                                             for let_key in original_letters:
                                                                 Be_BP_Letter[let_key]=original_bp_list[original_letters.index(let_key)+1]-original_bp_list[original_letters.index(let_key)]
@@ -4804,10 +4768,7 @@ else:
                                                             for i in ori_let2:
                                                                 ori_bp2.append(ori_bp2[-1]+Be_BP_Letter[i])
                                                             Initial_TB=0
-                                                            Initial_Move_Prob=[1.0/3,1.0/3,1.0/3]
-                                                            Pair_Through=Full_Info[4]
-                                                            Read_Through=Full_Info[5]
-                                                            SingleR_Through=Full_Info[6]
+                                                            [Pair_Through,Read_Through,SingleR_Through]=[Full_Info[4],Full_Info[5],Full_Info[6]]
                                                             bp_MP=[original_bp_list,original_bp_list]
                                                             letter_MP=[original_letters,original_letters]
                                                             Be_BP=[ori_bp2,ori_bp2]
@@ -4831,39 +4792,28 @@ else:
                                                                 if Full_Info[1]['a']<GC_Mean_Coverage[Chr]/4 and Full_Info[2]<3:
                                                                     Run_Result=zero_RD_Process(original_bp_list,run_flag,Best_IL_Score,Best_RD_Score)
                                                                     if Run_Result=='Error': continue
-                                                                    Best_Letter_Rec=Run_Result[0]
-                                                                    Best_Score_Rec=Run_Result[1]
-                                                                    run_flag=Run_Result[2]
+                                                                    [Best_Letter_Rec,Best_Score_Rec,run_flag]=[Run_Result[0],Run_Result[1],Run_Result[2]]
                                                                     Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
                                                                 else:
                                                                     if Full_Info[1]['a']<GC_Mean_Coverage[Chr]:
                                                                         Run_Result=one_RD_Process(GC_para_dict,BP_para_dict,run_flag,Score_rec_hash)
                                                                         if Run_Result=='Error': continue
-                                                                        Best_Letter_Rec=Run_Result[0]
-                                                                        Best_Score_Rec=Run_Result[1]
-                                                                        run_flag=Run_Result[2]
+                                                                        [Best_Letter_Rec,Best_Score_Rec,run_flag]=[Run_Result[0],Run_Result[1],Run_Result[2]]
                                                                         Score_rec_hash=Run_Result[3]
-                                                                        #Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
                                                                     else:
                                                                         if Full_Info[1]['a']<2*GC_Mean_Coverage[Chr]:
                                                                             Run_Result=two_RD_Process(GC_para_dict,BP_para_dict,run_flag,Score_rec_hash)
                                                                             if Run_Result=='Error': continue
-                                                                            Best_Letter_Rec=Run_Result[0]
-                                                                            Best_Score_Rec=Run_Result[1]
-                                                                            run_flag=Run_Result[2]
+                                                                            [Best_Letter_Rec,Best_Score_Rec,run_flag]=[Run_Result[0],Run_Result[1],Run_Result[2]]
                                                                             Score_rec_hash=Run_Result[3]
-                                                                            #Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
                                                                         else:
                                                                             copy_num_a=int(float(Full_Info[1]['a'])/(float(GC_Mean_Coverage[Chr])/2))
                                                                             copy_num_b=int(float(Full_Info[1]['a'])/(float(GC_Mean_Coverage[Chr])/2))+1
                                                                             if copy_num_b<4:
                                                                                 Run_Result=few_RD_Process(GC_para_dict,BP_para_dict,run_flag,Score_rec_hash)
                                                                                 if Run_Result=='Error': continue
-                                                                                Best_Letter_Rec=Run_Result[0]
-                                                                                Best_Score_Rec=Run_Result[1]
-                                                                                run_flag=Run_Result[2]
+                                                                                [Best_Letter_Rec,Best_Score_Rec,run_flag]=[Run_Result[0],Run_Result[1],Run_Result[2]]
                                                                                 Score_rec_hash=Run_Result[3]
-                                                                                #Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
                                                                             else:
                                                                                 Run_Result=many_RD_Process(copy_num_a,run_flag)
                                                                                 if Run_Result=='Error': continue
@@ -4879,9 +4829,7 @@ else:
                                                                 if bl2_flag==0:
                                                                     Run_Result=two_block_RD_Process(GC_para_dict,BP_para_dict,run_flag)
                                                                     if Run_Result=='Error': continue
-                                                                    Best_Letter_Rec=Run_Result[0]
-                                                                    Best_Score_Rec=Run_Result[1]
-                                                                    run_flag=Run_Result[2]
+                                                                    [Best_Letter_Rec,Best_Score_Rec,run_flag]=[Run_Result[0],Run_Result[1],Run_Result[2]]
                                                                     Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
                                                             if run_flag==0:
                                                                 if deterministic_flag==0:
@@ -4891,7 +4839,9 @@ else:
                                                                         if Move_Step>speed_test: break
                                                                         Move_Step+=1
                                                                         [M_Key_0,P_Key_0]=['_'.join(['Step',str(Move_Step),'M']),'_'.join(['Step',str(Move_Step),'P'])]
-                                                                        Move_Sample_Pool=['delete','invert','insert']
+                                                                        if inv_flag_overall<0.1:         Move_Sample_Pool=['delete','insert']
+                                                                        else:   Move_Sample_Pool=['delete','invert','insert']
+                                                                        Initial_Move_Prob=[float(1)/float(len(Move_Sample_Pool)) for i in range(len(Move_Sample_Pool))]
                                                                         Move_M_P=Move_Choose(Move_Sample_Pool,Ploidy,Initial_Move_Prob)
                                                                         M_Move_Choices=Move_Choice_procedure_2(Move_M_P[0],Be_Letter[0],original_letters,'2m')
                                                                         P_Move_Choices=Move_Choice_procedure_2(Move_M_P[1],Be_Letter[1],original_letters,'2p')

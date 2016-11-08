@@ -1643,6 +1643,13 @@ def IL_Penal_Calcu(read_info,IL_Statistics,Cut_Upper,Cut_Lower,Penalty_For_Inser
     for j in Initial_IL:
         Initial_ILPenal+=[pdf_calculate(j,IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero)/len(Initial_IL)]
     return Initial_ILPenal
+def tag_inv(letter_in):
+    #eg of letter_in=[['a^'], []]
+    out=0
+    for x in letter_in:
+        for y in x:
+            if '^' in y:    out+=1
+    return out
 def insert_block_produce(Letter_List,Letter_List_origin):
     Insert_Pool=[]
     for i in Letter_List_origin:
