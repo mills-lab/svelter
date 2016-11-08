@@ -393,7 +393,7 @@ def IL_Stat_Simp(StatFile):
     STD1=float(p1[2])
     fstat.close()
     return [[Mean1,0,STD1,1,1,0],[1,Mean1,STD1]]
-def IL_Stat(StatFile):  
+def IL_Stat_readin(StatFile):  
     fstat=open(StatFile)
     temp=fstat.readline()
     temp=fstat.readline()
@@ -414,6 +414,13 @@ def IL_Stat(StatFile):
     STD3=float(p1[2])
     fstat.close()
     return [[Mean1,Mean2,STD1,STD2,Prop1,Prop2],[Prop3,Mean3,STD3]]
+def RD_Stat_readin(StatFile):
+    #eg of StatFile='/scratch/remills_flux/xuefzhao/SV_discovery_index/download/NullModel.NA19240.alt_bwamem_GRCh38DH.20150715.YRI.high_coverage.cram/RDNull.NA19240.alt_bwamem_GRCh38DH.20150715.YRI.high_coverage.genome.NegativeBinomial'
+    fstat=open(StatFile)
+    temp=fstat.readline()
+    p1=fstat.readline().strip().split()
+    fstat.close()
+    return [float(i) for i in p1]
 def CI_Calculate_Bimodal(ILStats,Times_of_stds):
     alpha1=float(ILStats['bimodal']['Bimodal1'])
     miu1=float(ILStats['bimodal']['Mean1'])
@@ -521,6 +528,7 @@ def calculate_len_genome(ref):
     for i in whole_genome.keys():
         len_genome+=whole_genome[i][0]
     return [whole_genome,len_genome]
+
 def cdf_solver_application(Insert_Len_Stat,cdf,model_comp):
     fstat=open(Insert_Len_Stat)
     temp=fstat.readline()
@@ -635,26 +643,32 @@ def cigar2reaadlength(cigar):
         if n[1]=='M' or n[1]=='D' or n[1]=='N':
             MapLen+=int(n[0])
     return MapLen
-def cigar2split(cigar):
+def cigar2cigars(cigar):
     pcigar=re.compile(r'''(\d+)([MIDNSHP=X])''')
     cigars=[]
     for m in pcigar.finditer(cigar):
         cigars.append((m.groups()[0],m.groups()[1]))
+    return cigars
+def cigar2split(cigar):
+    cigars=cigar2cigars(cigar)
     MapLen=[]
     maplen=0
     if cigars[0][1] in ['S','H']:
         MapLen.append(0)
-    for n in cigars[1:]:
-        if n[1]=='M' or n[1]=='D' or n[1]=='N':
-            maplen+=int(n[0])
-        if n[1] in ['S','H']: 
-            MapLen.append(maplen-1)
+        for n in cigars[1:]:
+            if n[1]=='M' or n[1]=='D' or n[1]=='N':
+                maplen+=int(n[0])
+            if n[1] in ['S','H']: 
+                MapLen.append(maplen-1)
+    else:
+        for n in cigars:
+            if n[1]=='M' or n[1]=='D' or n[1]=='N':
+                maplen+=int(n[0])
+            if n[1] in ['S','H']: 
+               MapLen.append(maplen-1)         
     return MapLen
 def cigar2splitlength(cigar):
-    pcigar=re.compile(r'''(\d+)([MIDNSHP=X])''')
-    cigars=[]
-    for m in pcigar.finditer(cigar):
-        cigars.append((m.groups()[0],m.groups()[1]))
+    cigars=cigar2cigars(cigar)
     splitlen=[]
     for i in cigars:
         if i[1] in ['S','H']:
@@ -1459,22 +1473,6 @@ def GC_Content_Calculate(seq2):
     NumAT_new=int(float(NumAT)/float(total_num)*100)
     NumGC_new=int(float(NumGC)/float(total_num)*100)
     return [NumGC_new,NumAT_new]            
-def GC_RD_Adj(GC_Median_Num,GC_Overall_Median_Num,Chromo,GC_Content,Coverage):
-    Coverage_af_Adj=[]
-    GC_Content=[float(i) for i in GC_Content]
-    Coverage=[float(i) for i in Coverage]
-    Overall_Median_Coverage=float(GC_Overall_Median_Num)
-    for key_1 in range(len(GC_Content)):
-            Be_Adj_RD=Coverage[key_1]
-            GC_Con=GC_Content[key_1]
-            GC_Con=int(round(GC_Con*100))
-            if GC_Con in GC_Median_Num.keys():
-                    Median_Coverage=GC_Median_Num[GC_Con]
-                    Af_Adj_RD=Be_Adj_RD*Overall_Median_Coverage/Median_Coverage
-            elif not GC_Con in GC_Median_Num.keys():
-                    Af_Adj_RD=Overall_Median_Coverage
-            Coverage_af_Adj+=[Af_Adj_RD]
-    return Coverage_af_Adj
 def GC_Stat_ReadIn(BamN,GC_Stat_Path,genome_name,affix):
     GC_Stat_File=GC_Stat_Path+'/'+BamN+'.'+genome_name+affix
     f_GC_stat=open(GC_Stat_File)
@@ -1633,6 +1631,18 @@ def IL_Prob_Bimodal(IL_Length,ILStats):
 def IL_Prob_Normal(IL_Length,ILStats):
     log_y=-0.5*numpy.log(2*numpy.pi)-numpy.log(float(ILStats['normal']['std']))-(float(IL_Length)-float(ILStats['normal']['Mean']))**2/2/float(ILStats['normal']['std'])**2
     return log_y
+def IL_Penal_Calcu(read_info,IL_Statistics,Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero):
+    Initial_IL=[]
+    for j2 in read_info[2].keys():
+        for j in read_info[2][j2]:
+            Initial_IL.append(j[3]-j[1])
+    for j2 in read_info[3].keys():
+        for j in read_info[3][j2]:
+            Initial_IL.append(j[3]-j[1])
+    Initial_ILPenal=[]
+    for j in Initial_IL:
+        Initial_ILPenal+=[pdf_calculate(j,IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero)/len(Initial_IL)]
+    return Initial_ILPenal
 def insert_block_produce(Letter_List,Letter_List_origin):
     Insert_Pool=[]
     for i in Letter_List_origin:
@@ -1652,18 +1662,6 @@ def invert_block_produce(Letter_List):
 def invert_BPs_produce(Letter_List):
     invert_BPs=[(j+1,j+2) for j in range(len(Letter_List))]
     return invert_BPs
-def IL_Penal_Calcu(read_info,IL_Statistics,Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero):
-    Initial_IL=[]
-    for j2 in read_info[2].keys():
-        for j in read_info[2][j2]:
-            Initial_IL.append(j[3]-j[1])
-    for j2 in read_info[3].keys():
-        for j in read_info[3][j2]:
-            Initial_IL.append(j[3]-j[1])
-    Initial_ILPenal=[]
-    for j in Initial_IL:
-        Initial_ILPenal+=[pdf_calculate(j,IL_Statistics[4],IL_Statistics[0],IL_Statistics[1],IL_Statistics[2],IL_Statistics[3],Cut_Upper,Cut_Lower,Penalty_For_InsertLengthZero)/len(Initial_IL)]
-    return Initial_ILPenal
 def letter_range_report(flank,chr_letter_bp):
     ks_range={}
     for k1 in chr_letter_bp.keys():
@@ -2300,7 +2298,8 @@ def Move_Choice_procedure_2(Move,Letter_List,Letter_List_origin,ChrAllele):
 def Move_Decide_deterministic(IL_List,RD_List,GC_Var_Coverage):
     IL_Weight=1
     RD_Weight=1
-    regulator=-numpy.max([(IL_List[j]*IL_Weight+RD_List[j]*RD_Weight) for j in range(len(IL_List))])/5
+    #regulator=-numpy.max([(IL_List[j]*IL_Weight+RD_List[j]*RD_Weight) for j in range(len(IL_List))])/5
+    regulator=1
     T_Penal=[(IL_List[j]*IL_Weight+RD_List[j]*RD_Weight)/regulator for j in range(len(IL_List))]
     T2_Penal=[math.exp(k) for k in T_Penal]
     Normalized_Penal=[l/numpy.sum(T2_Penal) for l in T2_Penal]
@@ -2310,20 +2309,24 @@ def Move_Decide_2(IL_List,RD_List,GC_Var_Coverage):
     #here, we add direction as an extra part to IL penalty
     IL_Weight=1
     RD_Weight=1
-    regulator=-numpy.max([(IL_List[j]*IL_Weight+RD_List[j]*RD_Weight) for j in range(len(IL_List))])/5
+    #regulator=-numpy.max([(IL_List[j]*IL_Weight+RD_List[j]*RD_Weight) for j in range(len(IL_List))])/5
+    regulator=1
     T_Penal=[(IL_List[j]*IL_Weight+RD_List[j]*RD_Weight)/regulator for j in range(len(IL_List))]
     T2_Penal=[math.exp(k) for k in T_Penal]
-    Normalized_Penal=[l/numpy.sum(T2_Penal) for l in T2_Penal]
-    indicator=float(random.choice(range(1000)))/1000
-    for j in range(len(IL_List)):
-        cdf=numpy.sum(Normalized_Penal[:j+1])
-        if cdf>indicator or cdf==indicator:
-            return [j,IL_List[j]*IL_Weight+RD_List[j]*RD_Weight]
+    if sum(T2_Penal)>0:
+        Normalized_Penal=[l/numpy.sum(T2_Penal) for l in T2_Penal]
+        indicator=float(random.choice(range(1000)))/1000
+        for j in range(len(IL_List)):
+            cdf=numpy.sum(Normalized_Penal[:j+1])
+            if cdf>indicator or cdf==indicator:
+                return [j,IL_List[j]*IL_Weight+RD_List[j]*RD_Weight]
+    return ''
 def Move_Decide_3(IL_List,RD_List,GC_Var_Coverage):
     #pick the highest scored structure as the final
     IL_Weight=1
     RD_Weight=1
-    regulator=-numpy.max([(IL_List[j]*IL_Weight+RD_List[j]*RD_Weight) for j in range(len(IL_List))])/5
+    #regulator=-numpy.max([(IL_List[j]*IL_Weight+RD_List[j]*RD_Weight) for j in range(len(IL_List))])/5
+    regulator=1
     T_Penal=[(IL_List[j]*IL_Weight+RD_List[j]*RD_Weight)/regulator for j in range(len(IL_List))]
     T_Penal_modify=[]
     T_Penal_Rec=[]
@@ -2642,6 +2645,11 @@ def Prob_NB(Number, Mean, Variance):
         return -Number
 def Prob_Norm(Number, Mean, Variance):
     return -0.5*math.log(2*numpy.pi*Variance)-(Number-Mean)**2/2/Variance
+def Prob_Standard_Norm(Number,Mean,Variance):
+    Number_new=(float(Number)-float(Mean))/float(sqrt(Variance))
+    Mean_new=0
+    Variance_new=1
+    return -0.5*math.log(2*numpy.pi*Variance_new)-(Number_new-Mean_new)**2/2/Variance_new
 def pos_define_and_redefine(pbam,ReadLen,real_region,Window_Size,RD_RealRegion):
     pos1=int(pbam[3])
     pos2=int(pbam[3])+ReadLen
@@ -3029,12 +3037,12 @@ def SPLCff_Calculate(NullSplitLen_perc,SPLenStat,ReadLength):
                     if float(subSPlit)/float(totalSPlit)>NullSplitLen_perc: 
                             break
             SPLCff=key-1
-            if SPLCff>ReadLength/10:
-                SPLCff=ReadLength/10
+            if SPLCff>ReadLength/20:
+                SPLCff=ReadLength/20
         else:
-            SPLCff=ReadLength/10
-        if SPLCff<10:
-            SPLCff=10
+            SPLCff=ReadLength/20
+        if SPLCff<5:
+            SPLCff=5
         fSPLStat.close()
         return SPLCff
 def split_loc_to_subloc(loc,sub_loc_size,ClusterLen2):
@@ -3162,34 +3170,44 @@ def PathBP_SetUp(NullPath):
     if not os.path.isdir(path_BP):
         os.system(r'''mkdir %s'''%(path_BP))
     return path_BP
+def pdf_bimodal_func(x,IL_Statistics):
+    #eg of IL_Statistics=[mean1,mean2,std1,std2,alpha1,alpha2]
+    return -IL_Statistics[4]*scipy.stats.norm.pdf(x,IL_Statistics[0],IL_Statistics[2])-IL_Statistics[5]*scipy.stats.norm.pdf(x,IL_Statistics[1],IL_Statistics[3])
+def pdf_bimodal_calcu(x,IL_Statistics):
+    #eg of IL_Statistics=[mean1,mean2,std1,std2,alpha1,alpha2]
+    return IL_Statistics[4]*scipy.stats.norm.pdf(x,IL_Statistics[0],IL_Statistics[2])+IL_Statistics[5]*scipy.stats.norm.pdf(x,IL_Statistics[1],IL_Statistics[3])
+def pdf_normal_calcu(x,Stat_list):
+    #eg of Stat_list=[mean,std]
+    return scipy.stats.norm.pdf(x,Stat_list[0],Stat_list[1])
+def pdf_normal_func(x,Stat_list):
+    #eg of Stat_list=[mean,std]
+    return -scipy.stats.norm.pdf(x,Stat_list[0],Stat_list[1])
+def find_max_bimodal(IL_Statistics):
+    #return maximum pdf of IL_ditribution
+    if not IL_Statistics[0]<IL_Statistics[1]: IL_new=IL_Statistics
+    else:
+        IL_new=[IL_Statistics[1],IL_Statistics[0],IL_Statistics[3],IL_Statistics[2],IL_Statistics[5],IL_Statistics[4]]
+    return -scipy.optimize.fminbound(pdf_bimodal_func,IL_new[1],IL_new[0],args=(IL_new,),full_output=True)[1]
+def find_max_negative_binomial(RD_Statistics):
+    return -scipy.optimize.fminbound(pdf_normal_func,RD_Statistics[0]-1,RD_Statistics[0]+1,args=([RD_Statistics[0],RD_Statistics[1]],),full_output=True)[1]
+def pdf_calculate_newer(x,IL_Statistics,upper_limit,lower_limit,Penalty_For_InsertLengthZero):
+    [Mean1,Mean2,Std1,Std2,Alpha,Beta]=IL_Statistics
+    if not Alpha==0:
+        if x<upper_limit and x>lower_limit:
+            return math.log(pdf_bimodal_calcu(x,IL_Statistics))
+        else:
+            return Penalty_For_InsertLengthZero
+    else:
+        if not x==0:
+            return  math.log(1-Alpha)-math.log(math.sqrt(2*math.pi*math.pow(Std2,2)))-math.pow((x-Mean2),2)/(2*math.pow(Std2,2))
+        elif x==0:
+            return Penalty_For_InsertLengthZero
 def pdf_calculate(x,alpha,mean1,mean2,std1,std2,upper_limit,lower_limit,Penalty_For_InsertLengthZero):
-    Alpha=numpy.min([alpha,1-alpha])
-    if mean1<mean2:
-        Mean1=mean1
-        Std1=std1
-        Mean2=mean2
-        Std2=std2
-    elif mean1>mean2: 
-        Mean1=mean2
-        Std1=std2
-        Mean2=mean1
-        Std2=std1
+    [Alpha,Mean1,Mean2,Std1,Std2]=[alpha,mean1,mean2,std1,std2]
     if not Alpha==0:
         if x<upper_limit and x>lower_limit:
             return math.log(Alpha/math.sqrt(2*math.pi*math.pow(Std1,2))*math.exp(-math.pow((x-Mean1),2)/(2*math.pow(Std1,2)))+(1-Alpha)/math.sqrt(2*math.pi*math.pow(Std2,2))*math.exp(-math.pow((x-Mean2),2)/(2*math.pow(Std2,2))))
-        elif x>=upper_limit:
-            test1=math.pow((x-Mean1),2)/(2*math.pow(Std1,2))-math.pow((x-Mean2),2)/(2*math.pow(Std2,2))
-            if test1<200:
-                return math.log(Alpha)-0.5*math.log(2*math.pi*math.pow(Std1,2))-math.pow((x-Mean1),2)/(2*math.pow(Std1,2))+math.log(1+(1-Alpha)*Std1/(Alpha*Std2)*math.exp(test1))
-            elif test1>200:
-                return math.log(1-Alpha)-0.5*math.log(2*math.pi*math.pow(Std2,2))-math.pow((x-Mean2),2)/(2*math.pow(Std2,2))
-        elif x<=lower_limit and not x==0:
-            test2=-math.pow((x-Mean1),2)/(2*math.pow(Std1,2))+math.pow((x-Mean2),2)/(2*math.pow(Std2,2))
-            if test2<200:
-                return math.log(1-Alpha)-0.5*math.log(2*math.pi*math.pow(Std2,2))-math.pow((x-Mean2),2)/(2*math.pow(Std2,2))+math.log(1+Alpha*Std2/((1-Alpha)*Std1)*math.exp(test2))
-            if test2>200:
-                return  math.log(Alpha)-0.5*math.log(2*math.pi*math.pow(Std1,2))-math.pow((x-Mean1),2)/(2*math.pow(Std1,2))
-        elif x==0:
+        else:
             return Penalty_For_InsertLengthZero
     else:
         if not x==0:
@@ -3571,7 +3589,7 @@ def bp_to_hash(bp_list,sv_let,chromos):
 def bp_to_let(del_info_unit,chromos):
     flag=0
     for i in del_info_unit[0]:
-        if i in chromos or not i.isdigit():
+        if i in chromos:
             flag+=1
     if not flag==0:
         letter=''.join([chr(i+97) for i in range(len(del_info_unit[0])-2*flag)])
@@ -3843,7 +3861,8 @@ def GC_RD_Adj(GC_Median_Num,GC_Overall_Median_Num,Chromo,GC_Content,Coverage):
                     Median_Coverage=GC_Median_Num[GC_Con]
                     Af_Adj_RD=Be_Adj_RD*Overall_Median_Coverage/Median_Coverage
             elif not GC_Con in GC_Median_Num.keys():
-                    Af_Adj_RD=Overall_Median_Coverage
+                    Median_Coverage=Overall_Median_Coverage
+                    Af_Adj_RD=Be_Adj_RD*Overall_Median_Coverage/Median_Coverage
             Coverage_af_Adj+=[Af_Adj_RD]
     return Coverage_af_Adj
 def GC_RD_Correction(GC_Median_Num,GC_Overall_Median_Num,NullPath,BamN,ref_prefix,chrbam):
@@ -4773,6 +4792,17 @@ def Insert_len_stat_readin(Insert_Len_Stat):
         return numpy.log(pdf_exp)
     else:
         return 1
+def sv_info_qc_score_extract(sv_info):
+    sv_info_out={}
+    qc_score_out={}
+    for k1 in sv_info.keys():
+        sv_info_out[k1]={}
+        for k2 in sv_info[k1].keys():
+            sv_info_out[k1][k2]=[]
+            for k3 in sv_info[k1][k2]:
+                sv_info_out[k1][k2].append(k3[:-1])
+                qc_score_out[':'.join(k3[:-1])]=k3[-1]
+    return [sv_info_out,qc_score_out]
 def sv_info_score_modify(sv_info):
     all_scores_pos=0
     all_scores_neg=0
