@@ -1065,8 +1065,7 @@ else:
                                         SplitReads={}
                                         pAllS1=fAllS.readline().strip().split()
                                         pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                                SplitReads[pAllS1[i]]=pAllS2[i]
+                                        for i in range(len(pAllS1)):                                  SplitReads[pAllS1[i]]=pAllS2[i]
                                         for i in range(len(pAllS1)):
                                                 if float(pAllS2[i])>SplitCutoff:
                                                         SplitMin=int(pAllS1[i])-1
@@ -1082,24 +1081,17 @@ else:
                                             if float(pAllS2[i])>DRCutoff:
                                                 DRMin=int(pAllS1[i])-1
                                                 break
-                                        if DRMin<5:                                                DRMin=5
+                                        if DRMin<5:                                      RMin=5
                                         fbam=os.popen('''samtools view -H %s'''%(BamInput))
-                                        if '--BPSPCff' in dict_opts.keys():
-                                            BPSPCff=int(float(dict_opts['--BPSPCff']))
-                                        else:
-                                            #BPSPCff=int(round(0.8*float(TBStats['stat']['Median'])/float(10)))
-                                            BPSPCff=int(round(2*float(RDStats['Median'])/float(10)))
-                                        if BPSPCff<3:                                            BPSPCff=3
-                                        if '--BPLNCff' in dict_opts.keys():
-                                            BPLNCff=int(float(dict_opts['--BPLNCff']))
-                                        else:
-                                            #BPLNCff=int(round(1.2*float(TBStats['stat']['Median'])/float(10)))
-                                            BPLNCff=int(round(3*float(RDStats['Median'])/float(10)))
-                                        if BPLNCff<3:                                            BPLNCff=3
+                                        if '--BPSPCff' in dict_opts.keys():              PSPCff=int(float(dict_opts['--BPSPCff']))
+                                        else:                                            BPSPCff=int(round(2*float(RDStats['Median'])/float(10)))
+                                        if BPSPCff<3:                                    BPSPCff=3
+                                        if '--BPLNCff' in dict_opts.keys():              BPLNCff=int(float(dict_opts['--BPLNCff']))
+                                        else:                                            BPLNCff=int(round(2*float(TBStats['stat']['Median'])/float(10)))
+                                        if BPLNCff<3:                                    BPLNCff=3
                                         SPCluMin=BPSPCff
                                         LnCluMin=BPLNCff
-                                        if '--SPCluLen' in dict_opts.keys():
-                                            SPCluLen=int(dict_opts['--SPCluLen'])
+                                        if '--SPCluLen' in dict_opts.keys():             SPCluLen=int(dict_opts['--SPCluLen'])
                                         else:                                            SPCluLen=5
                                         SubLnCluMin=max([LnCluMin,SPCluMin])
                                         LinkCluMin=min([LnCluMin,SPCluMin])
@@ -1213,7 +1205,7 @@ else:
                                                             absIL=abs(int(pbam[8]))
                                                             signIL=0
                                                             posF=[]
-                                                            if absIL<int(ILCffs[0]) or absIL>int(ILCffs[1]):                                                                    signIL+=1
+                                                            if absIL<int(ILCffs[0]) or absIL>int(ILCffs[1]):      signIL+=1
                                                             if not pbam[5].find('S')==-1 or not pbam[5].find('H')==-1:
                                                                 ClippedLen=cigar2splitlen(pbam[5])
                                                                 ClippedPos=cigar2split(pbam[5])
@@ -1345,13 +1337,15 @@ else:
                                                                             if not tempk2[0] in LinkRF.keys():           LinkRF[tempk2[0]]=[]
                                                                             LinkRF[tempk2[0]].append(tempk2[2])
                                                         for k1 in abInfF.keys():
-                                                                if not abInfF[k1][-1]==0:
-                                                                        if not k1 in LinkSP.keys():           LinkSP[k1]=0
-                                                                        LinkSP[k1]+=abInfF[k1][-1]
+                                                            abInfF[k1][3]+=abInfF[k1][1]
+                                                            if not abInfF[k1][-1]==0:
+                                                                    if not k1 in LinkSP.keys():           LinkSP[k1]=0
+                                                                    LinkSP[k1]+=abInfF[k1][-1]
                                                         for k1 in abInfR.keys():
-                                                                if not abInfR[k1][-1]==0:
-                                                                        if not k1 in LinkSP.keys():           LinkSP[k1]=0
-                                                                        LinkSP[k1]+=abInfR[k1][-1]                            
+                                                            abInfR[k1][3]+=abInfR[k1][1]
+                                                            if not abInfR[k1][-1]==0:
+                                                                    if not k1 in LinkSP.keys():           LinkSP[k1]=0
+                                                                    LinkSP[k1]+=abInfR[k1][-1]                            
                                                         for k1 in LinkFR.keys():
                                                                 for k2 in LinkFR[k1]:
                                                                         if not k2 in LinkRF.keys():           LinkRF[k2]=[]
@@ -1654,32 +1648,24 @@ else:
                                                             for k1 in out_pair_modify.keys():
                                                                 out_pair_numrec[k1]=[]
                                                                 for k2 in [k1]+out_pair_modify[k1]:
-                                                                    if k2 in tempIL.keys() and not k2 in LinkSP.keys():
-                                                                        out_pair_numrec[k1].append(len(tempIL[k2][1]))
-                                                                    elif k2 in LinkSP.keys() and not k2 in tempIL.keys():
-                                                                        out_pair_numrec[k1].append(LinkSP[k2])
-                                                                    elif k2 in LinkSP.keys() and k2 in tempIL.keys():
-                                                                        out_pair_numrec[k1].append(LinkSP[k2]+len(tempIL[k2][1]))
-                                                                    else:
-                                                                        out_pair_numrec[k1].append(0)
+                                                                    if k2 in tempIL.keys() and not k2 in LinkSP.keys():     out_pair_numrec[k1].append(len(tempIL[k2][1]))
+                                                                    elif k2 in LinkSP.keys() and not k2 in tempIL.keys():   out_pair_numrec[k1].append(LinkSP[k2])
+                                                                    elif k2 in LinkSP.keys() and k2 in tempIL.keys():       out_pair_numrec[k1].append(LinkSP[k2]+len(tempIL[k2][1]))
+                                                                    else:                                                   out_pair_numrec[k1].append(0)
                                                             fout=open(BPOutputb,'a')
                                                             out_pair_modify=out_pair_modify_check(out_pair_modify,3)
                                                             for i in sorted(out_pair_modify.keys()):
                                                                 for j in out_pair_modify[i]:                            
                                                                     print >>fout, ' '.join([chrom,str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
                                                                     #print ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
-                                                                    if i in tempIL.keys():
-                                                                        del tempIL[i]
-                                                                    if j in tempIL.keys():
-                                                                        del tempIL[j]
+                                                                    if i in tempIL.keys():            del tempIL[i]        
+                                                                    if j in tempIL.keys():            del tempIL[j]
                                                             fout.close()
                                                             fout=open(BPOutputa,'a')
                                                             for i in sorted(out_single_bp+LinkSP_To_Link.keys()):
                                                                 num=0
-                                                                if i in abInfF.keys():
-                                                                    num+=sum(abInfF[i])
-                                                                if i in abInfR.keys():
-                                                                    num+=sum(abInfR[i])
+                                                                if i in abInfF.keys():        num+=sum(abInfF[i])
+                                                                if i in abInfR.keys():        num+=sum(abInfR[i])
                                                                 print >>fout, ' '.join([str(j) for j in [chrom,i,num]])
                                                                 #print ' '.join([str(j) for j in [i,num]])
                                                             fout.close()
@@ -1698,32 +1684,25 @@ else:
                                                         tempLNR=[]
                                                         for key in abLink.keys():
                                                                 for key2 in range(len(abLink[key])/3):
-                                                                        if abLink[key][3*key2]=='f':
-                                                                                tempLNF.append(key)
-                                                                        else:
-                                                                                tempLNR.append(key)
+                                                                        if abLink[key][3*key2]=='f':            tempLNF.append(key)
+                                                                        else:                                   tempLNR.append(key)
                                                         for key in abLinkSP.keys():
                                                                 for key2 in range(len(abLinkSP[key])/3):
-                                                                        if abLinkSP[key][3*key2]=='f':
-                                                                                tempLNF.append(key)
-                                                                        else:
-                                                                                tempLNR.append(key)
+                                                                        if abLinkSP[key][3*key2]=='f':          tempLNF.append(key)
+                                                                        else:                                   tempLNR.append(key)
                                                         FtLNFR=clusterNums(tempLNF+tempLNR,ClusterLen,'f')[0]
                                                         RtLNFR=clusterNums(tempLNF+tempLNR,ClusterLen,'r')[0]
                                                         FRtLNFR=clusterSupVis2(sorted(tempLNF+tempLNR),RtLNFR,FtLNFR,'left')
                                                         for key1 in FRtLNFR.keys():
                                                                 t_LNFR=[]
                                                                 for key2 in FRtLNFR[key1]:
-                                                                        if key2 in abLink.keys():
-                                                                                t_LNFR+=abLink[key2]
+                                                                        if key2 in abLink.keys():         t_LNFR+=abLink[key2]
                                                                         else:
                                                                                 if abs(key2-key1)<SPCluLen or abs(key2-max(FRtLNFR[key1]))<SPCluLen:
                                                                                         t_LNFR+=abLinkSP[key2]
-                                                                if len(t_LNFR)/3<LinkCluMin:
-                                                                        del FRtLNFR[key1]
+                                                                if len(t_LNFR)/3<LinkCluMin: del FRtLNFR[key1]
                                                                 else:
-                                                                    if not t_LNFR in FRtLNFR[key1]:
-                                                                        FRtLNFR[key1].append(t_LNFR)
+                                                                    if not t_LNFR in FRtLNFR[key1]: FRtLNFR[key1].append(t_LNFR)
                                                         FRtLNFRb=[]
                                                         for key1 in FRtLNFR.keys():
                                                             t1_LN=[]
@@ -1764,18 +1743,12 @@ else:
                                                                                         t4LNc.append(t3_LN[key2]['c'][t3_LN[key2]['b'].index(key6)])
                                                                                         t4LNd.append(key6)
                                                                                         t4LNb.append(t1_LN[t2_LN.index(t3_LN[key2]['d'][t3_LN[key2]['b'].index(key6)])])
-                                                                                if not 'f' in t4LNa or float(t4LNa.count('r'))/float(t4LNa.count('f'))>5:
-                                                                                        t4out+=[chrom,'r',min(t4LNb)]
-                                                                                elif not 'r' in t4LNa or float(t4LNa.count('f'))/float(t4LNa.count('r'))>5:
-                                                                                        t4out+=[chrom,'f',max(t4LNb)]
-                                                                                else:
-                                                                                        t4out+=[chrom,min(t4LNb),max(t4LNb)]
-                                                                                if not '+' in t4LNc or float(t4LNc.count('-'))/float(t4LNc.count('+'))>5:
-                                                                                        t4out+=[key2,'-',min(t4LNd)]
-                                                                                elif not '-' in t4LNc or float(t4LNc.count('+'))/float(t4LNc.count('-'))>5:
-                                                                                        t4out+=[key2,'+',max(t4LNd)]
-                                                                                else:
-                                                                                        t4out+=[key2,min(t4LNd),max(t4LNd)]
+                                                                                if not 'f' in t4LNa or float(t4LNa.count('r'))/float(t4LNa.count('f'))>5:                 t4out+=[chrom,'r',min(t4LNb)]
+                                                                                elif not 'r' in t4LNa or float(t4LNa.count('f'))/float(t4LNa.count('r'))>5:               t4out+=[chrom,'f',max(t4LNb)]
+                                                                                else:                                                                                     t4out+=[chrom,min(t4LNb),max(t4LNb)]
+                                                                                if not '+' in t4LNc or float(t4LNc.count('-'))/float(t4LNc.count('+'))>5:                 t4out+=[key2,'-',min(t4LNd)]
+                                                                                elif not '-' in t4LNc or float(t4LNc.count('+'))/float(t4LNc.count('-'))>5:               t4out+=[key2,'+',max(t4LNd)]
+                                                                                else:                                                                                     t4out+=[key2,min(t4LNd),max(t4LNd)]
                                                             if not t4out==[] and not t4out in FRtLNFRb:
                                                                     FRtLNFRb.append(t4out)             
                                                         if not FRtLNFRb==[]:
@@ -1801,11 +1774,9 @@ else:
                                                                     tPairF_a=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,k3-BPAlignQCFlank,k3+BPAlignQCFlank))
                                                                     tPairF_b=float(tPairF_a.read().strip())  
                                                                     if not tPairF_b<float(BPAlignQC):
-                                                                            if not [min([k3,k1]),max([k3,k1])] in out_pair_bp:
-                                                                                    out_pair_bp.append([min([k3,k1]),max([k3,k1])])
+                                                                            if not [min([k3,k1]),max([k3,k1])] in out_pair_bp:             out_pair_bp.append([min([k3,k1]),max([k3,k1])])
                                                                 else:
-                                                                            if not [min([k3,k1]),max([k3,k1])] in out_pair_bp:
-                                                                                    out_pair_bp.append([min([k3,k1]),max([k3,k1])])
+                                                                            if not [min([k3,k1]),max([k3,k1])] in out_pair_bp:             out_pair_bp.append([min([k3,k1]),max([k3,k1])])
                                             if not out_pair_bp==[]:
                                                 temp_out_pair_bp=[]
                                                 out_BPmodify={}
@@ -1893,136 +1864,206 @@ else:
     if function_name=='BPSearch_Predefined':
         import glob
         import getopt
-        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','out-path=','input-bed=','help=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration=','BPSPCff=','BPLNCff='])
+        opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','help=','input-bed=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
-        CN2_Region={}
         if dict_opts=={} or dict_opts.keys()==['-h'] or dict_opts.keys()==['--help']:
-            print 'SVelter-0.1          Last Update:2015-08-20'
-            print 'Required Parameters:'
-            print '    --sample, input alignment file in bam format'
-            print '    --workdir, writable working directory.'
-            print 'Optional Parameters:'
-            print '    --chromosome, name of chromosome to run. should match chromosome name in bam file'
-            print '    --null-model, specify which stat model to be fitted on each parameter. if --null-model==C / Complex, negative bimodal distribution will be fitted to insertlenth; else, normal will be used'
-            print '    --qc-align, minimum alignment quality required for mapped reads in bam file [20)'
-            print '    --qc-split, minimum alighment of clipped parts of reads considered as a soft clip [20)'
-            print '    --split-min-len, the minumum length of clip read considered as split; (default:10% of read length)'
-            print '    --qc-map-tool, the tool extracts mappability information from a bigWig file,avaliable from: http://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/bigWigSummary'
-            print '    --qc-map-file, .bigWig file used to decide local genomic mappability, avaliable from: ftp://hgdownload.cse.ucsc.edu/goldenPath/currentGenomes/Homo_sapiens/encodeDCC/wgEncodeMapability/'
-            print '    --qc-map-cutoff, the minimum mapping quality required for a breakpoint to be reported [0.0)'
+            readme.print_default_parameters_predefinedbp()
         else:
-            def Define_Default_BPSearching():
-                global ILCutoff
-                ILCutoff=0.95
-                global RDCutoff
-                RDCutoff=0.95
-                global TBCutoff
-                TBCutoff=0.9999
-                global SplitCutoff
-                SplitCutoff=0.999
-                global ABILCutoff
-                ABILCutoff=0.99
-                global DRCutoff
-                DRCutoff=0.99
-                global SPLCutoff
-                SPLCutoff=0.85
-                global Length_Limit
-                Length_Limit=2000
-                global model_comp
-                if not '--null-model' in dict_opts.keys():
-                    model_comp='C'
-                else:
-                    if dict_opts['--null-model'] in ['S','Simple']:
-                        model_comp='S'
-                    else:
-                        model_comp='C'
-                global ToolMappingQ
-                global FileMappingQ
-                global align_QCflag
-                if '--qc-map-tool' in dict_opts.keys() and '--qc-map-file' in dict_opts.keys():
-                    ToolMappingQ=dict_opts['--qc-map-tool']
-                    FileMappingQ=dict_opts['--qc-map-file']
-                    align_QCflag=1
-                else:
-                    align_QCflag=0
-                global BPAlignQC
-                if '--BPAlignQC' in dict_opts.keys():
-                    BPAlignQC=float(dict_opts['--BPAlignQC'])
-                else:
-                    BPAlignQC=0.2
-                global QCAlign   
-                if '--qc-align' in dict_opts.keys():
-                    QCAlign=int(dict_opts['--qc-align'])
-                else:
-                    QCAlign=20
-                global QC_RDCalculate_Cff
-                QC_RDCalculate_Cff=10
-                global QCSplit   
-                if '--qc-split' in dict_opts.keys():
-                    QCSplit=int(dict_opts['--qc-split'])
-                else:
-                    QCSplit=20
-                global NullSplitLen_perc
-                if '--split-min-len' in dict_opts.keys():
-                    NullSplitLen_perc=float(dict_opts['--split-min-len'])
-                else:
-                    NullSplitLen_perc=0.9
-                global BPAlignQCFlank
-                if '--BPAlignQCFlank' in dict_opts.keys():
-                    BPAlignQCFlank=int(dict_opts['--BPAlignQCFlank'])
-                else:
-                    BPAlignQCFlank=500
-            def global_para_declaration():
-                print 'temp files produced under: '+workdir
-                global bam_path
-                global bam_files
-                global bam_files_appdix
-                global ref_path
-                global ref_file
-                global ref_index
-                global input_bed
-                global Window_Size
-                global ReadLength
-                global sub_loc_size
-                bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
-                bam_files=[dict_opts['--sample']]
-                bam_files_appdix=dict_opts['--sample'].split('.')[-1]
-                ref_path=workdir+'reference_SVelter/'
-                ref_file=ref_path+'genome.fa'
-                ref_index=ref_file+'.fai'
-                if '--input-bed' in dict_opts.keys():
-                    input_bed=dict_opts['--input-bed']
-                global BPPath
-                if '--out-path' in dict_opts.keys():
-                    BPPath=path_modify(dict_opts['--out-path'])
-                else:
-                    BPPath=workdir+'BreakPoints.'+'.'.join(dict_opts['--sample'].split('/')[-1].split('.')[:-1])+'.predefinedBP.'+'.'.join(input_bed.split('/')[-1].split('.')[:-1])+'/'
-                path_mkdir(BPPath)
-                global NullPath
-                NullPath='/'.join(BPPath.split('/')[:-2])+'/'+'.'.join(['NullModel']+BPPath.split('/')[-2].split('.')[1:])+'/'
-            import numpy
-            import scipy
-            import math
-            from math import sqrt,pi,exp
-            from scipy.stats import norm
-            import random
-            import pickle
             import time
             import datetime
-            import itertools
-            Define_Default_BPSearching()
-            if not '--workdir' in dict_opts.keys():
-                print 'Error: please specify working directory using: --workdir'
+            if not '--input-bed' in dict_opts.keys():
+                print 'Error: please specify predefined breakpoints using --input-bed'
             else:
-                workdir=path_modify(dict_opts['--workdir'])
-                if not '--sample' in dict_opts.keys():
-                    print 'Error: please specify either input file using --sample'
-                else:
-                    global_para_declaration()
-                    if not os.path.isfile(ref_index):
-                        print 'Error: reference genome not indexed'
+                def Code_Files_Define():
+                    global input_bed
+                    input_bed=dict_opts['--input-bed']
+                    global workdir
+                    workdir=path_modify(dict_opts['--workdir'])
+                    global Code_File
+                    global Code0_Function
+                    global Code1_Function
+                    global Code2_Function
+                    global Code2_Predefined_Function
+                    global Code3_Function
+                    global Code4_Function
+                    global Code5_Function
+                    global RCode_Path
+                    global Code1a_file
+                    global Code1d_file
+                    global Code1d2_file
+                    Code_File=script_name
+                    Code0_Function='Setup'
+                    Code1_Function='NullModel'
+                    Code2_Function='BPSearch'
+                    Code2_Predefined_Function='BPSearch_Predefined'
+                    Code3_Function='BPIntegrate'
+                    Code4_Function='SVPredict'
+                    Code5_Function='SVIntegrate'
+                    RCode_Path=workdir+'reference_SVelter/'
+                    Code1a_file=RCode_Path+'SVelter1.NullModel.Figure.a.r'
+                    Code1d_file=RCode_Path+'SVelter1.NullModel.Figure.b.r'
+                    Code1d2_file=RCode_Path+'SVelter1.NullModel.Figure.c.r'
+                def Define_Default_AllInOne():
+                    global deterministic_flag
+                    deterministic_flag=0
+                    if '--deterministic-flag' in dict_opts.keys():
+                        deterministic_flag=int(dict_opts['--deterministic-flag'])
+                    if '--core' in dict_opts.keys():
+                        global pool
+                        pool = Pool(processes=int(dict_opts['--core']))
+                    global model_comp
+                    if not '--null-model' in dict_opts.keys():
+                        model_comp='S'
                     else:
-                        chromos=chromos_read_in(ref_file)
+                        if dict_opts['--null-model'] in ['S','Simple']:
+                            model_comp='S'
+                        else:
+                            model_comp='C'
+                    global QCAlign
+                    if '--qc-align' in dict_opts.keys():
+                        QCAlign=int(dict_opts['--qc-align'])
+                    else:
+                        QCAlign=20
+                    global QCSplit
+                    if '--qc-split' in dict_opts.keys():
+                        QCSplit=int(dict_opts['--qc-split'])
+                    else:
+                        QCSplit=20
+                    global NullSplitLen_perc
+                    if '--split-min-len' in dict_opts.keys():
+                        NullSplitLen_perc=int(dict_opts['--split-min-len'])
+                    else:
+                        NullSplitLen_perc=0.9
+                    global KeepFile
+                    if '--keep-temp-files' in dict_opts.keys():
+                        KeepFile=dict_opts['--keep-temp-files']
+                    else:
+                        KeepFile='No'
+                    global KeepFigure
+                    if '--keep-temp-figs' in dict_opts.keys():
+                        KeepFigure=dict_opts['--keep-temp-figs']
+                    else:
+                        KeepFigure='No'
+                    global Trail_Number
+                    if '--num-iteration' in dict_opts.keys():
+                        Trail_Number=int(dict_opts['--num-iteration'])
+                    else:
+                        Trail_Number=10000
+                    global Local_Minumum_Number
+                    Local_Minumum_Number=100
+                    global Ploidy
+                    if '--ploidy' in dict_opts.keys():
+                        Ploidy=int(dict_opts['--ploidy'])
+                    else:
+                        Ploidy=2
+                    global ILCff_STD_Time
+                    if '-S' in dict_opts.keys():
+                        ILCff_STD_Time=int(dict_opts['-S'])
+                    else:
+                        ILCff_STD_Time=3
+                def run_SVelter1_chrom_predefine(sin_bam_file):
+                    os.system(r'''%s %s --keep-temp-files %s --keep-temp-figs %s --null-model %s --workdir %s --sample %s --out-path %s'''%(Code_File,Code1_Function,KeepFile,KeepFigure,model_comp,workdir,sin_bam_file,NullModel_out_folder)) 
+                def run_SVelter1_Single_chrom_predefine(sin_bam_file,chromos_single):
+                    os.system(r'''%s %s --keep-temp-files %s --keep-temp-figs %s --null-model %s --workdir %s --sample %s --chromosome %s --out-path %s'''%(Code_File,Code1_Function,KeepFile,KeepFigure,model_comp,workdir,sin_bam_file,chromos_single,NullModel_out_folder)) 
+                def run_SVelter2_chrom_predefine(chrom_name,sin_bam_file,ILCff_STD_Time):
+                    os.system(r'''%s %s --chromosome %s --workdir %s --sample %s --null-model %s -S %s --out-path %s'''%(Code_File,Code2_Predefined_Function,chrom_name,workdir,sin_bam_file,model_comp,ILCff_STD_Time,BPPredict_out_folder))
+                def run_SVelter3_chrom_predefine(sin_bam_file,out_folder):
+                    os.system(r'''%s %s --batch %s --workdir %s --sample %s --bp-path %s'''%(Code_File,Code3_Function,dict_opts['--batch'],workdir,sin_bam_file,BPPredict_out_folder)) 
+                def run_SVelter4_chrom(txt_name,sin_bam_file):
+                    os.system(r'''%s %s --workdir %s --bp-file %s --sample %s --num-iteration %s --ploidy %s --null-model %s --deterministic-flag %s'''%(Code_File,Code4_Function,workdir,txt_name,sin_bam_file,str(Trail_Number),str(Ploidy),model_comp,deterministic_flag))
+                    print txt_name+' done!'
+                def run_SVelter5_chrom(path2,out_vcf):
+                    os.system(r'''%s %s --workdir %s --input-path %s --prefix %s'''%(Code_File,Code5_Function,workdir,path2,out_vcf))
+                def SamplingPercentage_read_in():
+                    if '--null-copyneutral-perc' in dict_opts.keys():
+                        SamplingPercentage=float(dict_opts['--null-copyneutral-perc'])
+                    else:
+                        SamplingPercentage=0.001
+                    return SamplingPercentage
+                def main():
+                    Code_Files_Define()
+                    Define_Default_AllInOne()
+                    if '--sample' in dict_opts.keys():
+                        bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
+                        bam_files=[dict_opts['--sample']]
+                        bam_files_appdix=dict_opts['--sample'].split('.')[-1]
+                    else:
+                        bam_path=path_modify(dict_opts['--samplePath'])
+                        bam_files=[]
+                        for file in os.listdir(bam_path):
+                            if file.split('.')[-1]==bam_files_appdix:
+                                bam_files.append(bam_path+file)
+                    ref_path=workdir+'reference_SVelter/'
+                    ref_file=ref_path+'genome.fa'
+                    ref_index=ref_file+'.fai'
+                    if not os.path.isfile(ref_index):
+                        print 'Error: reference genome not indexed '
+                    else:
+                        global whole_genome
+                        global len_genome
+                        [whole_genome,len_genome]=calculate_len_genome(ref_file)
+                        chromos=whole_genome.keys()
+                        chr_name_check=0
+                        fin=open(ref_index)
+                        chr_ref_check=[]
+                        for line in fin:
+                            pin=line.strip().split()
+                            chr_ref_check.append(pin[0])
+                        fin.close()
+                        for filein_bam in bam_files:
+                            chr_bam_check=[]
+                            fin=os.popen(r'''samtools view -H %s'''%(filein_bam))
+                            for line in fin:
+                                pin=line.strip().split()
+                                if pin[0]=='@SQ':
+                                    chr_bam_check.append(pin[1].split(':')[1])
+                            fin.close()
+                        if not chr_ref_check==chr_bam_check:
+                            print 'Warning: please make sure the reference file matches the sample file'
+                        chr_flag=0
+                        if 'chr' in chr_ref_check[0]:
+                            chr_flag=1
+                        SamplingPercentage=float(SamplingPercentage_read_in())
+                        cn2_file=cn2_file_read_in(dict_opts,workdir)
+                        ex_file=ex_file_read_in(dict_opts,workdir)
+                        cn2_length=int(cn2_length_readin(dict_opts))
+                        Gap_Refs=[ex_file]
+                        if not os.path.isfile(cn2_file):
+                            cn2_path='/'.join(cn2_file.split('/')[:-1])+'/'
+                            if not os.path.isdir(cn2_path): 
+                                os.system(r'''mkdir %s'''%(cn2_path))
+                            if not '--null-random-length' in dict_opts.keys():
+                                dict_opts['--null-random-length']=5000
+                            else:
+                                dict_opts['--null-random-length']=int(dict_opts['--null-random-length'])
+                            if not '--null-random-num' in dict_opts.keys():
+                                dict_opts['--null-random-num']=10000
+                            else:
+                                dict_opts['--null-random-num']=int(dict_opts['--null-random-num'])
+                            cn2_length=dict_opts['--null-random-length']-100
+                            fo=open(cn2_file,'w')
+                            for i in sorted(whole_genome.keys()):
+                                num_i=int(float(whole_genome[i][0])/float(len_genome)*dict_opts['--null-random-num'])
+                                reg_i=[random.randint(1,whole_genome[i][0]-dict_opts['--null-random-length']) for j in range(num_i)]
+                                for j in sorted(reg_i):
+                                    print >>fo, ' '.join([i,str(j),str(j+dict_opts['--null-random-length']-1)])
+                            fo.close()
+                            SamplingPercentage=1
+                        if not os.path.isfile(ex_file):
+                            fo=open(ex_file,'w')
+                            for chr_ex in chromos:
+                                print >>fo, ' '.join([chr_ex,'0','0'])
+                            fo.close()
+                        #if '--prefix' in dict_opts.keys():
+                        #    out_vcf=dict_opts['--prefix']+'.vcf'
+                        #    out_svelter=dict_opts['--prefix']+'.svelter'
+                        #else:
+                        #    out_vcf=workdir+dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'.vcf')
+                        #    out_svelter=workdir+dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'.svelter')
+                        #    print 'Warning: output file is not specified'
+                        #    print 'output file: '+out_vcf
+                        #    print 'output file: '+out_svelter
+                        temp_inter_replace=0
                         if '--chromosome' in dict_opts.keys():
                             chrom_single=dict_opts['--chromosome']
                             if not chrom_single in chromos:
@@ -2030,173 +2071,21 @@ else:
                                 chromos=[]
                             else:
                                 chromos=[chrom_single]
-                        if not chromos==[]:
-                            genome_name=genome_name_readin(dict_opts)
-                            for bamF in bam_files:
-                                time1=time.time()
-                                [Window_Size,ReadLength,sub_loc_size]=Null_Stats_Readin_One(NullPath,bamF,NullSplitLen_perc,genome_name,bam_files_appdix)
-                                for chrF in chromos:
-                                    bamF_Name=bamF.split('/')[-1].replace('.'+bam_files_appdix,'')
-                                    floc_Name=BPPath+bamF_Name+'.'+chrF
-                                    Refloc_name='.'.join(ref_file.split('.')[:-1])+'.Mappable.bed'
-                                    stat_file_name(bamF_Name,genome_name)
-                                    if os.path.isfile(Refloc_name):
-                                        BamInput=bamF
-                                        ILStats=ILStats_readin(ILStat)
-                                        RDStats=RDStats_readin(RDStat)
-                                        TBStats=TBStats_readin(TBStat)
-                                        SPLCff=SPLCff_Calculate(NullSplitLen_perc,SPLenStat,ReadLength)
-                                        fAllS=open(AllStat)
-                                        pAllS=fAllS.readline().rstrip()
-                                        ILCIs={}
-                                        pAllS1=fAllS.readline().strip().split()
-                                        pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                                ILCIs[pAllS1[i]]=pAllS2[i]
-                                        pAllS=fAllS.readline().rstrip()
-                                        RDCIs={}
-                                        pAllS1=fAllS.readline().strip().split()
-                                        pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                            RDCIs[pAllS1[i]]=pAllS2[i]
-                                        pAllS=fAllS.readline().rstrip()
-                                        TBCIs={}
-                                        pAllS1=fAllS.readline().strip().split()
-                                        pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                            TBCIs[pAllS1[i]]=pAllS2[i]
-                                        pAllS=fAllS.readline().rstrip()
-                                        InsertLen={}
-                                        pAllS1=fAllS.readline().strip().split()
-                                        pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                                InsertLen[pAllS1[i]]=pAllS2[i]
-                                        for i in range(len(pAllS1)):
-                                                if float(pAllS2[i])>ABILCutoff:
-                                                        InsertLenMin=int(pAllS1[i])-1
-                                                        break
-                                        if InsertLenMin<5:
-                                                InsertLenMin=5
-                                        pAllS=fAllS.readline().rstrip()
-                                        SplitReads={}
-                                        pAllS1=fAllS.readline().strip().split()
-                                        pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                                SplitReads[pAllS1[i]]=pAllS2[i]
-                                        for i in range(len(pAllS1)):
-                                                if float(pAllS2[i])>SplitCutoff:
-                                                        SplitMin=int(pAllS1[i])-1
-                                                        break
-                                        if SplitMin<5:
-                                                SplitMin=5
-                                        pAllS=fAllS.readline().rstrip()
-                                        AbDirection={}
-                                        pAllS1=fAllS.readline().strip().split()
-                                        pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):
-                                                AbDirection[pAllS1[i]]=pAllS2[i]
-                                        for i in range(len(pAllS1)):
-                                            if float(pAllS2[i])>DRCutoff:
-                                                DRMin=int(pAllS1[i])-1
-                                                break
-                                        if DRMin<5:
-                                                DRMin=5
-                                        fbam=os.popen('''samtools view -H %s'''%(BamInput))
-                                        if '--BPSPCff' in dict_opts.keys():
-                                            BPSPCff=int(float(dict_opts['--BPSPCff']))
-                                        else:
-                                            #BPSPCff=int(round(0.8*float(TBStats['stat']['Median'])/float(10)))
-                                            BPSPCff=int(round(2*float(RDStats['Median'])/float(10)))
-                                        if BPSPCff<3:
-                                            BPSPCff=3
-                                        if '--BPLNCff' in dict_opts.keys():
-                                            BPLNCff=int(float(dict_opts['--BPLNCff']))
-                                        else:
-                                            #BPLNCff=int(round(1.2*float(TBStats['stat']['Median'])/float(10)))
-                                            BPLNCff=int(round(3*float(RDStats['Median'])/float(10)))
-                                        if BPLNCff<3:
-                                            BPLNCff=3
-                                        SPCluMin=BPSPCff
-                                        LnCluMin=BPLNCff
-                                        if '--SPCluLen' in dict_opts.keys():
-                                            SPCluLen=int(dict_opts['--SPCluLen'])
-                                        else:
-                                            SPCluLen=5
-                                        SubLnCluMin=max([LnCluMin,SPCluMin])
-                                        LinkCluMin=min([LnCluMin,SPCluMin])
-                                        ClusterLen=ClusterLen_Calculation(ILStats,model_comp,ReadLength)
-                                        ClusterLen2=int(ClusterLen/Window_Size+1)*Window_Size
-                                        Min_Distinguish_Len=Window_Size
-                                        subLnClusterLen=ClusterLen/2
-                                        if not '-S' in dict_opts.keys():
-                                            dict_opts['-S']=3
-                                        ILCffs=IL_CI_Decide(ILStats,int(dict_opts['-S']),model_comp)
-                                        BPOutputa=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.SPs'
-                                        fout=open(BPOutputa,'w')
-                                        fout.close()
-                                        BPOutputb=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.LNs'
-                                        fout=open(BPOutputb,'w')
-                                        fout.close()
-                                        BPOutputd=floc_Name+'.'+'.'.join(['SPCff'+str(SPCluMin),'CluCff'+str(LnCluMin),'AlignCff'+str(BPAlignQC)])+'.chromLNs'
-                                        fout=open(BPOutputd,'w')
-                                        fout.close()
-                                        BPOutpute='/'.join(BPOutputd.split('/')[:-1])+'/'+'.'.join(BPOutputd.split('/')[-1].split('.')[:-6]+BPOutputd.split('/')[-1].split('.')[-5:])
-                                        if not os.path.isfile(BPOutpute):
-                                            fout=open(BPOutpute,'w')
-                                            fout.close()
-                                        abtLink={}
-                                        floc=open(Refloc_name)
-                                        loc_rec={}
-                                        for line in floc:
-                                            ploc=line.strip().split()
-                                            if not ploc[0] in loc_rec.keys():
-                                                loc_rec[ploc[0]]=[]
-                                                loc_rec[ploc[0]].append([int(ploc2) for ploc2 in ploc[1:]])
-                                            else:
-                                                loc_rec[ploc[0]].append([int(ploc2) for ploc2 in ploc[1:]])
-                                        floc.close()
-                                        if not loc_rec=={} and chrF in loc_rec.keys():
-                                            test_mul_RP=[]
-                                            test_mul_SP=[]
-                                            chrom=chrF
-                                            RD_index_Path=NullPath+'RD_Stat/'
-                                            path_mkdir(RD_index_Path)
-                                            RD_index_File=RD_index_Path+bamF_Name+'.'+chrF+'.RD.index'
-                                            if not os.path.isfile(RD_index_File):
-                                                file_setup(RD_index_File)
-                                                for loc in loc_rec[chrom]:
-                                                    loc2=split_loc_to_subloc(loc,sub_loc_size,ClusterLen2)
-                                                    for real_region in loc2:
-                                                        fRDind=open(RD_index_File,'a')
-                                                        print >>fRDind,chrom+':'+str(real_region[0])+'-'+str(real_region[1])                
-                                                        RD_RealRegion=[0 for i in range((real_region[1]-real_region[0])/Window_Size+1)]
-                                                        fbam=os.popen('''samtools view -F 256 %s %s:%d-%d'''%(BamInput,chrom,real_region[0],real_region[1]))
-                                                        while True:
-                                                            pbam1=fbam.readline().strip()
-                                                            if not pbam1: break
-                                                            pbam=pbam1.split()
-                                                            if not int(pbam[4])>int(QC_RDCalculate_Cff): continue             #fail quality control, skip
-                                                            if int(pbam[1])&4>0: continue           #the read was not mapped, skip
-                                                            DRtemp=Reads_Direction_Detect_flag(pbam[1])
-                                                            ReadLen=cigar2reaadlength(pbam[5])
-                                                            pos1=int(pbam[3])
-                                                            pos2=int(pbam[3])+ReadLen
-                                                            if pos2>real_region[0] and pos1<real_region[1]:
-                                                                if pos1<real_region[0] and pos2>real_region[0]:
-                                                                    pos1=real_region[0]
-                                                                if pos1<real_region[1] and pos2>real_region[1]:
-                                                                    pos2=real_region[1]
-                                                                block1=(pos1-real_region[0])/Window_Size
-                                                                RD_RealRegion[block1]+=ReadLen
-                                                        fbam.close()
-                                                        for rfrr in range(len(RD_RealRegion[:-1])):
-                                                            RD_RealRegion[rfrr]=str(float(RD_RealRegion[rfrr])/Window_Size)
-                                                        if real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size ==0:
-                                                            del RD_RealRegion[-1]
-                                                        else:
-                                                            RD_RealRegion[-1]=str(float(RD_RealRegion[-1])/float(real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size))
-                                                        print >>fRDind, ' '.join(RD_RealRegion)
-                                                        fRDind.close()
+                        for sin_bam_file in bam_files:
+                            global NullModel_out_folder
+                            global BPPredict_out_folder
+                            global bp_files_out_folder
+                            BPPredict_out_folder=workdir+'BreakPoints.'+'.'.join(sin_bam_file.split('/')[-1].split('.')[:-1])+'.predefinedBP.'+'.'.join(dict_opts['--input-bed'].split('/')[-1].split('.')[:-1])+'/'
+                            NullModel_out_folder=workdir+'NullModel.'+'.'.join(sin_bam_file.split('/')[-1].split('.')[:-1])+'.predefinedBP.'+'.'.join(dict_opts['--input-bed'].split('/')[-1].split('.')[:-1])+'/'
+                            bp_files_out_folder=workdir+'bp_files.'+'.'.join(sin_bam_file.split('/')[-1].split('.')[:-1])+'.predefinedBP.'+'.'.join(dict_opts['--input-bed'].split('/')[-1].split('.')[:-1])+'/'
+                            running_time=[]
+                            if os.path.isfile(input_bed):
+                                bed_info=bed_readin(input_bed)
+                                path_mkdir(BPPredict_out_folder)
+                                bed_write(bed_info,BPPredict_out_folder,sin_bam_file.split('/')[-1],input_bed)
+                            else:
+                                print 'Error: predefined breakpoints file not exist !'
+            main()
     if function_name=='BPIntegrate':
         import glob
         import getopt
@@ -2999,7 +2888,7 @@ else:
                 Copy_num_estimate={}
                 for i in Initial_GCRD_Adj.keys():
                     if not i in ['left','right']:
-                        Copy_num_estimate[i]=round(Initial_GCRD_Adj[i]*2/GC_para_dict['GC_Mean_Coverage'][Chr])
+                        Copy_num_estimate[i]=int(Initial_GCRD_Adj[i]*2/GC_para_dict['GC_Mean_Coverage'][Chr])
                         if Initial_GCRD_Adj[i]<float(GC_para_dict['GC_Mean_Coverage'][Chr])/10.0:
                             Copy_num_estimate[i]=-1
                 Copy_num_Check=[]
@@ -4495,8 +4384,8 @@ else:
                 BamN=dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'')
                 Input_File=dict_opts['--bp-file']
                 bp_txt_Path='/'.join(Input_File.split('/')[:-1])+'/'
-                BPPath='/'.join(bp_txt_Path.split('/')[:-2])+'/'+'.'.join(['BreakPoints']+bp_txt_Path.split('/')[-2].split('.')[1:])+'/'
-                NullPath='/'.join(bp_txt_Path.split('/')[:-2])+'/'+'.'.join(['NullModel']+bp_txt_Path.split('/')[-2].split('.')[1:])+'/'
+                BPPath=workdir +'.'.join(['BreakPoints']+[dict_opts['--sample'].split('/')[-1]])+'/'
+                NullPath=workdir+'.'.join(['NullModel']+[dict_opts['--sample'].split('/')[-1]])+'/'
                 global Insert_Len_Stat,Read_Depth_Stat,Physical_Cov_Stat,RD_Weight
                 Insert_Len_Stat=NullPath+'ILNull.'+BamN+'.'+genome_name+'.Bimodal'      #Insert Length stat
                 Read_Depth_Stat=NullPath+'RDNull.'+BamN+'.'+genome_name+'.NegativeBinomial'      #read coverage stat
@@ -4521,6 +4410,76 @@ else:
                 for x in Read_Through:
                     if x[-2:] in [['+','+'],['-','-']]: inv_pairs_count+=1
                 return float(inv_pairs_count)/float(all_count)
+            def After_Letter_List_Produce_M(M_Move_Choices,Be_BP,Be_Letter,original_bp_list,Ploidy,Best_Score_Rec,Best_Letter_Rec,Block_CN_Upper):
+                [Af_BP_List,Af_Letter_List]=[[],[]]
+                for m in [['2m','1','1','1','X']]+M_Move_Choices:
+                    p=[str(Chr)+'p','1','1','1','X']
+                    Move_MP=[m,p]
+                    Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
+                    Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
+                    if Ploidy==1:
+                        Af_Letter[1]=Af_Letter[0]
+                        Af_BP[1]=Af_BP[0]
+                        Af_BP_List.append(Af_BP)
+                        Af_Letter_List.append(Af_Letter)
+                    elif  Ploidy==0:
+                        Af_BP_List.append(Af_BP)
+                        Af_BP_List.append([Af_BP[0],Af_BP[0]])
+                        Af_Letter_List.append(Af_Letter)
+                        Af_Letter_List.append([Af_Letter[0],Af_Letter[0]])
+                    elif Ploidy==2:
+                        Af_BP_List.append(Af_BP)
+                        Af_Letter_List.append(Af_Letter)
+                out=[[],[],0]
+                for Af_Num in range(len(Af_Letter_List)):
+                    Af_Letter=Af_Letter_List[Af_Num]
+                    Af_BP=Af_BP_List[Af_Num]
+                    if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
+                    if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
+                    letter_num_flag=0
+                    for key in Block_CN_Upper.keys():
+                            if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
+                                    letter_num_flag+=1
+                    if not letter_num_flag==0: continue
+                    out[0].append(Af_Letter)
+                    out[1].append(Af_BP)
+                    out[2]+=1
+                return out
+            def After_Letter_List_Produce_P(P_Move_Choices,Be_BP,Be_Letter,original_bp_list,Ploidy,Best_Score_Rec,Best_Letter_Rec,Block_CN_Upper):
+                [Af_BP_List,Af_Letter_List]=[[],[]]
+                for p in [['2p','1','1','1','X']]+P_Move_Choices:
+                    m=[str(Chr)+'m','1','1','1','X']
+                    Move_MP=[m,p]
+                    Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
+                    Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
+                    if Ploidy==1:
+                        Af_Letter[0]=Af_Letter[1]
+                        Af_BP[0]=Af_BP[1]
+                        Af_BP_List.append(Af_BP)
+                        Af_Letter_List.append(Af_Letter)
+                    elif  Ploidy==0:
+                        Af_BP_List.append(Af_BP)
+                        Af_BP_List.append([Af_BP[1],Af_BP[1]])
+                        Af_Letter_List.append(Af_Letter)
+                        Af_Letter_List.append([Af_Letter[1],Af_Letter[1]])
+                    elif Ploidy==2:
+                        Af_BP_List.append(Af_BP)
+                        Af_Letter_List.append(Af_Letter)
+                out=[[],[],0]
+                for Af_Num in range(len(Af_Letter_List)):
+                    Af_Letter=Af_Letter_List[Af_Num]
+                    Af_BP=Af_BP_List[Af_Num]
+                    if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
+                    if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
+                    letter_num_flag=0
+                    for key in Block_CN_Upper.keys():
+                            if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
+                                    letter_num_flag+=1
+                    if not letter_num_flag==0: continue
+                    out[0].append(Af_Letter)
+                    out[1].append(Af_BP)
+                    out[2]+=1
+                return out
             Define_Default_SVPredict()
             if not '--workdir' in dict_opts.keys():
                 print 'Error: please specify working directory using: --workdir'
@@ -4546,11 +4505,6 @@ else:
                             else:
                                 time1=time.time()
                                 null_model_global_para_setup(dict_opts)
-                                if not bp_txt_Path[0]=='/':
-                                    if BPPath[0]=='/':
-                                        BPPath=BPPath[1:]
-                                    if NullPath[0]=='/':
-                                        NullPath=NullPath[1:]
                                 if not os.path.isfile(Insert_Len_Stat):
                                     print 'Error: cannot access file: '+Insert_Len_Stat
                                 else:
@@ -4711,16 +4665,12 @@ else:
                                                             if not bps3[k1]=={}:
                                                                 bps4[k1]=[[k1]+bps3[k1][sorted(bps3[k1].keys())[0]]]
                                                                 for k2 in range(len(bps3[k1].keys())-1):
-                                                                    if bps3[k1][sorted(bps3[k1].keys())[k2+1]][0]==bps3[k1][sorted(bps3[k1].keys())[k2]][-1]:
-                                                                        bps4[k1][-1]+=[bps3[k1][sorted(bps3[k1].keys())[k2+1]][-1]]
-                                                                    else:
-                                                                        bps4[k1].append(bps3[k1][sorted(bps3[k1].keys())[k2+1]])
+                                                                    if bps3[k1][sorted(bps3[k1].keys())[k2+1]][0]==bps3[k1][sorted(bps3[k1].keys())[k2]][-1]:   bps4[k1][-1]+=[bps3[k1][sorted(bps3[k1].keys())[k2+1]][-1]]
+                                                                    else:                                                                                       bps4[k1].append(bps3[k1][sorted(bps3[k1].keys())[k2+1]])
                                                         bps2=bps4_to_bps2(bps4)
                                                         Chr=bps2[0][0]
                                                         Flank_para_dict={'flank':flank,'Cut_Lower':Cut_Lower,'Cut_Upper':Cut_Upper,'ReadLength':ReadLength}
-                                                        Copy_num_esti_info=copy_num_estimate_calcu(GC_para_dict,Flank_para_dict,bps2)
-                                                        Copy_num_Check=Copy_num_esti_info[1]
-                                                        Copy_num_estimate=Copy_num_esti_info[0]
+                                                        [Copy_num_estimate,Copy_num_Check]=copy_num_estimate_calcu(GC_para_dict,Flank_para_dict,bps2)
                                                         if Copy_num_Check==[]:
                                                             Full_Info=Full_Info_of_Reads_Integrate(GC_para_dict,Flank_para_dict,bps2)
                                                             RD_within_B=RD_within_B_calcu(GC_Mean_Coverage,Full_Info,bps2)
@@ -4758,20 +4708,16 @@ else:
                                                             for i in original_letters:
                                                                 ori_let2.append(i)
                                                             for i in original_letters:
-                                                                if Copy_num_estimate[i]<1:
-                                                                    ori_let2.remove(i)
+                                                                if Copy_num_estimate[i]<0:    ori_let2.remove(i)
                                                                 elif Copy_num_estimate[i]>3:
                                                                     letter_copy=int(Copy_num_estimate[i]/2)
-                                                                    for j in range(letter_copy)[1:]:
-                                                                        ori_let2.append(i)
+                                                                    for j in range(letter_copy)[1:]: ori_let2.append(i)
                                                             ori_bp2=[original_bp_list[0]]
-                                                            for i in ori_let2:
-                                                                ori_bp2.append(ori_bp2[-1]+Be_BP_Letter[i])
+                                                            for i in ori_let2:    ori_bp2.append(ori_bp2[-1]+Be_BP_Letter[i])
                                                             Initial_TB=0
                                                             [Pair_Through,Read_Through,SingleR_Through]=[Full_Info[4],Full_Info[5],Full_Info[6]]
                                                             bp_MP=[original_bp_list,original_bp_list]
                                                             letter_MP=[original_letters,original_letters]
-                                                            Be_BP=[ori_bp2,ori_bp2]
                                                             Be_BP_Letter['left']=flank
                                                             Be_BP_Letter['right']=flank
                                                             for let_key in Be_BP_Letter.keys():
@@ -4782,8 +4728,8 @@ else:
                                                                     num_of_read_pairs+=Be_BP_Letter[k1]*RD_within_B[k1]/2/ReadLength
                                                             num_of_read_pairs+=len(Full_Info[4])+len(Full_Info[5])+len(Full_Info[6])
                                                             Be_Info=[Pair_Through,Read_Through,SingleR_Through]
-                                                            ori_let2=ori_let_Modi(Be_Info,ori_let2)
-                                                            Be_Letter=[ori_let2,ori_let2]
+                                                            Be_Letter=[ori_let_Modi(Be_Info,ori_let2,Copy_num_estimate),ori_let2]
+                                                            Be_BP=ori_bp_Modi(Be_Letter,ori_bp2,Be_BP_Letter)
                                                             Best_Score=float("-inf")
                                                             [Move_Step,best_iterations,Best_Letter,Best_BPs,score_record,Best_Score_Rec,Score_rec_hash,break_Iteration_Flag,run_flag,Best_Letter_Rec]=[0,0,[],[],[],0,{},0,0,[]]
                                                             num_of_reads=(original_bp_list[-1]-original_bp_list[0])*GC_Mean_Coverage[Chr]/2/ReadLength
@@ -4817,137 +4763,202 @@ else:
                                                                             else:
                                                                                 Run_Result=many_RD_Process(copy_num_a,run_flag)
                                                                                 if Run_Result=='Error': continue
-                                                                                Best_Letter_Rec=Run_Result[0]
-                                                                                Best_Score_Rec=Run_Result[1]
-                                                                                run_flag=Run_Result[2]
+                                                                                [Best_Letter_Rec,Best_Score_Rec,run_flag]=[Run_Result[0],Run_Result[1],Run_Result[2]]
                                                                                 Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
                                                             elif len(Full_Info[9])==2 and deterministic_flag==0:
                                                                 bl2_flag=0
                                                                 for keyCNE in Copy_num_estimate.keys():
-                                                                    if not Copy_num_estimate[keyCNE]<2:
-                                                                        bl2_flag+=1
+                                                                    if not Copy_num_estimate[keyCNE]<2:    bl2_flag+=1
                                                                 if bl2_flag==0:
                                                                     Run_Result=two_block_RD_Process(GC_para_dict,BP_para_dict,run_flag)
                                                                     if Run_Result=='Error': continue
                                                                     [Best_Letter_Rec,Best_Score_Rec,run_flag]=[Run_Result[0],Run_Result[1],Run_Result[2]]
                                                                     Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
                                                             if run_flag==0:
-                                                                if deterministic_flag==0:
-                                                                    speed_test=10
-                                                                    t1_sptest=time.time()
+                                                                speed_test=10
+                                                                t1_sptest=time.time()
+                                                                while True:
+                                                                    print Be_Letter
+                                                                    if Move_Step>speed_test: break
+                                                                    Move_Step+=1
+                                                                    if inv_flag_overall<0.1:         Move_Sample_Pool=['delete','insert']
+                                                                    else:   Move_Sample_Pool=['delete','invert','insert']
+                                                                    Initial_Move_Prob=[float(1)/float(len(Move_Sample_Pool)) for i in range(len(Move_Sample_Pool))]
+                                                                    Move_M_P=Move_Choose(Move_Sample_Pool,Ploidy,Initial_Move_Prob)
+                                                                    M_Move_Choices=Move_Choice_procedure_2(Move_M_P[0],Be_Letter[0],original_letters,'2m')
+                                                                    P_Move_Choices=Move_Choice_procedure_2(Move_M_P[1],Be_Letter[1],original_letters,'2p')
+                                                                    if M_Move_Choices=='ERROR!' and P_Move_Choices=='ERROR!':
+                                                                        Move_Step-=1
+                                                                        continue
+                                                                    if not M_Move_Choices=='ERROR!' and not M_Move_Choices==[]: 
+                                                                        [P_IL,P_RD,P_DR,P_TB,Letter_Rec,BP_Rec]=[[],[],[],[],[],[]]
+                                                                        Af_Letter_BP_List=After_Letter_List_Produce_M(M_Move_Choices,Be_BP,Be_Letter,original_bp_list,Ploidy,Best_Score_Rec,Best_Letter_Rec,Block_CN_Upper)
+                                                                        for Af_Info_Number in range(Af_Letter_BP_List[2]):
+                                                                            [Af_Letter,Af_BP]=[Af_Letter_BP_List[0][Af_Info_Number],Af_Letter_BP_List[1][Af_Info_Number]]
+                                                                            Af_Info_all=Letter_Through_Rearrange_4(GC_para_dict,BP_para_dict,Be_Info,Af_Letter,Af_BP)
+                                                                            if Af_Info_all==0:continue
+                                                                            Letter_Rec.append(Af_Letter)
+                                                                            BP_Rec.append(Af_BP)
+                                                                            Af_IL_Penal=Af_Info_all[0]
+                                                                            Af_RD_Rec=Af_Info_all[1]
+                                                                            Af_DR_Penal=(Af_Info_all[2])**2
+                                                                            Af_TB_Penal_a=Af_Info_all[4]
+                                                                            Af_TB_Rec=Af_Info_all[3]
+                                                                            Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
+                                                                            Af_RD_Penal=RD_Adj_Penal(GC_para_dict,Initial_GCRD_Adj,Chr,Af_RD_Rec,Af_Letter)
+                                                                            for key in Af_Info_all[5].keys():        Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N]/2)
+                                                                            P_IL.append(Af_IL_Penal)
+                                                                            P_RD.append(Af_RD_Penal)
+                                                                            P_DR.append(Af_DR_Penal/num_of_read_pairs)
+                                                                            P_TB.append(Af_TB_Penal)
+                                                                        if len(P_IL)==0: continue
+                                                                        Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
+                                                                        Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
+                                                                        Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
+                                                                        Regu_RD=[i-RD_GS for i in Regu_RD]
+                                                                        Regulator=1
+                                                                        ILTemp=[j/Regulator for j in Regu_IL]
+                                                                        RDTemp=[i for i in Regu_RD]
+                                                                        if deterministic_flag==0:   DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Var_Coverage)
+                                                                        else:                       DECISION_Score=Move_Decide_deterministic(ILTemp,RDTemp,GC_Var_Coverage)
+                                                                        if DECISION_Score=='':  continue
+                                                                        DECISION=DECISION_Score[0]
+                                                                        S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
+                                                                        Be_Letter=Letter_Rec[DECISION]
+                                                                        Be_BP=BP_Rec[DECISION]
+                                                                        if not S_DECISION in Score_rec_hash.keys():
+                                                                            Score_rec_hash[S_DECISION]=[]
+                                                                        Score_rec_hash[S_DECISION].append(Be_Letter)
+                                                                        if S_DECISION>Best_Score:
+                                                                                Best_Letter=[Be_Letter]
+                                                                                Best_BPs=[Be_BP]
+                                                                                Best_Score=S_DECISION
+                                                                                best_iterations=0
+                                                                        elif S_DECISION==Best_Score:
+                                                                                if not Be_Letter in Best_Letter:
+                                                                                        Best_Letter+=[Be_Letter]
+                                                                                        Best_BPs+=[Be_BP]
+                                                                                best_iterations+=1
+                                                                        else:
+                                                                                best_iterations+=1
+                                                                        score_record.append(S_DECISION)
+                                                                    if not P_Move_Choices=='ERROR!' and not P_Move_Choices==[]:
+                                                                        [P_IL,P_RD,P_DR,P_TB,Letter_Rec,BP_Rec]=[[],[],[],[],[],[]]
+                                                                        Af_Letter_BP_List=After_Letter_List_Produce_P(P_Move_Choices,Be_BP,Be_Letter,original_bp_list,Ploidy,Best_Score_Rec,Best_Letter_Rec,Block_CN_Upper)
+                                                                        for Af_Info_Number in range(Af_Letter_BP_List[2]):
+                                                                            [Af_Letter,Af_BP]=[Af_Letter_BP_List[0][Af_Info_Number],Af_Letter_BP_List[1][Af_Info_Number]]
+                                                                            Af_Info_all=Letter_Through_Rearrange_4(GC_para_dict,BP_para_dict,Be_Info,Af_Letter,Af_BP)
+                                                                            if Af_Info_all==0:        continue
+                                                                            Letter_Rec.append(Af_Letter)
+                                                                            BP_Rec.append(Af_BP)
+                                                                            Af_IL_Penal=Af_Info_all[0]
+                                                                            Af_RD_Rec=Af_Info_all[1]
+                                                                            Af_DR_Penal=(Af_Info_all[2])**2
+                                                                            Af_TB_Penal_a=Af_Info_all[4]
+                                                                            Af_TB_Rec=Af_Info_all[3]
+                                                                            Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
+                                                                            Af_RD_Penal=RD_Adj_Penal(GC_para_dict,Initial_GCRD_Adj,Chr,Af_RD_Rec,Af_Letter)
+                                                                            for key in Af_Info_all[5].keys():        Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N])
+                                                                            P_IL.append(Af_IL_Penal)
+                                                                            P_RD.append(Af_RD_Penal)
+                                                                            P_DR.append(Af_DR_Penal/num_of_read_pairs)
+                                                                            P_TB.append(Af_TB_Penal)
+                                                                        if len(P_IL)==0: continue
+                                                                        Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
+                                                                        Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
+                                                                        Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
+                                                                        Regu_RD=[i-RD_GS for i in Regu_RD]
+                                                                        Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
+                                                                        Regulator=1
+                                                                        ILTemp=[j/Regulator for j in Regu_IL]
+                                                                        RDTemp=[i for i in Regu_RD]
+                                                                        if deterministic_flag==0:   DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Var_Coverage)
+                                                                        else:                       DECISION_Score=Move_Decide_deterministic(ILTemp,RDTemp,GC_Var_Coverage)
+                                                                        if DECISION_Score=='':  continue
+                                                                        DECISION=DECISION_Score[0]
+                                                                        S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
+                                                                        Be_Letter=Letter_Rec[DECISION]
+                                                                        Be_BP=BP_Rec[DECISION]
+                                                                        if not S_DECISION in Score_rec_hash.keys():
+                                                                            Score_rec_hash[S_DECISION]=[]
+                                                                        Score_rec_hash[S_DECISION].append(Be_Letter)
+                                                                        if S_DECISION>Best_Score:
+                                                                                Best_Letter=[Be_Letter]
+                                                                                Best_BPs=[Be_BP]
+                                                                                Best_Score=S_DECISION
+                                                                                best_iterations=0
+                                                                        elif S_DECISION==Best_Score:
+                                                                                if not Be_Letter in Best_Letter:
+                                                                                        Best_Letter+=[Be_Letter]
+                                                                                        Best_BPs+=[Be_BP]
+                                                                                best_iterations+=1
+                                                                        else:
+                                                                                best_iterations+=1
+                                                                        score_record.append(S_DECISION)
+                                                                        #best_score_rec.append(Best_Score)
+                                                                t2_sptest=time.time()
+                                                                if t2_sptest-t1_sptest<10 or bpsk1<4:
                                                                     while True:
-                                                                        if Move_Step>speed_test: break
+                                                                        print Be_Letter
+                                                                        if Move_Step>Trail_Number: break
+                                                                        if best_iterations>Local_Minumum_Number: 
+                                                                            if Best_Score_Rec==0:
+                                                                                    best_iterations=0
+                                                                                    Best_Score_Rec=Best_Score
+                                                                                    Best_Letter_Rec=Best_Letter
+                                                                                    Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
+                                                                                    Best_BPs_Rec=Best_BPs
+                                                                                    Be_Letter=Best_Letter[0]
+                                                                                    Be_BP=Best_BPs[0]
+                                                                                    Best_Score-=100
+                                                                            else:
+                                                                                    if Best_Score<Best_Score_Rec:
+                                                                                            break_Iteration_Flag=1
+                                                                                    elif Best_Score==Best_Score_Rec:
+                                                                                            break_Iteration_Flag=1
+                                                                                            for i in Best_Letter:
+                                                                                                    if not i in Best_Letter_Rec:
+                                                                                                            Best_Letter_Rec.append(i)
+                                                                                    else:
+                                                                                            best_iterations=0
+                                                                                            Best_Score_Rec=Best_Score
+                                                                                            Best_Letter_Rec=Best_Letter
+                                                                                            Best_BPs_Rec=Best_BPs
+                                                                                            Be_Letter=Best_Letter[0]
+                                                                                            Be_BP=Best_BPs[0]
+                                                                                            Best_Score-=100
+                                                                        if break_Iteration_Flag>0:        break
                                                                         Move_Step+=1
-                                                                        [M_Key_0,P_Key_0]=['_'.join(['Step',str(Move_Step),'M']),'_'.join(['Step',str(Move_Step),'P'])]
-                                                                        if inv_flag_overall<0.1:         Move_Sample_Pool=['delete','insert']
-                                                                        else:   Move_Sample_Pool=['delete','invert','insert']
-                                                                        Initial_Move_Prob=[float(1)/float(len(Move_Sample_Pool)) for i in range(len(Move_Sample_Pool))]
+                                                                        Move_Sample_Pool=['delete','invert','insert']
                                                                         Move_M_P=Move_Choose(Move_Sample_Pool,Ploidy,Initial_Move_Prob)
+                                                                        if Be_Letter[0]==[]:    Move_M_P[0]='insert'
+                                                                        if Be_Letter[1]==[]:    Move_M_P[1]='insert'
                                                                         M_Move_Choices=Move_Choice_procedure_2(Move_M_P[0],Be_Letter[0],original_letters,'2m')
                                                                         P_Move_Choices=Move_Choice_procedure_2(Move_M_P[1],Be_Letter[1],original_letters,'2p')
                                                                         if M_Move_Choices=='ERROR!' and P_Move_Choices=='ERROR!':
-                                                                            Move_Step-=1
-                                                                            continue
-                                                                        if not M_Move_Choices=='ERROR!': 
-                                                                            [P_IL,P_RD,P_DR,P_TB,Letter_Rec,BP_Rec]=[[],[],[],[],[],[]]
-                                                                            for m in [['2m','1','1','1','X']]+M_Move_Choices:
-                                                                                p=[str(Chr)+'p','1','1','1','X']
-                                                                                Move_MP=[m,p]
-                                                                                Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
-                                                                                Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
-                                                                                if Ploidy==1:
-                                                                                    Af_Letter[1]=Af_Letter[0]
-                                                                                    Af_BP[1]=Af_BP[0]
-                                                                                if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
-                                                                                if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
-                                                                                letter_num_flag=0
-                                                                                for key in Block_CN_Upper.keys():
-                                                                                        if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
-                                                                                                letter_num_flag+=1
-                                                                                if not letter_num_flag==0: continue
-                                                                                Af_Info_all=Letter_Through_Rearrange_4(GC_para_dict,BP_para_dict,Be_Info,Af_Letter,Af_BP)
-                                                                                if Af_Info_all==0:continue
-                                                                                Letter_Rec.append(Af_Letter)
-                                                                                BP_Rec.append(Af_BP)
-                                                                                Af_IL_Penal=Af_Info_all[0]
-                                                                                Af_RD_Rec=Af_Info_all[1]
-                                                                                Af_DR_Penal=(Af_Info_all[2])**2
-                                                                                Af_TB_Penal_a=Af_Info_all[4]
-                                                                                Af_TB_Rec=Af_Info_all[3]
-                                                                                Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
-                                                                                Af_RD_Penal=RD_Adj_Penal(GC_para_dict,Initial_GCRD_Adj,Chr,Af_RD_Rec,Af_Letter)
-                                                                                for key in Af_Info_all[5].keys():
-                                                                                        Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N]/2)
-                                                                                P_IL.append(Af_IL_Penal)
-                                                                                P_RD.append(Af_RD_Penal)
-                                                                                P_DR.append(Af_DR_Penal/num_of_read_pairs)
-                                                                                P_TB.append(Af_TB_Penal)
-                                                                            if len(P_IL)==0: continue
-                                                                            Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
-                                                                            Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
-                                                                            Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
-                                                                            Regu_RD=[i-RD_GS for i in Regu_RD]
-                                                                            Regulator=1
-                                                                            ILTemp=[j/Regulator for j in Regu_IL]
-                                                                            RDTemp=[i for i in Regu_RD]
-                                                                            DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Var_Coverage)
-                                                                            if DECISION_Score=='':  continue
-                                                                            DECISION=DECISION_Score[0]
-                                                                            S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
-                                                                            Be_Letter=Letter_Rec[DECISION]
-                                                                            Be_BP=BP_Rec[DECISION]
-                                                                            if not S_DECISION in Score_rec_hash.keys():
-                                                                                Score_rec_hash[S_DECISION]=[]
-                                                                            Score_rec_hash[S_DECISION].append(Be_Letter)
-                                                                            if S_DECISION>Best_Score:
-                                                                                    Best_Letter=[Be_Letter]
-                                                                                    Best_BPs=[Be_BP]
-                                                                                    Best_Score=S_DECISION
-                                                                                    best_iterations=0
-                                                                            elif S_DECISION==Best_Score:
-                                                                                    if not Be_Letter in Best_Letter:
-                                                                                            Best_Letter+=[Be_Letter]
-                                                                                            Best_BPs+=[Be_BP]
-                                                                                    best_iterations+=1
-                                                                            else:
-                                                                                    best_iterations+=1
-                                                                            score_record.append(S_DECISION)
-                                                                        if not P_Move_Choices=='ERROR!':
+                                                                                Move_Step-=1
+                                                                                continue
+                                                                        if not M_Move_Choices=='ERROR!' and not M_Move_Choices==[]:
                                                                                 [P_IL,P_RD,P_DR,P_TB,Letter_Rec,BP_Rec]=[[],[],[],[],[],[]]
-                                                                                if not P_Move_Choices==[]:
-                                                                                    for p in [['2p','1','1','1','X']]+P_Move_Choices:
-                                                                                        m=[str(Chr)+'m','1','1','1','X']
-                                                                                        Move_MP=[m,p]
-                                                                                        Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
-                                                                                        Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
-                                                                                        if Ploidy==1:
-                                                                                            Af_Letter[1]=Af_Letter[0]
-                                                                                            Af_BP[1]=Af_BP[0]
-                                                                                        if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
-                                                                                        if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
-                                                                                        letter_num_flag=0
-                                                                                        for key in Block_CN_Upper.keys():
-                                                                                                if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
-                                                                                                        letter_num_flag+=1
-                                                                                        if not letter_num_flag==0: continue
-                                                                                        Af_Info_all=Letter_Through_Rearrange_4(GC_para_dict,BP_para_dict,Be_Info,Af_Letter,Af_BP)
-                                                                                        if Af_Info_all==0:
-                                                                                                continue
-                                                                                        Letter_Rec.append(Af_Letter)
-                                                                                        BP_Rec.append(Af_BP)
-                                                                                        Af_IL_Penal=Af_Info_all[0]
-                                                                                        Af_RD_Rec=Af_Info_all[1]
-                                                                                        Af_DR_Penal=(Af_Info_all[2])**2
-                                                                                        Af_TB_Penal_a=Af_Info_all[4]
-                                                                                        Af_TB_Rec=Af_Info_all[3]
-                                                                                        Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
-                                                                                        Af_RD_Penal=RD_Adj_Penal(GC_para_dict,Initial_GCRD_Adj,Chr,Af_RD_Rec,Af_Letter)
-                                                                                        for key in Af_Info_all[5].keys():
-                                                                                                Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N])
-                                                                                        P_IL.append(Af_IL_Penal)
-                                                                                        P_RD.append(Af_RD_Penal)
-                                                                                        P_DR.append(Af_DR_Penal/num_of_read_pairs)
-                                                                                        P_TB.append(Af_TB_Penal)
+                                                                                Af_Letter_BP_List=After_Letter_List_Produce_M(M_Move_Choices,Be_BP,Be_Letter,original_bp_list,Ploidy,Best_Score_Rec,Best_Letter_Rec,Block_CN_Upper)
+                                                                                for Af_Info_Number in range(Af_Letter_BP_List[2]):
+                                                                                    [Af_Letter,Af_BP]=[Af_Letter_BP_List[0][Af_Info_Number],Af_Letter_BP_List[1][Af_Info_Number]]
+                                                                                    Af_Info_all=Letter_Through_Rearrange_4(GC_para_dict,BP_para_dict,Be_Info,Af_Letter,Af_BP)
+                                                                                    if Af_Info_all==0:continue
+                                                                                    Letter_Rec.append(Af_Letter)
+                                                                                    BP_Rec.append(Af_BP)
+                                                                                    Af_IL_Penal=Af_Info_all[0]
+                                                                                    Af_RD_Rec=Af_Info_all[1]
+                                                                                    Af_DR_Penal=(Af_Info_all[2])**2
+                                                                                    Af_TB_Penal_a=Af_Info_all[4]
+                                                                                    Af_TB_Rec=Af_Info_all[3]
+                                                                                    Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
+                                                                                    Af_RD_Penal=RD_Adj_Penal(GC_para_dict,Initial_GCRD_Adj,Chr,Af_RD_Rec,Af_Letter)
+                                                                                    for key in Af_Info_all[5].keys():        Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N]/2)
+                                                                                    P_IL.append(Af_IL_Penal)
+                                                                                    P_RD.append(Af_RD_Penal)
+                                                                                    P_DR.append(Af_DR_Penal/num_of_read_pairs)
+                                                                                    P_TB.append(Af_TB_Penal)
                                                                                 if len(P_IL)==0: continue
                                                                                 Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
                                                                                 Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
@@ -4957,15 +4968,18 @@ else:
                                                                                 Regulator=1
                                                                                 ILTemp=[j/Regulator for j in Regu_IL]
                                                                                 RDTemp=[i for i in Regu_RD]
-                                                                                DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Var_Coverage)
+                                                                                if deterministic_flag==0:   DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Var_Coverage)
+                                                                                else:                       DECISION_Score=Move_Decide_deterministic(ILTemp,RDTemp,GC_Var_Coverage)
                                                                                 if DECISION_Score=='':  continue
                                                                                 DECISION=DECISION_Score[0]
                                                                                 S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
                                                                                 Be_Letter=Letter_Rec[DECISION]
                                                                                 Be_BP=BP_Rec[DECISION]
                                                                                 if not S_DECISION in Score_rec_hash.keys():
-                                                                                    Score_rec_hash[S_DECISION]=[]
-                                                                                Score_rec_hash[S_DECISION].append(Be_Letter)
+                                                                                    Score_rec_hash[S_DECISION]=[Be_Letter]
+                                                                                else: 
+                                                                                    if not Be_Letter in Score_rec_hash[S_DECISION]:
+                                                                                        Score_rec_hash[S_DECISION].append(Be_Letter)
                                                                                 if S_DECISION>Best_Score:
                                                                                         Best_Letter=[Be_Letter]
                                                                                         Best_BPs=[Be_BP]
@@ -4980,530 +4994,84 @@ else:
                                                                                         best_iterations+=1
                                                                                 score_record.append(S_DECISION)
                                                                                 #best_score_rec.append(Best_Score)
-                                                                    t2_sptest=time.time()
-                                                                    if t2_sptest-t1_sptest<10 or bpsk1<4:
-                                                                        while True:
-                                                                                if Move_Step>Trail_Number: break
-                                                                                if best_iterations>Local_Minumum_Number: 
-                                                                                    if Best_Score_Rec==0:
-                                                                                            best_iterations=0
-                                                                                            Best_Score_Rec=Best_Score
-                                                                                            Best_Letter_Rec=Best_Letter
-                                                                                            Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
-                                                                                            Best_BPs_Rec=Best_BPs
-                                                                                            Be_Letter=Best_Letter[0]
-                                                                                            Be_BP=Best_BPs[0]
-                                                                                            Best_Score-=100
-                                                                                    else:
-                                                                                            if Best_Score<Best_Score_Rec:
-                                                                                                    break_Iteration_Flag=1
-                                                                                            elif Best_Score==Best_Score_Rec:
-                                                                                                    break_Iteration_Flag=1
-                                                                                                    for i in Best_Letter:
-                                                                                                            if not i in Best_Letter_Rec:
-                                                                                                                    Best_Letter_Rec.append(i)
-                                                                                            else:
-                                                                                                    best_iterations=0
-                                                                                                    Best_Score_Rec=Best_Score
-                                                                                                    Best_Letter_Rec=Best_Letter
-                                                                                                    Best_BPs_Rec=Best_BPs
-                                                                                                    Be_Letter=Best_Letter[0]
-                                                                                                    Be_BP=Best_BPs[0]
-                                                                                                    Best_Score-=100
-                                                                                if break_Iteration_Flag>0:
-                                                                                        break
-                                                                                Move_Step+=1
-                                                                                M_Key_0='_'.join(['Step',str(Move_Step),'M'])
-                                                                                P_Key_0='_'.join(['Step',str(Move_Step),'P'])
-                                                                                Move_Sample_Pool=['delete','invert','insert']
-                                                                                Move_M_P=Move_Choose(Move_Sample_Pool,Ploidy,Initial_Move_Prob)
-                                                                                M_Move_Choices=Move_Choice_procedure_2(Move_M_P[0],Be_Letter[0],original_letters,'2m')
-                                                                                P_Move_Choices=Move_Choice_procedure_2(Move_M_P[1],Be_Letter[1],original_letters,'2p')
-                                                                                if M_Move_Choices=='ERROR!' and P_Move_Choices=='ERROR!':
-                                                                                        Move_Step-=1
-                                                                                        continue
-                                                                                if not M_Move_Choices=='ERROR!':
-                                                                                        [P_IL,P_RD,P_DR,P_TB,Letter_Rec,BP_Rec]=[[],[],[],[],[],[]]
-                                                                                        for m in [['2m','1','1','1','X']]+M_Move_Choices:
-                                                                                                p=[str(Chr)+'p','1','1','1','X']
-                                                                                                Move_MP=[m,p]
-                                                                                                Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
-                                                                                                Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
-                                                                                                if Ploidy==1:
-                                                                                                    Af_Letter[1]=Af_Letter[0]
-                                                                                                    Af_BP[1]=Af_BP[0]
-                                                                                                if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
-                                                                                                if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
-                                                                                                letter_num_flag=0
-                                                                                                for key in Block_CN_Upper.keys():
-                                                                                                        if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
-                                                                                                                letter_num_flag+=1
-                                                                                                if not letter_num_flag==0: continue
-                                                                                                Af_Info_all=Letter_Through_Rearrange_4(GC_para_dict,BP_para_dict,Be_Info,Af_Letter,Af_BP)
-                                                                                                if Af_Info_all==0:continue
-                                                                                                Letter_Rec.append(Af_Letter)
-                                                                                                BP_Rec.append(Af_BP)
-                                                                                                Af_IL_Penal=Af_Info_all[0]
-                                                                                                Af_RD_Rec=Af_Info_all[1]
-                                                                                                Af_DR_Penal=(Af_Info_all[2])**2
-                                                                                                Af_TB_Penal_a=Af_Info_all[4]
-                                                                                                Af_TB_Rec=Af_Info_all[3]
-                                                                                                Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
-                                                                                                Af_RD_Penal=RD_Adj_Penal(GC_para_dict,Initial_GCRD_Adj,Chr,Af_RD_Rec,Af_Letter)
-                                                                                                for key in Af_Info_all[5].keys():
-                                                                                                        Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N]/2)
-                                                                                                P_IL.append(Af_IL_Penal)
-                                                                                                P_RD.append(Af_RD_Penal)
-                                                                                                P_DR.append(Af_DR_Penal/num_of_read_pairs)
-                                                                                                P_TB.append(Af_TB_Penal)
-                                                                                        if len(P_IL)==0: continue
-                                                                                        Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
-                                                                                        Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
-                                                                                        Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
-                                                                                        Regu_RD=[i-RD_GS for i in Regu_RD]
-                                                                                        Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
-                                                                                        Regulator=1
-                                                                                        ILTemp=[j/Regulator for j in Regu_IL]
-                                                                                        RDTemp=[i for i in Regu_RD]
-                                                                                        DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Var_Coverage)
-                                                                                        if DECISION_Score=='':  continue
-                                                                                        DECISION=DECISION_Score[0]
-                                                                                        S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
-                                                                                        Be_Letter=Letter_Rec[DECISION]
-                                                                                        Be_BP=BP_Rec[DECISION]
-                                                                                        if not S_DECISION in Score_rec_hash.keys():
-                                                                                            Score_rec_hash[S_DECISION]=[Be_Letter]
-                                                                                        else: 
-                                                                                            if not Be_Letter in Score_rec_hash[S_DECISION]:
-                                                                                                Score_rec_hash[S_DECISION].append(Be_Letter)
-                                                                                        if S_DECISION>Best_Score:
-                                                                                                Best_Letter=[Be_Letter]
-                                                                                                Best_BPs=[Be_BP]
-                                                                                                Best_Score=S_DECISION
-                                                                                                best_iterations=0
-                                                                                        elif S_DECISION==Best_Score:
-                                                                                                if not Be_Letter in Best_Letter:
-                                                                                                        Best_Letter+=[Be_Letter]
-                                                                                                        Best_BPs+=[Be_BP]
-                                                                                                best_iterations+=1
-                                                                                        else:
-                                                                                                best_iterations+=1
-                                                                                        score_record.append(S_DECISION)
-                                                                                        #best_score_rec.append(Best_Score)
-                                                                                if not P_Move_Choices=='ERROR!':
-                                                                                        [P_IL,P_RD,P_DR,P_TB,Letter_Rec,BP_Rec]=[[],[],[],[],[],[]]
-                                                                                        if not P_Move_Choices==[]:
-                                                                                            for p in [['2p','1','1','1','X']]+P_Move_Choices:
-                                                                                                m=[str(Chr)+'m','1','1','1','X']
-                                                                                                Move_MP=[m,p]
-                                                                                                Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
-                                                                                                Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
-                                                                                                if Ploidy==1:
-                                                                                                    Af_Letter[1]=Af_Letter[0]
-                                                                                                    Af_BP[1]=Af_BP[0]
-                                                                                                if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
-                                                                                                if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
-                                                                                                letter_num_flag=0
-                                                                                                for key in Block_CN_Upper.keys():
-                                                                                                        if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
-                                                                                                                letter_num_flag+=1
-                                                                                                if not letter_num_flag==0: continue
-                                                                                                Af_Info_all=Letter_Through_Rearrange_4(GC_para_dict,BP_para_dict,Be_Info,Af_Letter,Af_BP)
-                                                                                                if Af_Info_all==0:
-                                                                                                        continue
-                                                                                                Letter_Rec.append(Af_Letter)
-                                                                                                BP_Rec.append(Af_BP)
-                                                                                                Af_IL_Penal=Af_Info_all[0]
-                                                                                                Af_RD_Rec=Af_Info_all[1]
-                                                                                                Af_DR_Penal=(Af_Info_all[2])**2
-                                                                                                Af_TB_Penal_a=Af_Info_all[4]
-                                                                                                Af_TB_Rec=Af_Info_all[3]
-                                                                                                Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
-                                                                                                Af_RD_Penal=RD_Adj_Penal(GC_para_dict,Initial_GCRD_Adj,Chr,Af_RD_Rec,Af_Letter)
-                                                                                                for key in Af_Info_all[5].keys():
-                                                                                                        Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N])
-                                                                                                P_IL.append(Af_IL_Penal)
-                                                                                                P_RD.append(Af_RD_Penal)
-                                                                                                P_DR.append(Af_DR_Penal/num_of_read_pairs)
-                                                                                                P_TB.append(Af_TB_Penal)
-                                                                                        if len(P_IL)==0: continue
-                                                                                        Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
-                                                                                        Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
-                                                                                        Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
-                                                                                        Regu_RD=[i-RD_GS for i in Regu_RD]
-                                                                                        Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
-                                                                                        Regulator=1
-                                                                                        ILTemp=[j/Regulator for j in Regu_IL]
-                                                                                        RDTemp=[i for i in Regu_RD]
-                                                                                        DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Var_Coverage)
-                                                                                        if DECISION_Score=='':  continue
-                                                                                        DECISION=DECISION_Score[0]
-                                                                                        S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
-                                                                                        Be_Letter=Letter_Rec[DECISION]
-                                                                                        Be_BP=BP_Rec[DECISION]
-                                                                                        if not S_DECISION in Score_rec_hash.keys():
-                                                                                            Score_rec_hash[S_DECISION]=[Be_Letter]
-                                                                                        else: 
-                                                                                            if not Be_Letter in Score_rec_hash[S_DECISION]:
-                                                                                                Score_rec_hash[S_DECISION].append(Be_Letter)
-                                                                                        if S_DECISION>Best_Score:
-                                                                                                Best_Letter=[Be_Letter]
-                                                                                                Best_BPs=[Be_BP]
-                                                                                                Best_Score=S_DECISION
-                                                                                                best_iterations=0
-                                                                                        elif S_DECISION==Best_Score:
-                                                                                                if not Be_Letter in Best_Letter:
-                                                                                                        Best_Letter+=[Be_Letter]
-                                                                                                        Best_BPs+=[Be_BP]
-                                                                                                best_iterations+=1
-                                                                                        else:
-                                                                                                best_iterations+=1
-                                                                                        score_record.append(S_DECISION)
-                                                                                        #best_score_rec.append(Best_Score)
-                                                                    else:
-                                                                        gaps=[]
-                                                                        bps2_new=[]
-                                                                        for k1 in bps2:
-                                                                            gaps.append([])
-                                                                            for k2 in range(len(k1)-2):
-                                                                                gaps[-1].append(int(k1[k2+2])-int(k1[k2+1]))
-                                                                        for k1 in range(len(gaps)):
-                                                                            bps2_new.append([])
-                                                                            chr_rec=bps2[k1][0]
-                                                                            rec1=1
-                                                                            for k2 in range(len(gaps[k1])):
-                                                                                if gaps[k1][k2]==max(gaps[k1]):
-                                                                                    bps2_new[-1].append([chr_rec]+bps2[k1][rec1:(k2+2)])
-                                                                                    bps2_new[-1].append([chr_rec]+bps2[k1][(k2+1):(k2+3)])
-                                                                                    rec1=k2+2
-                                                                            bps2_new[-1].append([chr_rec]+bps2[k1][rec1:])
-                                                                        for k1 in bps2_new:
-                                                                            for k2 in k1:
-                                                                                bps_hash[max(bps_hash.keys())].append([k2])
-                                                                        Best_Letter_Rec=[]
-                                                                        Best_Score_Rec=100
+                                                                        if not P_Move_Choices=='ERROR!' and not P_Move_Choices==[]:
+                                                                                [P_IL,P_RD,P_DR,P_TB,Letter_Rec,BP_Rec]=[[],[],[],[],[],[]]
+                                                                                Af_Letter_BP_List=After_Letter_List_Produce_P(P_Move_Choices,Be_BP,Be_Letter,original_bp_list,Ploidy,Best_Score_Rec,Best_Letter_Rec,Block_CN_Upper)
+                                                                                for Af_Info_Number in range(Af_Letter_BP_List[2]):
+                                                                                        [Af_Letter,Af_BP]=[Af_Letter_BP_List[0][Af_Info_Number],Af_Letter_BP_List[1][Af_Info_Number]]
+                                                                                        Af_Info_all=Letter_Through_Rearrange_4(GC_para_dict,BP_para_dict,Be_Info,Af_Letter,Af_BP)
+                                                                                        if Af_Info_all==0:        continue
+                                                                                        Letter_Rec.append(Af_Letter)
+                                                                                        BP_Rec.append(Af_BP)
+                                                                                        Af_IL_Penal=Af_Info_all[0]
+                                                                                        Af_RD_Rec=Af_Info_all[1]
+                                                                                        Af_DR_Penal=(Af_Info_all[2])**2
+                                                                                        Af_TB_Penal_a=Af_Info_all[4]
+                                                                                        Af_TB_Rec=Af_Info_all[3]
+                                                                                        Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
+                                                                                        Af_RD_Penal=RD_Adj_Penal(GC_para_dict,Initial_GCRD_Adj,Chr,Af_RD_Rec,Af_Letter)
+                                                                                        for key in Af_Info_all[5].keys():         Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N])
+                                                                                        P_IL.append(Af_IL_Penal)
+                                                                                        P_RD.append(Af_RD_Penal)
+                                                                                        P_DR.append(Af_DR_Penal/num_of_read_pairs)
+                                                                                        P_TB.append(Af_TB_Penal)
+                                                                                if len(P_IL)==0: continue
+                                                                                Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
+                                                                                Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
+                                                                                Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
+                                                                                Regu_RD=[i-RD_GS for i in Regu_RD]
+                                                                                Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
+                                                                                Regulator=1
+                                                                                ILTemp=[j/Regulator for j in Regu_IL]
+                                                                                RDTemp=[i for i in Regu_RD]
+                                                                                if deterministic_flag==0:   DECISION_Score=Move_Decide_2(ILTemp,RDTemp,GC_Var_Coverage)
+                                                                                else:                       DECISION_Score=Move_Decide_deterministic(ILTemp,RDTemp,GC_Var_Coverage)
+                                                                                if DECISION_Score=='':  continue
+                                                                                DECISION=DECISION_Score[0]
+                                                                                S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
+                                                                                Be_Letter=Letter_Rec[DECISION]
+                                                                                Be_BP=BP_Rec[DECISION]
+                                                                                if not S_DECISION in Score_rec_hash.keys():
+                                                                                    Score_rec_hash[S_DECISION]=[Be_Letter]
+                                                                                else: 
+                                                                                    if not Be_Letter in Score_rec_hash[S_DECISION]:
+                                                                                        Score_rec_hash[S_DECISION].append(Be_Letter)
+                                                                                if S_DECISION>Best_Score:
+                                                                                        Best_Letter=[Be_Letter]
+                                                                                        Best_BPs=[Be_BP]
+                                                                                        Best_Score=S_DECISION
+                                                                                        best_iterations=0
+                                                                                elif S_DECISION==Best_Score:
+                                                                                        if not Be_Letter in Best_Letter:
+                                                                                                Best_Letter+=[Be_Letter]
+                                                                                                Best_BPs+=[Be_BP]
+                                                                                        best_iterations+=1
+                                                                                else:
+                                                                                        best_iterations+=1
+                                                                                score_record.append(S_DECISION)
+                                                                                #best_score_rec.append(Best_Score)
                                                                 else:
-                                                                    speed_test=10
-                                                                    t1_sptest=time.time()
-                                                                    while True:
-                                                                        if Move_Step>speed_test: break
-                                                                        Move_Step+=1
-                                                                        M_Key_0='_'.join(['Step',str(Move_Step),'M'])
-                                                                        P_Key_0='_'.join(['Step',str(Move_Step),'P'])
-                                                                        Move_Sample_Pool=['delete','invert','insert']
-                                                                        Move_M_P=[Move_Sample_Pool[Move_Step%len(Move_Sample_Pool)],Move_Sample_Pool[Move_Step%len(Move_Sample_Pool)]]
-                                                                        M_Move_Choices=Move_Choice_procedure_2(Move_M_P[0],Be_Letter[0],original_letters,'2m')
-                                                                        P_Move_Choices=Move_Choice_procedure_2(Move_M_P[1],Be_Letter[1],original_letters,'2p')
-                                                                        if not M_Move_Choices=='ERROR!':
-                                                                            [P_IL,P_RD,P_DR,P_TB,Letter_Rec,BP_Rec]=[[],[],[],[],[],[]] 
-                                                                            for m in [['2m','1','1','1','X']]+M_Move_Choices:
-                                                                                    p=[str(Chr)+'p','1','1','1','X']
-                                                                                    Move_MP=[m,p]
-                                                                                    Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
-                                                                                    Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
-                                                                                    if Ploidy==1:
-                                                                                        Af_Letter[1]=Af_Letter[0]
-                                                                                        Af_BP[1]=Af_BP[0]
-                                                                                    if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
-                                                                                    if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
-                                                                                    letter_num_flag=0
-                                                                                    for key in Block_CN_Upper.keys():
-                                                                                            if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
-                                                                                                    letter_num_flag+=1
-                                                                                    if not letter_num_flag==0: continue
-                                                                                    Af_Info_all=Letter_Through_Rearrange_4(GC_para_dict,BP_para_dict,Be_Info,Af_Letter,Af_BP)
-                                                                                    if Af_Info_all==0:continue
-                                                                                    Letter_Rec.append(Af_Letter)
-                                                                                    BP_Rec.append(Af_BP)
-                                                                                    Af_IL_Penal=Af_Info_all[0]
-                                                                                    Af_RD_Rec=Af_Info_all[1]
-                                                                                    Af_DR_Penal=(Af_Info_all[2])**2
-                                                                                    Af_TB_Penal_a=Af_Info_all[4]
-                                                                                    Af_TB_Rec=Af_Info_all[3]
-                                                                                    Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
-                                                                                    Af_RD_Penal=RD_Adj_Penal(GC_para_dict,Initial_GCRD_Adj,Chr,Af_RD_Rec,Af_Letter)
-                                                                                    for key in Af_Info_all[5].keys():
-                                                                                            Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N]/2)
-                                                                                    P_IL.append(Af_IL_Penal)
-                                                                                    P_RD.append(Af_RD_Penal)
-                                                                                    P_DR.append(Af_DR_Penal/num_of_read_pairs)
-                                                                                    P_TB.append(Af_TB_Penal)
-                                                                            if len(P_IL)==0: continue
-                                                                            Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
-                                                                            Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
-                                                                            Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
-                                                                            Regu_RD=[i-RD_GS for i in Regu_RD]
-                                                                            Regulator=1
-                                                                            ILTemp=[j/Regulator for j in Regu_IL]
-                                                                            RDTemp=[i for i in Regu_RD]
-                                                                            DECISION_Score=Move_Decide_deterministic(ILTemp,RDTemp,GC_Var_Coverage)
-                                                                            DECISION=DECISION_Score[0]
-                                                                            S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
-                                                                            Be_Letter=Letter_Rec[DECISION]
-                                                                            Be_BP=BP_Rec[DECISION]
-                                                                            if not S_DECISION in Score_rec_hash.keys():
-                                                                                Score_rec_hash[S_DECISION]=[]
-                                                                            Score_rec_hash[S_DECISION].append(Be_Letter)
-                                                                            if S_DECISION>Best_Score:
-                                                                                    Best_Letter=[Be_Letter]
-                                                                                    Best_BPs=[Be_BP]
-                                                                                    Best_Score=S_DECISION
-                                                                                    best_iterations=0
-                                                                            elif S_DECISION==Best_Score:
-                                                                                    if not Be_Letter in Best_Letter:
-                                                                                            Best_Letter+=[Be_Letter]
-                                                                                            Best_BPs+=[Be_BP]
-                                                                                    best_iterations+=1
-                                                                            else:
-                                                                                    best_iterations+=1
-                                                                            score_record.append(S_DECISION)
-                                                                            #best_score_rec.append(Best_Score)
-                                                                        if not P_Move_Choices=='ERROR!':
-                                                                            [P_IL,P_RD,P_DR,P_TB,Letter_Rec,BP_Rec]=[[],[],[],[],[],[]]
-                                                                            if not P_Move_Choices==[]:
-                                                                                for p in [['2p','1','1','1','X']]+P_Move_Choices:
-                                                                                    m=[str(Chr)+'m','1','1','1','X']
-                                                                                    Move_MP=[m,p]
-                                                                                    Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
-                                                                                    Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
-                                                                                    if Ploidy==1:
-                                                                                        Af_Letter[1]=Af_Letter[0]
-                                                                                        Af_BP[1]=Af_BP[0]
-                                                                                    if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
-                                                                                    if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
-                                                                                    letter_num_flag=0
-                                                                                    for key in Block_CN_Upper.keys():
-                                                                                            if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
-                                                                                                    letter_num_flag+=1
-                                                                                    if not letter_num_flag==0: continue
-                                                                                    Af_Info_all=Letter_Through_Rearrange_4(GC_para_dict,BP_para_dict,Be_Info,Af_Letter,Af_BP)
-                                                                                    if Af_Info_all==0:
-                                                                                            continue
-                                                                                    Letter_Rec.append(Af_Letter)
-                                                                                    BP_Rec.append(Af_BP)
-                                                                                    Af_IL_Penal=Af_Info_all[0]
-                                                                                    Af_RD_Rec=Af_Info_all[1]
-                                                                                    Af_DR_Penal=(Af_Info_all[2])**2
-                                                                                    Af_TB_Penal_a=Af_Info_all[4]
-                                                                                    Af_TB_Rec=Af_Info_all[3]
-                                                                                    Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
-                                                                                    Af_RD_Penal=RD_Adj_Penal(GC_para_dict,Initial_GCRD_Adj,Chr,Af_RD_Rec,Af_Letter)
-                                                                                    for key in Af_Info_all[5].keys():
-                                                                                            Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N])
-                                                                                    P_IL.append(Af_IL_Penal)
-                                                                                    P_RD.append(Af_RD_Penal)
-                                                                                    P_DR.append(Af_DR_Penal/num_of_read_pairs)
-                                                                                    P_TB.append(Af_TB_Penal)
-                                                                            if len(P_IL)==0: continue
-                                                                            Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
-                                                                            Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
-                                                                            Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
-                                                                            Regu_RD=[i-RD_GS for i in Regu_RD]
-                                                                            Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
-                                                                            Regulator=1
-                                                                            ILTemp=[j/Regulator for j in Regu_IL]
-                                                                            RDTemp=[i for i in Regu_RD]
-                                                                            DECISION_Score=Move_Decide_deterministic(ILTemp,RDTemp,GC_Var_Coverage)
-                                                                            DECISION=DECISION_Score[0]
-                                                                            S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
-                                                                            Be_Letter=Letter_Rec[DECISION]
-                                                                            Be_BP=BP_Rec[DECISION]
-                                                                            if not S_DECISION in Score_rec_hash.keys():
-                                                                                Score_rec_hash[S_DECISION]=[]
-                                                                            Score_rec_hash[S_DECISION].append(Be_Letter)
-                                                                            if S_DECISION>Best_Score:
-                                                                                    Best_Letter=[Be_Letter]
-                                                                                    Best_BPs=[Be_BP]
-                                                                                    Best_Score=S_DECISION
-                                                                                    best_iterations=0
-                                                                            elif S_DECISION==Best_Score:
-                                                                                    if not Be_Letter in Best_Letter:
-                                                                                            Best_Letter+=[Be_Letter]
-                                                                                            Best_BPs+=[Be_BP]
-                                                                                    best_iterations+=1
-                                                                            else:
-                                                                                    best_iterations+=1
-                                                                            score_record.append(S_DECISION)
-                                                                            #best_score_rec.append(Best_Score)
-                                                                    t2_sptest=time.time()
-                                                                    if t2_sptest-t1_sptest<10 or bpsk1<4:
-                                                                        while True:
-                                                                                if Move_Step>Trail_Number: break
-                                                                                if best_iterations>Local_Minumum_Number: 
-                                                                                    break_Iteration_Flag=1
-                                                                                    best_iterations=0
-                                                                                    Best_Score_Rec=Best_Score
-                                                                                    Best_Letter_Rec=Best_Letter
-                                                                                    Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
-                                                                                    Best_BPs_Rec=Best_BPs
-                                                                                    Be_Letter=Best_Letter[0]
-                                                                                    Be_BP=Best_BPs[0]
-                                                                                    break_Iteration_Flag+=1
-                                                                                if break_Iteration_Flag>0: break
-                                                                                Move_Step+=1
-                                                                                M_Key_0='_'.join(['Step',str(Move_Step),'M'])
-                                                                                P_Key_0='_'.join(['Step',str(Move_Step),'P'])
-                                                                                Move_Sample_Pool=['delete','invert','insert']
-                                                                                Move_M_P=[Move_Sample_Pool[Move_Step%len(Move_Sample_Pool)],Move_Sample_Pool[Move_Step%len(Move_Sample_Pool)]]
-                                                                                M_Move_Choices=Move_Choice_procedure_2(Move_M_P[0],Be_Letter[0],original_letters,'2m')
-                                                                                P_Move_Choices=Move_Choice_procedure_2(Move_M_P[1],Be_Letter[1],original_letters,'2p')
-                                                                                if not M_Move_Choices=='ERROR!':
-                                                                                    [P_IL,P_RD,P_DR,P_TB,Letter_Rec,BP_Rec]=[[],[],[],[],[],[]]
-                                                                                    for m in [['2m','1','1','1','X']]+M_Move_Choices:
-                                                                                            p=[str(Chr)+'p','1','1','1','X']
-                                                                                            Move_MP=[m,p]
-                                                                                            Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
-                                                                                            Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
-                                                                                            if Ploidy==1:
-                                                                                                Af_Letter[1]=Af_Letter[0]
-                                                                                                Af_BP[1]=Af_BP[0]
-                                                                                            if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
-                                                                                            if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
-                                                                                            letter_num_flag=0
-                                                                                            for key in Block_CN_Upper.keys():
-                                                                                                    if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
-                                                                                                            letter_num_flag+=1
-                                                                                            if not letter_num_flag==0: continue
-                                                                                            Af_Info_all=Letter_Through_Rearrange_4(GC_para_dict,BP_para_dict,Be_Info,Af_Letter,Af_BP)
-                                                                                            if Af_Info_all==0:continue
-                                                                                            Letter_Rec.append(Af_Letter)
-                                                                                            BP_Rec.append(Af_BP)
-                                                                                            Af_IL_Penal=Af_Info_all[0]
-                                                                                            Af_RD_Rec=Af_Info_all[1]
-                                                                                            Af_DR_Penal=(Af_Info_all[2])**2
-                                                                                            Af_TB_Penal_a=Af_Info_all[4]
-                                                                                            Af_TB_Rec=Af_Info_all[3]
-                                                                                            Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
-                                                                                            Af_RD_Penal=RD_Adj_Penal(GC_para_dict,Initial_GCRD_Adj,Chr,Af_RD_Rec,Af_Letter)
-                                                                                            for key in Af_Info_all[5].keys():
-                                                                                                    Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N]/2)
-                                                                                            P_IL.append(Af_IL_Penal)
-                                                                                            P_RD.append(Af_RD_Penal)
-                                                                                            P_DR.append(Af_DR_Penal/num_of_read_pairs)
-                                                                                            P_TB.append(Af_TB_Penal)
-                                                                                    if len(P_IL)==0: continue
-                                                                                    Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
-                                                                                    Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
-                                                                                    Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
-                                                                                    Regu_RD=[i-RD_GS for i in Regu_RD]
-                                                                                    Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
-                                                                                    Regulator=1
-                                                                                    ILTemp=[j/Regulator for j in Regu_IL]
-                                                                                    RDTemp=[i for i in Regu_RD]
-                                                                                    DECISION_Score=Move_Decide_deterministic(ILTemp,RDTemp,GC_Var_Coverage)
-                                                                                    DECISION=DECISION_Score[0]
-                                                                                    S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
-                                                                                    Be_Letter=Letter_Rec[DECISION]
-                                                                                    Be_BP=BP_Rec[DECISION]
-                                                                                    if not S_DECISION in Score_rec_hash.keys():
-                                                                                        Score_rec_hash[S_DECISION]=[Be_Letter]
-                                                                                    else: 
-                                                                                        if not Be_Letter in Score_rec_hash[S_DECISION]:
-                                                                                            Score_rec_hash[S_DECISION].append(Be_Letter)
-                                                                                    if S_DECISION>Best_Score:
-                                                                                            Best_Letter=[Be_Letter]
-                                                                                            Best_BPs=[Be_BP]
-                                                                                            Best_Score=S_DECISION
-                                                                                            best_iterations=0
-                                                                                    elif S_DECISION==Best_Score:
-                                                                                            if not Be_Letter in Best_Letter:
-                                                                                                    Best_Letter+=[Be_Letter]
-                                                                                                    Best_BPs+=[Be_BP]
-                                                                                            best_iterations+=1
-                                                                                    else:
-                                                                                            best_iterations+=1
-                                                                                    score_record.append(S_DECISION)
-                                                                                if not P_Move_Choices=='ERROR!':
-                                                                                    [P_IL,P_RD,P_DR,P_TB,Letter_Rec,BP_Rec]=[[],[],[],[],[],[]]
-                                                                                    if not P_Move_Choices==[]:
-                                                                                        for p in [['2p','1','1','1','X']]+P_Move_Choices:
-                                                                                            m=[str(Chr)+'m','1','1','1','X']
-                                                                                            Move_MP=[m,p]
-                                                                                            Af_BP=[BPList_Rearrange(Be_BP[0],m,original_bp_list),BPList_Rearrange(Be_BP[1],p,original_bp_list)]
-                                                                                            Af_Letter=[LetterList_Rearrange(Be_Letter[0],m,original_bp_list),LetterList_Rearrange(Be_Letter[1],p,original_bp_list)]
-                                                                                            if Ploidy==1:
-                                                                                                Af_Letter[1]=Af_Letter[0]
-                                                                                                Af_BP[1]=Af_BP[0]
-                                                                                            if not Af_Letter_QC(Af_Letter,Copy_num_estimate)==0:continue
-                                                                                            if not Best_Score_Rec==0 and Af_Letter in Best_Letter_Rec: continue
-                                                                                            letter_num_flag=0
-                                                                                            for key in Block_CN_Upper.keys():
-                                                                                                    if (Af_Letter[0]+Af_Letter[1]).count(key)>Block_CN_Upper[key]:
-                                                                                                            letter_num_flag+=1
-                                                                                            if not letter_num_flag==0: continue
-                                                                                            Af_Info_all=Letter_Through_Rearrange_4(GC_para_dict,BP_para_dict,Be_Info,Af_Letter,Af_BP)
-                                                                                            if Af_Info_all==0:
-                                                                                                    continue
-                                                                                            Letter_Rec.append(Af_Letter)
-                                                                                            BP_Rec.append(Af_BP)
-                                                                                            Af_IL_Penal=Af_Info_all[0]
-                                                                                            Af_RD_Rec=Af_Info_all[1]
-                                                                                            Af_DR_Penal=(Af_Info_all[2])**2
-                                                                                            Af_TB_Penal_a=Af_Info_all[4]
-                                                                                            Af_TB_Rec=Af_Info_all[3]
-                                                                                            Af_TB_Penal=float(Af_TB_Penal_a)/float(num_of_reads)+float(Af_TB_Rec)/float(len(Af_Letter[0]+Af_Letter[1])+2)
-                                                                                            Af_RD_Penal=RD_Adj_Penal(GC_para_dict,Initial_GCRD_Adj,Chr,Af_RD_Rec,Af_Letter)
-                                                                                            for key in Af_Info_all[5].keys():
-                                                                                                    Af_RD_Penal+=Prob_Norm(Af_Info_all[5][key],0,GC_Var_Coverage[chrom_N])
-                                                                                            P_IL.append(Af_IL_Penal)
-                                                                                            P_RD.append(Af_RD_Penal)
-                                                                                            P_DR.append(Af_DR_Penal/num_of_read_pairs)
-                                                                                            P_TB.append(Af_TB_Penal)
-                                                                                    if len(P_IL)==0: continue
-                                                                                    Regu_IL=[P_IL[i]*(1+DR_Weight*P_DR[i]) for i in range(len(P_IL))]
-                                                                                    Regu_RD=[P_RD[i]+P_TB[i] for i in range(len(P_RD))]
-                                                                                    Regu_IL=[(i-IL_GS)*K_IL_new for i in Regu_IL]
-                                                                                    Regu_RD=[i-RD_GS for i in Regu_RD]
-                                                                                    Regulator=numpy.median(Regu_IL)/numpy.median(Regu_RD)
-                                                                                    Regulator=1
-                                                                                    ILTemp=[j/Regulator for j in Regu_IL]
-                                                                                    RDTemp=[i for i in Regu_RD]
-                                                                                    DECISION_Score=Move_Decide_deterministic(ILTemp,RDTemp,GC_Var_Coverage)
-                                                                                    DECISION=DECISION_Score[0]
-                                                                                    S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
-                                                                                    Be_Letter=Letter_Rec[DECISION]
-                                                                                    Be_BP=BP_Rec[DECISION]
-                                                                                    if not S_DECISION in Score_rec_hash.keys():
-                                                                                        Score_rec_hash[S_DECISION]=[Be_Letter]
-                                                                                    else: 
-                                                                                        if not Be_Letter in Score_rec_hash[S_DECISION]:
-                                                                                            Score_rec_hash[S_DECISION].append(Be_Letter)
-                                                                                    if S_DECISION>Best_Score:
-                                                                                            Best_Letter=[Be_Letter]
-                                                                                            Best_BPs=[Be_BP]
-                                                                                            Best_Score=S_DECISION
-                                                                                            best_iterations=0
-                                                                                    elif S_DECISION==Best_Score:
-                                                                                            if not Be_Letter in Best_Letter:
-                                                                                                    Best_Letter+=[Be_Letter]
-                                                                                                    Best_BPs+=[Be_BP]
-                                                                                            best_iterations+=1
-                                                                                    else:
-                                                                                            best_iterations+=1
-                                                                                    score_record.append(S_DECISION)
-                                                                                    #best_score_rec.append(Best_Score)
-                                                                    else:
-                                                                        gaps=[]
-                                                                        bps2_new=[]
-                                                                        for k1 in bps2:
-                                                                            gaps.append([])
-                                                                            for k2 in range(len(k1)-2):
-                                                                                gaps[-1].append(int(k1[k2+2])-int(k1[k2+1]))
-                                                                        for k1 in range(len(gaps)):
-                                                                            bps2_new.append([])
-                                                                            chr_rec=bps2[k1][0]
-                                                                            rec1=1
-                                                                            for k2 in range(len(gaps[k1])):
-                                                                                if gaps[k1][k2]==max(gaps[k1]):
-                                                                                    bps2_new[-1].append([chr_rec]+bps2[k1][rec1:(k2+2)])
-                                                                                    bps2_new[-1].append([chr_rec]+bps2[k1][(k2+1):(k2+3)])
-                                                                                    rec1=k2+2
-                                                                            bps2_new[-1].append([chr_rec]+bps2[k1][rec1:])
-                                                                        for k1 in bps2_new:
-                                                                            for k2 in k1:
-                                                                                bps_hash[max(bps_hash.keys())].append([k2])
-                                                                        Best_Letter_Rec=[]
-                                                                        Best_Score_Rec=100
+                                                                    gaps=[]
+                                                                    bps2_new=[]
+                                                                    for k1 in bps2:
+                                                                        gaps.append([])
+                                                                        for k2 in range(len(k1)-2):
+                                                                            gaps[-1].append(int(k1[k2+2])-int(k1[k2+1]))
+                                                                    for k1 in range(len(gaps)):
+                                                                        bps2_new.append([])
+                                                                        chr_rec=bps2[k1][0]
+                                                                        rec1=1
+                                                                        for k2 in range(len(gaps[k1])):
+                                                                            if gaps[k1][k2]==max(gaps[k1]):
+                                                                                bps2_new[-1].append([chr_rec]+bps2[k1][rec1:(k2+2)])
+                                                                                bps2_new[-1].append([chr_rec]+bps2[k1][(k2+1):(k2+3)])
+                                                                                rec1=k2+2
+                                                                        bps2_new[-1].append([chr_rec]+bps2[k1][rec1:])
+                                                                    for k1 in bps2_new:
+                                                                        for k2 in k1:
+                                                                            bps_hash[max(bps_hash.keys())].append([k2])
+                                                                    Best_Letter_Rec=[]
+                                                                    Best_Score_Rec=100
                                                             struc_to_remove=[]
                                                             for bestletter in Best_Letter_Rec:
                                                                 if '/'.join([''.join(bestletter[0]),''.join(bestletter[1])])==original_structure:
@@ -5643,27 +5211,23 @@ else:
                 out=[]
                 simple_flag=0
                 for x in complex_list:
-                    if x[3] in simple_svs:      out.append(x)
-                    elif x[3]=='tandup':  out.append(x)
+                    if x[3] in simple_svs:    out.append(x)
+                    elif x[3]=='tandup':      out.append(x)
                     else:        simple_flag+=1
                 if simple_flag==0:  return out
                 else:
                     temp_hash_1={}
                     for k1 in complex_list:
-                        if not k1[-1] in temp_hash_1.keys():
-                            temp_hash_1[k1[-1]]={}
-                        if not k1[-3] in temp_hash_1[k1[-1]].keys():
-                            temp_hash_1[k1[-1]][k1[-3]]={}
-                        if not k1[-2] in temp_hash_1[k1[-1]][k1[-3]].keys():
-                            temp_hash_1[k1[-1]][k1[-3]][k1[-2]]=[]
+                        if not k1[-1] in temp_hash_1.keys():    temp_hash_1[k1[-1]]={}
+                        if not k1[-3] in temp_hash_1[k1[-1]].keys():    temp_hash_1[k1[-1]][k1[-3]]={}
+                        if not k1[-2] in temp_hash_1[k1[-1]][k1[-3]].keys():    temp_hash_1[k1[-1]][k1[-3]][k1[-2]]=[]
                         temp_hash_1[k1[-1]][k1[-3]][k1[-2]].append(k1)
                     for k1 in temp_hash_1.keys():
                         for k2 in temp_hash_1[k1].keys():
                             for k3 in temp_hash_1[k1][k2].keys():
                                 allales_info={}
                                 for k4 in temp_hash_1[k1][k2][k3]:
-                                    if not k4[4] in allales_info.keys():
-                                        allales_info[k4[4]]=[]
+                                    if not k4[4] in allales_info.keys():allales_info[k4[4]]=[]
                                     allales_info[k4[4]].append(k4)
                                 for x in allales_info.keys():
                                     if allales_info[x][0][3]=='del_dup_inv': 
@@ -5671,12 +5235,12 @@ else:
                                         dup_inv_info=[]
                                         ins_info=[]
                                         for y in allales_info[x]:
-                                            if y[5]=='del_block':       info_column.append('del='+':'.join(y[:3]))
+                                            if y[5]=='del_block=':       info_column.append('del='+':'.join([y[0],'-'.join(y[1:3])]))
                                             else:   
-                                                if y[5]=='dup_inv_block':   dup_inv_info.append(y[:5])
-                                                elif y[5]=='insert_point':  ins_info.append([y[0],y[2]])
+                                                if y[5]=='dup_inv_block=':   dup_inv_info.append(y[:5])
+                                                elif y[5]=='insert_point=':  ins_info.append([y[0],y[2]])
                                         for y in range(len(dup_inv_info)):
-                                            vcf_single_rec=dup_inv_info[y]+[';'.join(['insert_point='+':'.join([str(i) for i in ins_info[y]])]+info_column)]+[k2,k3,k1]
+                                            vcf_single_rec=dup_inv_info[y]+[';'.join(info_column+['dup_inv='+':'.join([dup_inv_info[y][0],'-'.join(dup_inv_info[y][1:3])])]+['insert_point='+':'.join([str(i) for i in ins_info[y]])])]+[k2,k3,k1]
                                             out.append(vcf_single_rec)
                                     elif allales_info[x][0][3]=='del_inv': 
                                         blocks_pos=[]
@@ -5689,8 +5253,8 @@ else:
                                             blocks_pos=[blocks_pos[0],min([int(i) for i in blocks_pos[1:]]),max([int(i) for i in blocks_pos[1:]])]
                                             [del_info,inv_info]=[[],[]]
                                             for y in allales_info[x]:
-                                                if y[5]=='del':del_info.append('del='+':'.join(y[:3]))
-                                                elif y[5]=='inv':inv_info.append('inv='+':'.join(y[:3]))
+                                                if y[5]=='del':del_info.append('del='+':'.join([y[0],'-'.join(y[1:3])]))
+                                                elif y[5]=='inv':inv_info.append('inv='+':'.join([y[0],'-'.join(y[1:3])]))
                                             vcf_single_rec=blocks_pos+['del_inv',x,';'.join(del_info+inv_info),k2,k3,k1]
                                             out.append(vcf_single_rec)
                                     elif allales_info[x][0][3]=='dup_inv': 
@@ -5707,32 +5271,13 @@ else:
                                             blocks_pos=[blocks_pos[0],min([int(i) for i in blocks_pos[1:]]),max([int(i) for i in blocks_pos[1:]])]
                                             [del_info,dup_info]=[[],[]]
                                             for y in allales_info[x]:
-                                                if y[5]=='del_block':del_info.append('del='+':'.join(y[:3]))
-                                                elif y[5]=='dup_block':dup_info.append('dup='+':'.join(y[:3]))
+                                                if y[5]=='del_block=':del_info.append('del='+':'.join([y[0],'-'.join(y[1:3])]))
+                                                elif y[5]=='dup_block=':dup_info.append('dup='+':'.join([y[0],'-'.join(y[1:3])]))
                                             vcf_single_rec=blocks_pos+['del_dup',x,';'.join(del_info+dup_info),k2,k3,k1]
                                             out.append(vcf_single_rec)
-                                    #elif allales_info[x][0][3]=='tandup': 
-                                    #    if len(temp_hash_1[k1][k2][k3])==1:
-                                    #        for k4 in temp_hash_1[k1][k2][k3]: out.append(k4)
-                                    #    else:
-                                    #        tandup_temp=[]
-                                    #        for k4 in temp_hash_1[k1][k2][k3]:
-                                    #            if k4[3]=='tandup':   tandup_temp.append(k4)
-                                    #        tandup_out=[]
-                                    #        for x in tandup_temp:
-                                    #            if tandup_out==[]:  tandup_out.append(x)
-                                    #            else:
-                                    #                if x[1]==tandup_out[-1][2] and abs(int(x[5].split('=')[1])-int(tandup_out[-1][5].split('=')[1]))<2:
-                                    #                    tandup_out[-1][2]=x[2]
-                                    #                elif x[1]==tandup_out[-1][1] and x[2]==tandup_out[-1][2]:
-                                    #                    tandup_out[-1][5]='CN='+str(int(x[5].split('=')[1])+int(tandup_out[-1][5].split('=')[1]))
-                                    #                else:   tandup_out.append(x)
-                                    #        for k4 in tandup_out:   out.append(k4)
-                                    #        print tandup_out
                                     elif allales_info[x][0][3] in simple_svs+['tandup']: continue
                                     else:
-                                        for k4 in allales_info[x]:
-                                            out.append(k4)
+                                        for k4 in allales_info[x]:    out.append(k4)
                     return out
             def Define_Default_SVIntegrate():
                 global score_Cff
@@ -5905,14 +5450,15 @@ else:
                                     k2_hap_new=['-']+[i for i in k2_hap]+['+']
                                     insert_block=[]
                                     pos_rec=-1
-                                    for i in insert_pos:
-                                        pos_rec+=1
-                                        if len(dup_block_combined[pos_rec])==1:
-                                            insert_block.append([k2_hap_new[i],k2_hap_new[i+1],k2_hap_new[i+2]])
-                                        else:
-                                            insert_block.append([k2_hap_new[i]]+k2_hap_new[(i+1):(i+len(dup_block_combined[pos_rec])+2)])
-                                    #insert_block=[[k2_hap_new[i],k2_hap_new[i+1],k2_hap_new[i+2]] for i in insert_pos]
-                                    return [dup_block_combined,insert_block]
+                                    if len(insert_pos)==len(dup_block_combined):
+                                        for i in insert_pos:
+                                            pos_rec+=1
+                                            if len(dup_block_combined[pos_rec])==1:
+                                                insert_block.append([k2_hap_new[i],k2_hap_new[i+1],k2_hap_new[i+2]])
+                                            else:
+                                                insert_block.append([k2_hap_new[i]]+k2_hap_new[(i+1):(i+len(dup_block_combined[pos_rec])+2)])
+                                        #insert_block=[[k2_hap_new[i],k2_hap_new[i+1],k2_hap_new[i+2]] for i in insert_pos]
+                                        return [dup_block_combined,insert_block]
                 return 'FALSE'
             def simple_tra_diploid_decide(k1,k2):
                 #eg of k1='ab/ab'   ; eg of k2='ba/ab'
@@ -6245,12 +5791,12 @@ else:
                                                             dup_block[-1].append(dup_block_temp+ins_block_temp)
                                                 if dup_block[0]==dup_block[1]:
                                                     for y in dup_block[0]:
-                                                            vcf_info_out.append(y[0]+['disdup','1/1']+[':'.join(['insert_point']+y[1])]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                            vcf_info_out.append(y[0]+['disdup','1/1']+['insert_point='+':'.join(y[1])]+[k1,k2,':'.join([str(i) for i in k3])])
                                                 else:
                                                      for y in dup_block[0]:
-                                                            vcf_info_out.append(y[0]+['disdup','1/0']+[':'.join(['insert_point']+y[1])]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                            vcf_info_out.append(y[0]+['disdup','1/0']+['insert_point='+':'.join(y[1])]+[k1,k2,':'.join([str(i) for i in k3])])
                                                      for y in dup_block[1]:
-                                                            vcf_info_out.append(y[0]+['disdup','0/1']+[':'.join(['insert_point']+y[1])]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                            vcf_info_out.append(y[0]+['disdup','0/1']+['insert_point='+':'.join(y[1])]+[k1,k2,':'.join([str(i) for i in k3])])
                                         if 'FALSE' in sv_info:
                                             sv_info=del_inv_diploid_decide(k1,k2)   #decide if del+inv
                                             if not 'FALSE'  in sv_info:
@@ -6309,16 +5855,16 @@ else:
                                                             for x in dup_inv_block[0]:
                                                                 y=x
                                                                 for z in range(len(y[0])):
-                                                                        vcf_info_out.append(y[0][z]+['dup_inv','1/1',':'.join(['insert_point']+[str(i) for i in y[1][0]])]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        vcf_info_out.append(y[0][z]+['dup_inv','1/1','insert_point='+':'.join([str(i) for i in y[1][0]])]+[k1,k2,':'.join([str(i) for i in k3])])
                                                         else:
                                                             for x in dup_inv_block[0]:
                                                                 y=x
                                                                 for z in range(len(y[0])):
-                                                                        vcf_info_out.append(y[0][z]+['dup_inv','1/0',':'.join(['insert_point']+[str(i) for i in y[1][0]])]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        vcf_info_out.append(y[0][z]+['dup_inv','1/0','insert_point='+':'.join([str(i) for i in y[1][0]])]+[k1,k2,':'.join([str(i) for i in k3])])
                                                             for x in dup_inv_block[1]:
                                                                 y=x
                                                                 for z in range(len(y[0])):
-                                                                        vcf_info_out.append(y[0][z]+['dup_inv','0/1',':'.join(['insert_point']+[str(i) for i in y[1][0]])]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        vcf_info_out.append(y[0][z]+['dup_inv','0/1','insert_point='+':'.join([str(i) for i in y[1][0]])]+[k1,k2,':'.join([str(i) for i in k3])])
                                                 if 'FALSE'  in sv_info:  
                                                     sv_info=del_dup_inv_diploid_decide(k1,k2)   #decide if del+dup+inv
                                                     if not 'FALSE' in sv_info:
@@ -6334,26 +5880,26 @@ else:
                                                                     del_dup_inv_block[-1]+=[del_block,dup_inv_block,ins_pos]
                                                             if sv_info[0]==sv_info[1]:
                                                                 for i1 in del_dup_inv_block[0][0]:
-                                                                    for j1 in i1:  vcf_info_out.append(j1+['del_dup_inv','1/1','del_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                    for j1 in i1:  vcf_info_out.append(j1+['del_dup_inv','1/1','del_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                 for i1 in del_dup_inv_block[0][1]:
-                                                                    for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/1','dup_inv_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                    for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/1','dup_inv_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                 for i1 in del_dup_inv_block[0][2]:
-                                                                    for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/1','insert_point']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                    for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/1','insert_point=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                             else:
                                                                 if not del_dup_inv_block[0]==[]:
                                                                     for i1 in del_dup_inv_block[0][0]:
-                                                                        for j1 in i1:  vcf_info_out.append(j1+['del_dup_inv','1/0','del_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        for j1 in i1:  vcf_info_out.append(j1+['del_dup_inv','1/0','del_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                     for i1 in del_dup_inv_block[0][1]:
-                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/0','dup_inv_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/0','dup_inv_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                     for i1 in del_dup_inv_block[0][2]:
-                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/0','insert_point']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/0','insert_point=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                 if not del_dup_inv_block[1]==[]:
                                                                     for i1 in del_dup_inv_block[1][0]:
-                                                                        for j1 in i1:  vcf_info_out.append(j1+['del_dup_inv','0/1','del_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        for j1 in i1:  vcf_info_out.append(j1+['del_dup_inv','0/1','del_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                     for i1 in del_dup_inv_block[1][1]:
-                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','0/1','dup_inv_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','0/1','dup_inv_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                     for i1 in del_dup_inv_block[1][2]:
-                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','0/1','insert_point']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','0/1','insert_point=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                     if 'FALSE' in sv_info:
                                                         sv_info=del_dup_diploid_decide(k1,k2)   #decide if del+dup
                                                         if not 'FALSE' in sv_info:
@@ -6368,20 +5914,20 @@ else:
                                                                         del_dup_block[-1]+=[del_block,dup_inv_block]
                                                                 if sv_info[0]==sv_info[1]:
                                                                     for i1 in del_dup_block[0][0]:
-                                                                        for j1 in i1:  vcf_info_out.append(j1+['del_dup','1/1','del_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        for j1 in i1:  vcf_info_out.append(j1+['del_dup','1/1','del_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                     for i1 in del_dup_block[0][1]:
-                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/1','dup_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/1','dup_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                 else:
                                                                     if not del_dup_block[0]==[]:
                                                                         for i1 in del_dup_block[0][0]:
-                                                                            for j1 in i1:  vcf_info_out.append(j1+['del_dup','1/0','del_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                            for j1 in i1:  vcf_info_out.append(j1+['del_dup','1/0','del_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                         for i1 in del_dup_block[0][1]:
-                                                                            for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/0','dup_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                            for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/0','dup_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                     if not del_dup_block[1]==[]:
                                                                         for i1 in del_dup_block[1][0]:
-                                                                            for j1 in i1:  vcf_info_out.append(j1+['del_dup','0/1','del_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                            for j1 in i1:  vcf_info_out.append(j1+['del_dup','0/1','del_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                         for i1 in del_dup_block[1][1]:
-                                                                            for j1 in i1:   vcf_info_out.append(j1+['del_dup','0/1','dup_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                            for j1 in i1:   vcf_info_out.append(j1+['del_dup','0/1','dup_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                         if 'FALSE'  in sv_info:   
                                                             sv_info=simple_tra_diploid_decide(k1,k2)    #decide if simple translocation
                                                             if 'FALSE' in sv_info:
@@ -6418,7 +5964,7 @@ else:
                                                                                             #insert_point=['Not','Known']
                                                                                         for y in dup_block:
                                                                                             for z in y:
-                                                                                                vcf_info_out.append(z+['disdup','1/1',':'.join([str(i) for i in ['insert_point']+insert_point]+[k1,k2,':'.join([str(i) for i in k3])])])
+                                                                                                vcf_info_out.append(z+['disdup','1/1','insert_point='+':'.join([str(i) for i in insert_point]+[k1,k2,':'.join([str(i) for i in k3])])])
                                                                                 elif allele_sv_info[1]=='del_inv':
                                                                                     x=allele_sv_info[0]
                                                                                     del_block_temp=[]
@@ -6442,26 +5988,26 @@ else:
                                                                                             insert_point.append([let_hash[y[0].replace('^','')[-1]][0],let_hash[y[0].replace('^','')[-1]][2]])                                                                                
                                                                                         #if insert_point==[]:    insert_point=[['Not','Kown']]                                                        
                                                                                         for z in dup_inv_let:
-                                                                                            vcf_info_out.append(z+['dup_inv','1/0',':'.join(['insert_point']+[str(i) for i in insert_point[0]])]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                            vcf_info_out.append(z+['dup_inv','1/0','insert_point='+':'.join([str(i) for i in insert_point[0]])]+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 elif allele_sv_info[1]=='del_dup_inv':
                                                                                     del_block=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][0]]
                                                                                     dup_inv_block=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][1]]
                                                                                     ins_pos=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][2]]
                                                                                     for i1 in del_block:
-                                                                                        for j1 in i1:  vcf_info_out.append(j1+['del_dup_inv','1/1','del_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:  vcf_info_out.append(j1+['del_dup_inv','1/1','del_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                     for i1 in dup_inv_block:
-                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/1','dup_inv_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/1','dup_inv_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                     for i1 in ins_pos:
-                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/1','insert_point']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/1','insert_point=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 elif allele_sv_info[1]=='del_dup':
                                                                                     del_block=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][0]]
                                                                                     dup_block=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][1]]
                                                                                     for i1 in del_block:
-                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/1','del_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/1','del_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                     for i1 in dup_block:
-                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/1','dup_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/1','dup_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 else:
-                                                                                    vcf_info_out.append([k3[0],k3[1],k3[-1]]+['1/1','cannot_classify_for_now']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                    vcf_info_out.append([k3[0],k3[1],k3[-1]]+['cannot_classify_for_now','1/1']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                     else:
                                                                         if k1=='a/a' and k2.count('a')>3:    #tandup, high copynumber 
                                                                             for k3 in svelter_hash[k1][k2]:
@@ -6499,7 +6045,7 @@ else:
                                                                                             #insert_point=['Not','Known']
                                                                                         for y in dup_block:
                                                                                             for z in y:
-                                                                                                vcf_info_out.append(z+['disdup','1/0',':'.join([str(i) for i in ['insert_point']+insert_point])]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                                vcf_info_out.append(z+['disdup','1/0','insert_point='+':'.join([str(i) for i in insert_point])]+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 elif allele_sv_info[1]=='del_inv':
                                                                                     x=allele_sv_info[0]
                                                                                     del_block_temp=[]
@@ -6523,26 +6069,26 @@ else:
                                                                                             insert_point.append([let_hash[y[0].replace('^','')[-1]][0],let_hash[y[0].replace('^','')[-1]][2]])                                                                                
                                                                                         #if insert_point==[]:    insert_point=[['Not','Kown']]                                                        
                                                                                         for z in dup_inv_let:
-                                                                                            vcf_info_out.append(z+['dup_inv','1/0',':'.join(['insert_point']+[str(i) for i in insert_point[0]])]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                            vcf_info_out.append(z+['dup_inv','1/0','insert_point='+':'.join([str(i) for i in insert_point[0]])]+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 elif allele_sv_info[1]=='del_dup_inv':
                                                                                     del_block=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][0]]
                                                                                     dup_inv_block=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][1]]
                                                                                     ins_pos=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][2]]
                                                                                     for i1 in del_block:
-                                                                                        for j1 in i1:  vcf_info_out.append(j1+['del_dup_inv','1/0','del_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:  vcf_info_out.append(j1+['del_dup_inv','1/0','del_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                     for i1 in dup_inv_block:
-                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/0','dup_inv_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/0','dup_inv_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                     for i1 in ins_pos:
-                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/0','insert_point']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','1/0','insert_point=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 elif allele_sv_info[1]=='del_dup':
                                                                                     del_block=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][0]]
                                                                                     dup_block=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][1]]
                                                                                     for i1 in del_block:
-                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/0','del_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/0','del_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                     for i1 in dup_block:
-                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/0','dup_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/0','dup_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 else:
-                                                                                    vcf_info_out.append([k3[0],k3[1],k3[-1]]+['1/0','cannot_classify_for_now']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                    vcf_info_out.append([k3[0],k3[1],k3[-1]]+['cannot_classify_for_now','1/0']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                         else:
                                                                             if k1=='a/a' and k2.count('a')>3:    #tandup, high copynumber 
                                                                                 for k3 in svelter_hash[k1][k2]:
@@ -6579,7 +6125,7 @@ else:
                                                                                             #insert_point=['Not','Known']
                                                                                         for y in dup_block:
                                                                                             for z in y:
-                                                                                                vcf_info_out.append(z+['disdup','0/1',':'.join([str(i) for i in ['insert_point']+insert_point])]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                                vcf_info_out.append(z+['disdup','0/1','insert_point='+':'.join([str(i) for i in insert_point])]+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 elif allele_sv_info[1]=='del_inv':
                                                                                     x=allele_sv_info[0]
                                                                                     del_block_temp=[]
@@ -6603,26 +6149,26 @@ else:
                                                                                             insert_point.append([let_hash[y[0].replace('^','')[-1]][0],let_hash[y[0].replace('^','')[-1]][2]])
                                                                                         #if insert_point==[]:    insert_point=[['Not','Kown']]                                                        
                                                                                         for z in dup_inv_let:
-                                                                                            vcf_info_out.append(z+['dup_inv','1/0',':'.join(['insert_point']+[str(i) for i in insert_point[0]])]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                            vcf_info_out.append(z+['dup_inv','1/0','insert_point='+':'.join([str(i) for i in insert_point[0]])]+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 elif allele_sv_info[1]=='del_dup_inv':
                                                                                     del_block=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][0]]
                                                                                     dup_inv_block=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][1]]
                                                                                     ins_pos=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][2]]
                                                                                     for i1 in del_block:
-                                                                                        for j1 in i1:  vcf_info_out.append(j1+['del_dup_inv','0/1','del_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:  vcf_info_out.append(j1+['del_dup_inv','0/1','del_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                     for i1 in dup_inv_block:
-                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','0/1','dup_inv_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','0/1','dup_inv_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                     for i1 in ins_pos:
-                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','0/1','insert_point']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup_inv','0/1','insert_point=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 elif allele_sv_info[1]=='del_dup':
                                                                                     del_block=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][0]]
                                                                                     dup_block=[let_to_block_info(i,let_hash) for i in allele_sv_info[0][1]]
                                                                                     for i1 in del_block:
-                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','0/1','del_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','0/1','del_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                     for i1 in dup_block:
-                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','0/1','dup_block']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                        for j1 in i1:   vcf_info_out.append(j1+['del_dup','0/1','dup_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 else:
-                                                                                    vcf_info_out.append([k3[0],k3[1],k3[-1]]+['0/1','cannot_classify_for_now']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                                    vcf_info_out.append([k3[0],k3[1],k3[-1]]+['cannot_classify_for_now','0/1']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                         else:
                                                                             if k1=='a/a' and k2.count('a')>3:    #tandup, high copynumber 
                                                                                 for k3 in svelter_hash[k1][k2]:
@@ -6734,6 +6280,9 @@ else:
                 print >>fo, '##INFO=<ID=del,Number=1,Type=String,Description="position of deleted region">'
                 print >>fo, '##INFO=<ID=dup,Number=1,Type=String,Description="position of duplicated region">'
                 print >>fo, '##INFO=<ID=inv,Number=1,Type=String,Description="position of inverted region">'
+                print >>fo, '##INFO=<ID=dup_inv,Number=1,Type=String,Description="position of inverted duplicated region">'
+                print >>fo, '##INFO=<ID=CN,Number=1,Type=String,Description="copy number estimation of tandem duplications">'
+                print >>fo, '##INFO=<ID=Other,Number=1,Type=String,Description="breakpoints and predicted structures by SVelter">'
                 print >>fo, '##INFO=<ID=bps,Number=1,Type=String,Description="all breakpoints detected by SVelter in this structural variants">'
                 print >>fo, '##INFO=<ID=ref_structure,Number=1,Type=String,Description="reference structure used by SVelter, each letter stands for a genomic region within adjacent breakpoints">'
                 print >>fo, '##INFO=<ID=alt_structure,Number=1,Type=String,Description="alternative structure predicted by SVelter">'
@@ -6754,16 +6303,22 @@ else:
                 fo.close()
             def write_vcf_list(vcf_list_modi_1,chromos,fileout_prefix,sample_name,qc_score_info):
                 #write output in vcf format
-                write_vcf_header([sample_name],fileout_prefix)
+                write_vcf_header([sample_name],fileout_prefix+'.vcf')
                 write_svelter_list(vcf_list_modi_1,fileout_prefix)
                 file_out_name=fileout_prefix+'.vcf'
                 fo=open(file_out_name,'a')
                 for k1 in vcf_list_modi_1:
                     other_info='/'.join([str(i) for i in k1[5:-3]])
                     if other_info=='':
-                        print >>fo, '\t'.join([str(i) for i in k1[:2]+[k1[-1],ref_base_readin(ref,k1[0],k1[1])]+[k1[3]]+[qc_score_info[k1[-1]],('PASS','LowQual')[qc_score_info[k1[-1]]<score_Cff]]+[';'.join(['SVTYPE='+k1[3],'END='+str(k1[2])])]+['GT',k1[4]]])
+                        if not k1[3]=='tandup':
+                            print >>fo, '\t'.join([str(i) for i in k1[:2]+[k1[-1],ref_base_readin(ref,k1[0],k1[1])]+['<'+k1[3].upper()+'>']+[qc_score_info[k1[-1]],('PASS','LowQual')[qc_score_info[k1[-1]]<score_Cff]]+[';'.join(['SVTYPE='+k1[3],'END='+str(k1[2]),'Other='+'_'.join(k1[-3:])])]+['GT',k1[4]]])
+                        else:
+                            print >>fo, '\t'.join([str(i) for i in k1[:2]+[k1[-1],ref_base_readin(ref,k1[0],k1[1])]+['<'+k1[3].upper()+'>']+[qc_score_info[k1[-1]],('PASS','LowQual')[qc_score_info[k1[-1]]<score_Cff]]+[';'.join(['SVTYPE='+k1[3],'END='+str(k1[2])])]+['CN',other_info.split('=')[1]]])                            
                     else:
-                        print >>fo, '\t'.join([str(i) for i in k1[:2]+[k1[-1],ref_base_readin(ref,k1[0],k1[1])]+[k1[3]]+[qc_score_info[k1[-1]],('PASS','LowQual')[qc_score_info[k1[-1]]<score_Cff]]+[';'.join(['SVTYPE='+k1[3],'END='+str(k1[2]),other_info])]+['GT',k1[4]]])
+                        if not k1[3]=='tandup':
+                            print >>fo, '\t'.join([str(i) for i in k1[:2]+[k1[-1],ref_base_readin(ref,k1[0],k1[1])]+['<'+k1[3].upper()+'>']+[qc_score_info[k1[-1]],('PASS','LowQual')[qc_score_info[k1[-1]]<score_Cff]]+[';'.join(['SVTYPE='+k1[3],'END='+str(k1[2]),other_info,'Other='+'_'.join(k1[-3:])])]+['GT',k1[4]]])
+                        else:
+                            print >>fo, '\t'.join([str(i) for i in k1[:2]+[k1[-1],ref_base_readin(ref,k1[0],k1[1])]+['<'+k1[3].upper()+'>']+[qc_score_info[k1[-1]],('PASS','LowQual')[qc_score_info[k1[-1]]<score_Cff]]+[';'.join(['SVTYPE='+k1[3],'END='+str(k1[2]),other_info])]+['CN',other_info.split('=')[1]]])                            
                 fo.close()
             def read_in_structures(filein):
                 fin=open(filein)

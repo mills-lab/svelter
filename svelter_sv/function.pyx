@@ -23,8 +23,8 @@ def Af_Letter_QC(Af_Letter,Copy_num_estimate):
             Copy_Num_Real[j[0]]+=1
     FLAG=0
     for i in Copy_num_estimate.keys():
-        if abs(Copy_num_estimate[i]-Copy_Num_Real[i])>1:
-            FLAG+=1
+        if Copy_Num_Real[i]-Copy_num_estimate[i] > -1 and Copy_Num_Real[i]-Copy_num_estimate[i] <2: continue
+        else:            FLAG+=1
     return FLAG
 def Af_TB_Penal_Less_Important_Caldu(num_of_reads,Af_Info_all,Af_Letter,IL_Statistics,ReadLength,GC_Overall_Median_Num):
     Af_TB_Rec=0
@@ -4722,7 +4722,13 @@ def zero_RD_Process(original_bp_list,run_flag,Best_IL_Score,Best_RD_Score):
     Best_Score_Rec=Best_IL_Score+Best_RD_Score
     run_flag+=1
     return([Best_Letter_Rec,Best_Score_Rec,run_flag])
-def ori_let_Modi(Be_Info, ori_let2):
+def ori_bp_Modi(Be_Letter,ori_bp2,Be_BP_Letter):
+    if Be_Letter[0]==Be_Letter[1]:    return [ori_bp2,ori_bp2]
+    else:
+        out=[[ori_bp2[0]],ori_bp2]
+        for x in Be_Letter[0]:    out[0].append(out[0][-1]+Be_BP_Letter[x[0]])
+        return out
+def ori_let_Modi(Be_Info, ori_let2,Copy_num_estimate):
     Ab_Dir_L1_a=[]
     Ab_Dir_L1_b=[]
     Ab_Dir_L2_a=[]
@@ -4788,7 +4794,11 @@ def ori_let_Modi(Be_Info, ori_let2):
             out+=x[::-1]
         else:
             out+=x
-    return out
+    out_new=[]
+    for i in out:
+        if not '^' in i and Copy_num_estimate[i[0]]==0: continue
+        else:   out_new.append(i)
+    return out_new
 def Insert_len_stat_readin(Insert_Len_Stat):
     if os.path.isfile(Insert_Len_Stat):
         fin=open(Insert_Len_Stat)
