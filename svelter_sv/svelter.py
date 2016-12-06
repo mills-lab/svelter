@@ -6423,8 +6423,7 @@ else:
                                 [svelter_hash,qc_score_info]=sv_info_qc_score_extract(sv_info_score_modify(sv_info))
                                 vcf_list=svelter_to_vcf_new(svelter_hash)
                                 vcf_list_modi_1=vcf_info_out_modify_1(vcf_list)
-                                fileout_prefix='/'.join(path2.split('/')[:-2])+'/'+'.'.join(path2.split('/')[-2].replace('bp_files.','').split('.')[:-1])
-                                write_vcf_list(vcf_list_modi_1,chromos,fileout_prefix,fileout_prefix.split('/')[-1],qc_score_info)
+                                write_vcf_list(vcf_list_modi_1,chromos,'.'.join(output_file.split('.')[:-1]),output_file.split('/')[-1],qc_score_info)
                             time2=time.time()
                             print 'SVIntegrate Complete !'
                             print 'Time Consuming: '+str(time2-time1)
