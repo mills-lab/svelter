@@ -1172,6 +1172,8 @@ else:
                                                                    QCFlag+=1
                                                                 if not pbam[5].find('S')==-1:
                                                                     QCFlag+=1
+                                                                if not pbam[5].find('H')==-1:
+                                                                    QCFlag+=1
                                                                 if not QCFlag==0:
                                                                     print>>fmini, pbam1
                                                         fbam.close()
@@ -4268,6 +4270,7 @@ else:
                                 Best_Score_Rec=80
                             print >>fo, 'Current Best Scure: '+str(Best_Score_Rec+20)
                             print>>fo, 'Time Consuming:'+str(datetime.timedelta(seconds=(time2-time1)))
+                        else:        print 'Uniparental_disomy: '+' '.join([str(bp_ele) for bp_ele in bps3+[original_letters,bestletter]])
                 fo.close()
             def score_rec_hash_Modify_for_short_del(Score_rec_hash):
                 Score_rec_hash_new={}
@@ -4409,7 +4412,8 @@ else:
                     if x[-2:] in [['+','+'],['-','-']]: inv_pairs_count+=1
                 for x in Read_Through:
                     if x[-2:] in [['+','+'],['-','-']]: inv_pairs_count+=1
-                return float(inv_pairs_count)/float(all_count)
+                if all_count>0:                return float(inv_pairs_count)/float(all_count)
+                else:   return 0
             def After_Letter_List_Produce_M(M_Move_Choices,Be_BP,Be_Letter,original_bp_list,Ploidy,Best_Score_Rec,Best_Letter_Rec,Block_CN_Upper):
                 [Af_BP_List,Af_Letter_List]=[[],[]]
                 for m in [['2m','1','1','1','X']]+M_Move_Choices:
@@ -5282,7 +5286,7 @@ else:
             def Define_Default_SVIntegrate():
                 global score_Cff
                 if not '--qc-structure' in dict_opts:
-                    score_Cff=-20
+                    score_Cff=0
                 else:
                     score_Cff=int(dict_opts['--qc-structure'])
             def del_block_modify(del_block,chromos):
@@ -5523,19 +5527,19 @@ else:
                 return out
             def dup_inv_haploid_decide(k1_hap,k2_hap):
                 #eg of k1_hap='abcd'    ;   eg of k2_hap='ad^bcd'
-                if len(k1_hap)>1:   #dup-inv cannot happen if only 1 block; only defined on multi-block event
-                    if '^' in k2_hap:   #inv in k2_hap
-                        dup_test=[k2_hap.count(i) for i in k1_hap]
-                        if max(dup_test)>1 and min(dup_test)>0: #no del in k2_hap;   dup in k2_hap
-                            dup_block=[k1_hap[i] for i in range(len(dup_test)) if dup_test[i]>1]
-                            all_block=letter_subgroup(k2_hap)
-                            if ''.join([i for i in all_block if not '^' in i])==k1_hap:
-                                dup_inv_block=[i for i in all_block if '^' in i]
-                                if dup_block==sorted([i for i in ''.join(dup_inv_block) if not i=='^']):
-                                    dup_pos=[i for i in range(len(all_block)) if all_block[i] in dup_inv_block]
-                                    all_block_with_flank=['-']+all_block+['+']
-                                    dup_neighber=[[all_block_with_flank[i],all_block_with_flank[i+1],all_block_with_flank[i+2]] for i in dup_pos]
-                                    return [dup_block,dup_neighber]
+                #if len(k1_hap)>1:   #dup-inv cannot happen if only 1 block; only defined on multi-block event
+                if '^' in k2_hap:   #inv in k2_hap
+                    dup_test=[k2_hap.count(i) for i in k1_hap]
+                    if max(dup_test)>1 and min(dup_test)>0: #no del in k2_hap;   dup in k2_hap
+                        dup_block=[k1_hap[i] for i in range(len(dup_test)) if dup_test[i]>1]
+                        all_block=letter_subgroup(k2_hap)
+                        if ''.join([i for i in all_block if not '^' in i])==k1_hap:
+                            dup_inv_block=[i for i in all_block if '^' in i]
+                            if dup_block==sorted([i for i in ''.join(dup_inv_block) if not i=='^']):
+                                dup_pos=[i for i in range(len(all_block)) if all_block[i] in dup_inv_block]
+                                all_block_with_flank=['-']+all_block+['+']
+                                dup_neighber=[[all_block_with_flank[i],all_block_with_flank[i+1],all_block_with_flank[i+2]] for i in dup_pos]
+                                return [dup_block,dup_neighber]
                 return 'FALSE'
             def del_dup_inv_diploid_decide(k1,k2) :
                 #eg of k1='ab/ab'   ; eg of k2='abb/ab'
@@ -6008,10 +6012,18 @@ else:
                                                                                         for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/1','dup_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 else:
                                                                                     vcf_info_out.append([k3[0],k3[1],k3[-1]]+['cannot_classify_for_now','1/1']+[k1,k2,':'.join([str(i) for i in k3])])
-                                                                    else:
-                                                                        if k1=='a/a' and k2.count('a')>3:    #tandup, high copynumber 
+                                                                        elif k1=='a/a' and k2.count('a')>3:    #tandup, high copynumber 
                                                                             for k3 in svelter_hash[k1][k2]:
                                                                                 vcf_info_out.append(k3+['tandup','./.','CN='+str(k2.count('a'))]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        else:
+                                                                            for k3 in svelter_hash[k1][k2]:
+                                                                                vcf_info_out.append([k3[0],k3[1],k3[-1]]+['cannot_classify_for_now','1/1']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                    elif k1=='a/a' and k2.count('a')>3:    #tandup, high copynumber 
+                                                                        for k3 in svelter_hash[k1][k2]:
+                                                                            vcf_info_out.append(k3+['tandup','./.','CN='+str(k2.count('a'))]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                    else:
+                                                                        for k3 in svelter_hash[k1][k2]:
+                                                                            vcf_info_out.append([k3[0],k3[1],k3[-1]]+['cannot_classify_for_now','1/1']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                 else:
                                                                     allele_sv_info=all_sv_single_haploid_decide(k1.split('/')[0],k2.split('/')[0])  #allele_1
                                                                     if not allele_sv_info=='NA':
@@ -6089,10 +6101,18 @@ else:
                                                                                         for j1 in i1:   vcf_info_out.append(j1+['del_dup','1/0','dup_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 else:
                                                                                     vcf_info_out.append([k3[0],k3[1],k3[-1]]+['cannot_classify_for_now','1/0']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        elif k1=='a/a' and k2.count('a')>3:    #tandup, high copynumber 
+                                                                            for k3 in svelter_hash[k1][k2]:
+                                                                                vcf_info_out.append(k3+['tandup','./.','CN='+str(k2.count('a'))]+[k1,k2,':'.join([str(i) for i in k3])])
                                                                         else:
-                                                                            if k1=='a/a' and k2.count('a')>3:    #tandup, high copynumber 
-                                                                                for k3 in svelter_hash[k1][k2]:
-                                                                                    vcf_info_out.append(k3+['tandup','./.','CN='+str(k2.count('a'))]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                            for k3 in svelter_hash[k1][k2]:
+                                                                                vcf_info_out.append([k3[0],k3[1],k3[-1]]+['cannot_classify_for_now','1/1']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                    elif k1=='a/a' and k2.count('a')>3:    #tandup, high copynumber 
+                                                                        for k3 in svelter_hash[k1][k2]:
+                                                                            vcf_info_out.append(k3+['tandup','./.','CN='+str(k2.count('a'))]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                    else:
+                                                                        for k3 in svelter_hash[k1][k2]:
+                                                                            vcf_info_out.append([k3[0],k3[1],k3[-1]]+['cannot_classify_for_now','1/1']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                     allele_sv_info=all_sv_single_haploid_decide(k1.split('/')[0],k2.split('/')[1])  #allele_2
                                                                     if not allele_sv_info=='NA':
                                                                         if not 'FALSE' in allele_sv_info:
@@ -6169,11 +6189,18 @@ else:
                                                                                         for j1 in i1:   vcf_info_out.append(j1+['del_dup','0/1','dup_block=']+[k1,k2,':'.join([str(i) for i in k3])])
                                                                                 else:
                                                                                     vcf_info_out.append([k3[0],k3[1],k3[-1]]+['cannot_classify_for_now','0/1']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                        elif k1=='a/a' and k2.count('a')>3:    #tandup, high copynumber 
+                                                                            for k3 in svelter_hash[k1][k2]:
+                                                                                vcf_info_out.append(k3+['tandup','./.','CN='+str(k2.count('a'))]+[k1,k2,':'.join([str(i) for i in k3])])
                                                                         else:
-                                                                            if k1=='a/a' and k2.count('a')>3:    #tandup, high copynumber 
-                                                                                for k3 in svelter_hash[k1][k2]:
-                                                                                    if not k3+['tandup','./.','CN='+str(k2.count('a'))]+[k1,k2,':'.join([str(i) for i in k3])] in vcf_info_out:
-                                                                                        vcf_info_out.append(k3+['tandup','./.','CN='+str(k2.count('a'))]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                            for k3 in svelter_hash[k1][k2]:
+                                                                                vcf_info_out.append([k3[0],k3[1],k3[-1]]+['cannot_classify_for_now','1/1']+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                    elif k1=='a/a' and k2.count('a')>3:    #tandup, high copynumber 
+                                                                        for k3 in svelter_hash[k1][k2]:
+                                                                            vcf_info_out.append(k3+['tandup','./.','CN='+str(k2.count('a'))]+[k1,k2,':'.join([str(i) for i in k3])])
+                                                                    else:
+                                                                        for k3 in svelter_hash[k1][k2]:
+                                                                            vcf_info_out.append([k3[0],k3[1],k3[-1]]+['cannot_classify_for_now','1/1']+[k1,k2,':'.join([str(i) for i in k3])])
                 return vcf_info_out
             def vcf_info_out_modify_1(vcf_list):
                 out=[]
@@ -6199,7 +6226,7 @@ else:
                         for k2 in sorted(vcf_hash[k1].keys()):
                             for k3 in sorted(vcf_hash[k1][k2].keys()):
                                 for k4 in vcf_hash[k1][k2][k3]:
-                                    vcf_out.append(k4)
+                                    if not k4 in vcf_out:                                   vcf_out.append(k4)
                 return vcf_out
             def overlap_csv_diploid_decide(k1,k2):
                 k2_haps=k2.split('/')
@@ -6346,7 +6373,8 @@ else:
                 pin=fin.readline().strip().split()
                 pin=fin.readline().strip().split()
                 fin.close()
-                return pin[0]
+                if len(pin)>0:                 return pin[0]
+                else:           return 'N'
             def out_vcf_to_final_vcf(out_vcf):
                 #out_vcf=[vcf_list]
                 #eg of vcf_list=['chrY', '26655224', '26655397', 'inv', '1/0', 'a/a', 'a^/a', 'chrY:26655224:26655397', '0.982409865935_0.000862204201036_3.84571648609e-09', '0.0582740231527_0.0576300231209_0.0323373546742', '0.0730093529725_0.0726786922608_0.0931921291232', '0.999316104416_6.33905201496e-06_2.27094687442e-08', '0.0293728183823_0.0292298080937_0.0292058447476', '0.0400447285638_0.0396106870366_0.00810824074155', '0.00246938033609_0.979532645829_7.59260922793e-06', '0.000233917319996_0.171378471541_5.7269108597e-06', '0.00412257237951_0.00408229517668_0.00127621580899']
@@ -6437,7 +6465,6 @@ else:
             import time
             import datetime
             import itertools
-            import svelter_sv.sv_flyer as svc
             main()
     if function_name=='PredefinedBP':
         import glob
@@ -9871,7 +9898,7 @@ else:
             def Define_Default_SVIntegrate():
                 global score_Cff
                 if not '--qc-structure' in dict_opts:
-                    score_Cff=-20
+                    score_Cff=0
                 else:
                     score_Cff=int(dict_opts['--qc-structure'])
             def disperse_dup_info_2_add(k3,dup_let):
@@ -10893,7 +10920,6 @@ else:
             import time
             import datetime
             import itertools
-            import svelter_sv.sv_flyer as svc
             Define_Default_SVIntegrate()
             if not '--workdir' in dict_opts.keys():
                 print 'Error: please specify working directory using: --workdir'
