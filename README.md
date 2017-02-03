@@ -18,6 +18,7 @@ Download and Install
 git clone https://github.com/mills-lab/svelter.git
 cd svelter
 python setup.py install --user
+export PATH=$PATH:$HOME/.local/bin
 ```
 Setup working directory:
 ``` 
