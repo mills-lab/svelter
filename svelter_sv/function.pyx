@@ -1,9 +1,18 @@
-from __future__ import absolute_import
-from __future__ import print_function
-
-import os,re,sys,numpy,scipy,random,getopt,math,pickle,time,datetime,itertools,random
+import os
+import re
+import sys
+import numpy
+import random
+import getopt
+import math
+import pickle
 from math import sqrt,pi,exp
+import scipy
 from scipy.stats import norm
+import time
+import datetime
+import itertools
+import random
 from scipy.stats import norm
 def Af_Letter_QC(Af_Letter,Copy_num_estimate):
     Copy_Num_Real={}

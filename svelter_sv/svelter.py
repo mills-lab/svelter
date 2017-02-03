@@ -9,10 +9,12 @@
 #command='SVelter.py SVPredict --deterministic-flag 1 --workdir /scratch/remills_flux/xuefzhao/NA12878.NGS/hg19 --sample /scratch/remills_flux/xuefzhao/NA12878.NGS/hg19/alignment/NA12878_S1.chr10.bam --bp-file /scratch/remills_flux/xuefzhao/NA12878.NGS/hg19/bp_files.NA12878_S1.chr10.bam/NA12878_S1.chr10.txt'
 #command='SVelter_Add_cram.03312016.py PredefinedBP --input-bed /mnt/EXT/Mills-scratch2/Xuefang/NA12878.NGS/het_RD10_INV.INV.bed --workdir /mnt/EXT/Mills-scratch2/Xuefang/NA12878.NGS/predefinedBP_Test/ --sample /mnt/EXT/Mills-scratch2/Xuefang/NA12878.NGS/alignment/NA12878_S1.bam'
 #sys.argv=command.split()
-from __future__ import absolute_import
-from __future__ import print_function
 
-import os,re,sys
+
+
+import os
+import re
+import sys
 from svelter_sv import readme
 script_name=sys.argv[0]
 def stat_file_name(bamF_Name,genome_name):
@@ -45,16 +47,24 @@ else:
             clean_svelter_set(workdir+'reference_SVelter/')
             print('SVelter Cleared Up!')
     if function_name=='Setup':
-        import glob,getopt
+        import glob
+        import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['support=','deterministic-flag=','ref-index=','help=','batch=','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','segdup=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         Code_path='/'.join(sys.argv[0].split('/')[:-1])+'/'
         if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
             readme.print_default_parameters_setup()
         else:
-            import numpy,scipy,math,random,pickle,time,datetime,itertools
+            import numpy
+            import scipy
+            import math
             from math import sqrt,pi,exp
             from scipy.stats import norm
+            import random
+            import pickle
+            import time
+            import datetime
+            import itertools
             def final_regions_decide(Gap_Hash_Ref1,hash_Cor,chrom):
                 GapHash=Gap_Hash_Ref1[chrom]
                 GapHash2=calculate_interval_region(hash_Cor,Chromo_Length,chrom)
@@ -263,7 +273,8 @@ else:
                         print('Suppport files completely set !')
                         print('Time Consuming:'+str(time2-time1))
     if function_name=='NullModel':
-        import glob,getopt
+        import glob
+        import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','out-path=','help=','long-insert=','batch=','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         def dict_opts_modify(dict_opts):
@@ -342,9 +353,16 @@ else:
         if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
             readme.print_default_parameters_nullmodel()
         else:
-            import numpy,scipy,math,random,pickle,time,datetime,itertools
+            import numpy
+            import scipy
+            import math
             from math import sqrt,pi,exp
             from scipy.stats import norm
+            import random
+            import pickle
+            import time
+            import datetime
+            import itertools
             def clean_files():
                 os.system('''rm  %s'''%(InsertLenNullTemp))
                 os.system('''rm  %s'''%(DRNullTemp))
@@ -878,7 +896,8 @@ else:
                             print('Null Model Built for '+bamF)
                             print('Time Consuming: '+str(time2-time1))
     if function_name=='BPSearch':
-        import glob,getopt
+        import glob
+        import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','out-path=','help=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration=','BPSPCff=','BPLNCff='])
         dict_opts=dict(opts)
         CN2_Region={}
@@ -966,9 +985,16 @@ else:
                 ref_path=workdir+'reference_SVelter/'
                 ref_file=ref_path+'genome.fa'
                 ref_index=ref_file+'.fai'
-            import numpy,scipy,math,random,pickle,time,datetime,itertools
+            import numpy
+            import scipy
+            import math
             from math import sqrt,pi,exp
             from scipy.stats import norm
+            import random
+            import pickle
+            import time
+            import datetime
+            import itertools
             Define_Default_BPSearching()
             if not '--workdir' in list(dict_opts.keys()):
                 print('Error: please specify working directory using: --workdir')
@@ -1838,12 +1864,15 @@ else:
                                             print('BPSearch Complete for '+bamF+'.'+chrF)
                                             print('Time Consuming: '+str(time2-time1))
     if function_name=='BPSearch_Predefined':
-        import glob,getopt,time,datetime
+        import glob
+        import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','help=','input-bed=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
             readme.print_default_parameters_predefinedbp()
         else:
+            import time
+            import datetime
             if not '--input-bed' in list(dict_opts.keys()):
                 print('Error: please specify predefined breakpoints using --input-bed')
             else:
@@ -2060,7 +2089,8 @@ else:
                                 print('Error: predefined breakpoints file not exist !')
             main()
     if function_name=='BPIntegrate':
-        import glob,getopt
+        import glob
+        import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','help=','bp-path=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
@@ -2126,9 +2156,16 @@ else:
                 global LN_list
                 global all_SPs
             min_length=100
-            import numpy,scipy,math,random,pickle,time,datetime,itertools
+            import numpy
+            import scipy
+            import math
             from math import sqrt,pi,exp
             from scipy.stats import norm
+            import random
+            import pickle
+            import time
+            import datetime
+            import itertools
             Define_Default_BPIntegrate()
             if not '--workdir' in list(dict_opts.keys()):
                 print('Error: please specify working directory using: --workdir')
@@ -2200,14 +2237,27 @@ else:
                             print('BPIntegrate Complete !')
                             print('Time Consuming: '+str(time2-time1))
     if function_name=='SVPredict':
-        import glob,getopt,os,sys,getopt,random,scipy,math,numpy,pickle,scipy,time,datetime,itertools
+        import glob
+        import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','help=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','input-bed=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
             readme.print_default_parameters_svpredict()
         else:
+            import os
+            import sys
+            import getopt
+            import random
+            import scipy
+            import math
+            import numpy
+            import pickle
             from math import sqrt,pi,exp
+            import scipy
             from scipy.stats import norm
+            import time
+            import datetime
+            import itertools
             def Af_Rearrange_Info_Collect_2(BP_para_dict,Letter_Candidates):
                 P_IL=[]
                 P_RD=[]
@@ -5069,7 +5119,8 @@ else:
                                                             for k1 in bps_new_2:
                                                                 bps_hash[max(bps_hash.keys())].append([k1])
     if function_name=='SVIntegrate':
-        import glob,getopt
+        import glob
+        import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','help=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
@@ -6404,17 +6455,27 @@ else:
                             time2=time.time()
                             print('SVIntegrate Complete !')
                             print('Time Consuming: '+str(time2-time1))
-            import numpy,scipy,math,random,pickle,time,datetime,itertools
+            import numpy
+            import scipy
+            import math
             from math import sqrt,pi,exp
             from scipy.stats import norm
+            import random
+            import pickle
+            import time
+            import datetime
+            import itertools
             main()
     if function_name=='PredefinedBP':
-        import glob,getopt,time,datetime
+        import glob
+        import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','help=','input-bed=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
             readme.print_default_parameters_predefinedbp()
         else:
+            import time
+            import datetime
             if not '--input-bed' in list(dict_opts.keys()):
                 print('Error: please specify predefined breakpoints using --input-bed')
             else:
@@ -6687,9 +6748,19 @@ else:
             main()
     if function_name=='GenoTyper':
         #command='svelter.py GenoTyper --workdir /scratch/remills_flux/xuefzhao/SV_discovery_index/download/ --seq-path /scratch/remills_flux/xuefzhao/SV_discovery_index/download/alignment/ -f /scratch/remills_flux/xuefzhao/SV_discovery_index/download/SVelter.version14/svelter/HG00512.alt_bwamem_GRCh38DH.20150715.CHS.high_coverage.svelter'
-        import getopt,random,scipy,math,numpy,pickle,scipy,time,datetime,itertools,glob
+        import getopt
+        import random
+        import scipy
+        import math
+        import numpy
+        import pickle
         from math import sqrt,pi,exp
+        import scipy
         from scipy.stats import norm
+        import time
+        import datetime
+        import itertools
+        import glob
         def Af_Letter_2_Af_BP(BP_para_dict,Af_Letter,Be_BP_Letter):
             Af_BP=[[BP_para_dict['original_bp_list'][0]],[BP_para_dict['original_bp_list'][0]]]
             for i in Af_Letter[0]:
@@ -9599,7 +9670,8 @@ else:
                                 geno_likelihood_write(geno_likelihood_list,sv_rec_list,single_file,bam_file_name)
         main()
     if function_name=='SVIntegrate_vcf4.1':
-        import glob,getopt
+        import glob
+        import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','help=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
@@ -10838,9 +10910,16 @@ else:
                             if '^' in a3:
                                 tra1[SV_ID]['b'].append([r_chr,bp_hash[a4][2],ref_allele[a4][2],'['+l_chr+':'+str(bp_hash[a3[-2]][2])+'['+ref_allele[a4][2]])
                                 tra1[SV_ID]['b'].append([l_chr,bp_hash[a3[-2]][2],ref_allele[a3[-2]][2],'['+bp_hash[a4][0]+':'+str(bp_hash[a4][2])+'['+ref_allele[a3[-2]][2]])
-            import numpy,scipy,math,random,pickle,time,datetime,itertools
+            import numpy
+            import scipy
+            import math
             from math import sqrt,pi,exp
             from scipy.stats import norm
+            import random
+            import pickle
+            import time
+            import datetime
+            import itertools
             Define_Default_SVIntegrate()
             if not '--workdir' in list(dict_opts.keys()):
                 print('Error: please specify working directory using: --workdir')
@@ -10908,7 +10987,8 @@ else:
                         print('SVIntegrate Complete !')
                         print('Time Consuming: '+str(time2-time1))
     if not function_name in ['BPSearch_Predefined','PredefinedBP','Setup','NullModel','BPSearch','BPIntegrate','SVPredict','SVIntegrate','SVIntegrate_vcf4.1','Clean','GenoTyper']:
-        import glob,getopt
+        import glob
+        import getopt
         opts,args=getopt.getopt(sys.argv[1:],'o:h:S:',['deterministic-flag=','help=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration=','keep-interval-files='])
         dict_opts=dict(opts)
         if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
@@ -11061,9 +11141,16 @@ else:
             def global_para_declaration_all():
                     global whole_genome
                     global len_genome
-            import numpy,scipy,math,random,pickle,time,datetime,itertools
+            import numpy
+            import scipy
+            import math
             from math import sqrt,pi,exp
             from scipy.stats import norm
+            import random
+            import pickle
+            import time
+            import datetime
+            import itertools
             Define_Default_AllInOne()
             global_para_declaration_all()
             if not '--workdir' in list(dict_opts.keys()):

@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-from __future__ import print_function
-
 def print_default_parameters():
     print('SVelter-0.1        Contact: xuefzhao@umich.edu      Last Update:2015-08-20')
     print('')
