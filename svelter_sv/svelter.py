@@ -9,12 +9,8 @@
 #command='SVelter.py SVPredict --deterministic-flag 1 --workdir /scratch/remills_flux/xuefzhao/NA12878.NGS/hg19 --sample /scratch/remills_flux/xuefzhao/NA12878.NGS/hg19/alignment/NA12878_S1.chr10.bam --bp-file /scratch/remills_flux/xuefzhao/NA12878.NGS/hg19/bp_files.NA12878_S1.chr10.bam/NA12878_S1.chr10.txt'
 #command='SVelter_Add_cram.03312016.py PredefinedBP --input-bed /mnt/EXT/Mills-scratch2/Xuefang/NA12878.NGS/het_RD10_INV.INV.bed --workdir /mnt/EXT/Mills-scratch2/Xuefang/NA12878.NGS/predefinedBP_Test/ --sample /mnt/EXT/Mills-scratch2/Xuefang/NA12878.NGS/alignment/NA12878_S1.bam'
 #sys.argv=command.split()
-
-
-
-import os
-import re
-import sys
+from __future__ import print_function
+import os,re,sys
 from svelter_sv import readme
 script_name=sys.argv[0]
 def stat_file_name(bamF_Name,genome_name):
