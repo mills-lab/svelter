@@ -1,19 +1,10 @@
-import os
-import re
-import sys
-import numpy
-import random
-import getopt
-import math
-import pickle
+from __future__ import print_function
+
+import os,re,sys,numpy,random,getopt,math,pickle,scipy,time,datetime,random,itertools
 from math import sqrt,pi,exp
-import scipy
 from scipy.stats import norm
-import time
-import datetime
-import itertools
-import random
 from scipy.stats import norm
+
 def Af_Letter_QC(Af_Letter,Copy_num_estimate):
     Copy_Num_Real={}
     for i in list(Copy_num_estimate.keys()):
@@ -361,7 +352,7 @@ def bed_write(bed_info,out_folder,sample_name,input_bed):
         fout=out_folder+'.'.join(sample_name.split('.')[:-1])+'.'+k1+'.predefinedBP.'+'.'.join(input_bed.split('/')[-1].split('.')[:-1])+'.LNs'
         fo=open(fout,'w')
         for k2 in bed_info[k1]:
-            print(' '.join([str(i) for i in [k1,k2[0],100,k2[1],100]]), file=fo)
+            print(' '.join([str(i) for i in [k1,k2[0],100,k2[1],100]]),file=fo)
         fo.close()
         fo=open(out_folder+'.'.join(sample_name.split('.')[:-1])+'.'+k1+'.predefinedBP.'+'.'.join(input_bed.split('/')[-1].split('.')[:-1])+'.SPs','w')
         fo.close()
