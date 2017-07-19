@@ -256,7 +256,7 @@ else:
                                                 print(' '.join([hakey2, str(key1[0]),str(key1[1])]), file=fout)
                                                 print(' '.join([hakey2, str(key1[0]),str(key1[1])]), file=fout2)
                                                 GC_out=[]
-                                                for key2 in range((key1[1]-key1[0])/100):
+                                                for key2 in [int(i) for i in range(int((key1[1]-key1[0])/100))]:
                                                     GC_region=hash_to_Seq[(key1[0]+key2*100):(key1[0]+(key2+1)*100)]
                                                     GC_out.append(str(float(GC_region.count('g')+GC_region.count('G')+GC_region.count('c')+GC_region.count('C'))/100.0))
                                                 GC_region=hash_to_Seq[(key1[0]+(key2+1)*100):key1[1]]
@@ -426,7 +426,8 @@ else:
                             time1=time.time()
                             if ReadLength_Flag==0:
                                 ReadLengthHash={}
-                            outputfile=NullPath+bamF.split('/')[-1].replace('.'+bam_file_appdix,'')+'.'+genome_name+'.null'
+                            #outputfile=NullPath+bamF.split('/')[-1].replace('.'+bam_file_appdix,'')+'.'+genome_name+'.null'
+                            outputfile=NullPath+'.'.join(bamF.split('/')[-1].split('.')[:-1]) +'.'+genome_name+'.null'
                             fo=open(outputfile,'w')
                             print(' '.join(['position','GCContent','ReadDepth','SplitReads','AbnormalDirection','ThroughBP']), file=fo)
                             fo.close()
@@ -482,15 +483,9 @@ else:
                                 TBNullDensity={}
                                 SplitNullDensity={}
                                 GC_Content={}
-                                #fcn2=open(cn2_file)
-                                #while True:
                                 for pcn2 in cn2_regions:
-                                    #pcn2=fcn2.readline().strip().split()
-                                    #if not pcn2: break
                                     if not len(pcn2)==3: break
                                     if pcn2[0] in chromos:
-                                        #if (int(pcn2[2])-int(pcn2[1]))>cn2_length and (int(pcn2[2])-int(pcn2[1]))<cn2_max_len:
-                                        #    if random.choice(range(100))<SamplingPercentage*100:
                                                 pos=[int(pcn2[1])+i*Window_Size for i in range(int(float(int(pcn2[2])-int(pcn2[1]))/Window_Size))]
                                                 pos0=[pcn2[0]+'_'+str(i*Window_Size) for i in pos]
                                                 RDNull=[0 for i in pos]
@@ -505,7 +500,7 @@ else:
                                                         if not preadpair: break
                                                         if not int(preadpair[4])>QCAlign: continue
                                                         if not int(preadpair[3])>pos[0]: continue
-                                                        block_num=max(int(preadpair[3])-pos[0],0)/Window_Size
+                                                        block_num=int(max(int(preadpair[3])-pos[0],0)/Window_Size)
                                                         if not block_num<len(pos): continue
                                                         if ReadLength_Flag==0:
                                                             if not preadpair[9]=='*':
@@ -526,10 +521,10 @@ else:
                                                                 if not Reads_Direction_Detect(preadpair)==['+', '-']:
                                                                         abdrpos=min([int(preadpair[3]),int(preadpair[7])])-int(pcn2[1])-100
                                                                         if abdrpos>-1 and abdrpos<(int(pcn2[2])-int(pcn2[1])-200):
-                                                                                DRNull[abdrpos/Window_Size]+=1
+                                                                                DRNull[int(abdrpos/Window_Size)]+=1
                                                                 if not preadpair[0] in readInf:
-                                                                        for j in range(max((int(preadpair[3])-pos[0])/Window_Size,0), min((int(preadpair[3])+int(preadpair[8])-pos[0])/Window_Size,len(pos))):
-                                                                                TBNull[j]+=1
+                                                                        for j in range(int(max((int(preadpair[3])-pos[0])/Window_Size,0)), int(min((int(preadpair[3])+int(preadpair[8])-pos[0])/Window_Size,len(pos)))):
+                                                                                TBNull[int(j)]+=1
                                                                         readInf.append(preadpair[0])
                                                 freadpairs.close()
                                                 if not sum(RDNull)==0:
@@ -541,7 +536,7 @@ else:
                                                             if not pref: break
                                                             REFSEQUENCE=[''.join(REFSEQUENCE+pref)]
                                                     fref.close()
-                                                    GCNull=[int(float(REFSEQUENCE[0][(Window_Size*i):(Window_Size*i+Window_Size)].count('G')+REFSEQUENCE[0][(Window_Size*i):(Window_Size*i+Window_Size)].count('C')+REFSEQUENCE[0][(Window_Size*i):(Window_Size*i+Window_Size)].count('g')+REFSEQUENCE[0][(Window_Size*i):(Window_Size*i+Window_Size)].count('c'))/float(Window_Size)*100) for i in range(len(REFSEQUENCE[0])/Window_Size)]
+                                                    GCNull=[int(float(REFSEQUENCE[0][(Window_Size*i):(Window_Size*i+Window_Size)].count('G')+REFSEQUENCE[0][(Window_Size*i):(Window_Size*i+Window_Size)].count('C')+REFSEQUENCE[0][(Window_Size*i):(Window_Size*i+Window_Size)].count('g')+REFSEQUENCE[0][(Window_Size*i):(Window_Size*i+Window_Size)].count('c'))/float(Window_Size)*100) for i in range(int(len(REFSEQUENCE[0])/Window_Size))]
                                                     fo=open(outputfile,'a')
                                                     for k in range(len(pos)):
                                                             if not RDNull[k]==0:
@@ -574,7 +569,6 @@ else:
                                                                     TBNullDensity[TBNull[k]]=1
                                                             elif TBNull[k] in list(TBNullDensity.keys()):
                                                                     TBNullDensity[TBNull[k]]+=1
-                                #fcn2.close()
                                 if 0 in list(RDNullDensity.keys()):
                                         del RDNullDensity[0]
                                 if 0 in list(TBNullDensity.keys()):
@@ -865,7 +859,7 @@ else:
                                                         os.system(r'''samtools view -F 256 %s %s:%d-%d > %s'''%(bamF,str(pcn2[0]),int(pcn2[1]),int(pcn2[2]),sam_file))
                                                         Number_Of_Windows=len(Seq1)/Window_Size
                                                         GC_Content={}
-                                                        for i in range(len(Seq1)/Window_Size+1)[1:]:                
+                                                        for i in range(int(len(Seq1)/Window_Size+1))[1:]:                
                                                                 Seq2=Seq1[(i-1)*Window_Size:i*Window_Size]
                                                                 GC_Content[i]=GC_Content_Calculate(Seq2)
                                                         coverage=Region_Coverage_Calculate(sam_file,Number_Of_Windows,pcn2,Window_Size)
@@ -877,7 +871,8 @@ else:
                                         os.system(r'''rm %s'''%(NullPath+temp_Name+'.fa'))
                                     if os.path.isfile(NullPath+temp_Name+'.sam'):
                                         os.system(r'''rm %s'''%(NullPath+temp_Name+'.sam'))
-                                    Output_File=NullPath+'RD_Stat/'+bamF.split('/')[-1].replace('.'+bam_file_appdix,'')+'.'+genome_name+'_MP'+str(QCAlign)+'_GC_Coverage_ReadLength'
+                                    #Output_File=NullPath+'RD_Stat/'+bamF.split('/')[-1].replace('.'+bam_file_appdix,'')+'.'+genome_name+'_MP'+str(QCAlign)+'_GC_Coverage_ReadLength'
+                                    Output_File=NullPath+'RD_Stat/'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'_MP'+str(QCAlign)+'_GC_Coverage_ReadLength'
                                     Output_Path=NullPath+'RD_Stat/'
                                     if not os.path.isdir(Output_Path):
                                         os.system(r'''mkdir %s'''%(Output_Path))
@@ -918,13 +913,10 @@ else:
                 global Length_Limit
                 Length_Limit=2000
                 global model_comp
-                if not '--null-model' in list(dict_opts.keys()):
-                    model_comp='C'
+                if not '--null-model' in list(dict_opts.keys()):       model_comp='C'
                 else:
-                    if dict_opts['--null-model'] in ['S','Simple']:
-                        model_comp='S'
-                    else:
-                        model_comp='C'
+                    if dict_opts['--null-model'] in ['S','Simple']:    model_comp='S'
+                    else:                                              model_comp='C'
                 global ToolMappingQ
                 global FileMappingQ
                 global align_QCflag
@@ -932,35 +924,24 @@ else:
                     ToolMappingQ=dict_opts['--qc-map-tool']
                     FileMappingQ=dict_opts['--qc-map-file']
                     align_QCflag=1
-                else:
-                    align_QCflag=0
+                else:     align_QCflag=0
                 global BPAlignQC
-                if '--BPAlignQC' in list(dict_opts.keys()):
-                    BPAlignQC=float(dict_opts['--BPAlignQC'])
-                else:
-                    BPAlignQC=0.2
+                if '--BPAlignQC' in list(dict_opts.keys()):    BPAlignQC=float(dict_opts['--BPAlignQC'])
+                else:                                          BPAlignQC=0.2
                 global QCAlign   
-                if '--qc-align' in list(dict_opts.keys()):
-                    QCAlign=int(dict_opts['--qc-align'])
-                else:
-                    QCAlign=20
+                if '--qc-align' in list(dict_opts.keys()):     QCAlign=int(dict_opts['--qc-align'])
+                else:                                          QCAlign=20
                 global QC_RDCalculate_Cff
                 QC_RDCalculate_Cff=10
                 global QCSplit   
-                if '--qc-split' in list(dict_opts.keys()):
-                    QCSplit=int(dict_opts['--qc-split'])
-                else:
-                    QCSplit=20
+                if '--qc-split' in list(dict_opts.keys()):     QCSplit=int(dict_opts['--qc-split'])
+                else:                                          QCSplit=20
                 global NullSplitLen_perc
-                if '--split-min-len' in list(dict_opts.keys()):
-                    NullSplitLen_perc=float(dict_opts['--split-min-len'])
-                else:
-                    NullSplitLen_perc=0.9
+                if '--split-min-len' in list(dict_opts.keys()): NullSplitLen_perc=float(dict_opts['--split-min-len'])
+                else:                                           NullSplitLen_perc=0.9
                 global BPAlignQCFlank
-                if '--BPAlignQCFlank' in list(dict_opts.keys()):
-                    BPAlignQCFlank=int(dict_opts['--BPAlignQCFlank'])
-                else:
-                    BPAlignQCFlank=500
+                if '--BPAlignQCFlank' in list(dict_opts.keys()):    BPAlignQCFlank=int(dict_opts['--BPAlignQCFlank'])
+                else:                                               BPAlignQCFlank=500
             def global_para_declaration():
                 global BPPath
                 global NullPath
@@ -992,15 +973,12 @@ else:
             import datetime
             import itertools
             Define_Default_BPSearching()
-            if not '--workdir' in list(dict_opts.keys()):
-                print('Error: please specify working directory using: --workdir')
+            if not '--workdir' in list(dict_opts.keys()):     print('Error: please specify working directory using: --workdir')
             else:
-                if not '--sample' in list(dict_opts.keys()):
-                    print('Error: please specify either input file using --sample')
+                if not '--sample' in list(dict_opts.keys()):  print('Error: please specify either input file using --sample')
                 else:
                     global_para_declaration()
-                    if not os.path.isfile(ref_index):
-                        print('Error: reference genome not indexed')
+                    if not os.path.isfile(ref_index):     print('Error: reference genome not indexed')
                     else:
                         chromos=chromos_read_in(ref_file)
                         if '--chromosome' in list(dict_opts.keys()):
@@ -1008,23 +986,20 @@ else:
                             if not chrom_single in chromos:
                                 print('Error: please make sure the chromosome defined by --chr is correct based on the reference genome')
                                 chromos=[]
-                            else:
-                                chromos=[chrom_single]
+                            else:             chromos=[chrom_single]
                         if not chromos==[]:
                             genome_name=genome_name_readin(dict_opts)
                             print('temp files produced under: '+workdir)
-                            if '--out-path' in list(dict_opts.keys()):
-                                BPPath=path_modify(dict_opts['--out-path'])
-                            else:
-                                BPPath=workdir+'BreakPoints.'+dict_opts['--sample'].split('/')[-1]+'/'
-                            if not os.path.isdir(BPPath):
-                                os.system(r'''mkdir %s'''%(BPPath))
+                            if '--out-path' in list(dict_opts.keys()):    BPPath=path_modify(dict_opts['--out-path'])
+                            else:                                         BPPath=workdir+'BreakPoints.'+dict_opts['--sample'].split('/')[-1]+'/'
+                            if not os.path.isdir(BPPath):                 os.system(r'''mkdir %s'''%(BPPath))
                             NullPath='/'.join(BPPath.split('/')[:-2])+'/'+'.'.join(['NullModel']+BPPath.split('/')[-2].split('.')[1:])+'/'
                             for bamF in bam_files:
                                 time1=time.time()                          
                                 [Window_Size,ReadLength,sub_loc_size]=Null_Stats_Readin_One(NullPath,bamF,NullSplitLen_perc,genome_name,bam_files_appdix)
                                 for chrF in chromos:
-                                    bamF_Name=bamF.split('/')[-1].replace('.'+bam_files_appdix,'')
+                                    bamF_Name='.'.join(bamF.split('/')[-1].split('.')[:-1])
+                                    #bamF_Name=bamF.split('/')[-1].replace('.'+bam_files_appdix,'')
                                     floc_Name=BPPath+bamF_Name+'.'+chrF
                                     Refloc_name='.'.join(ref_file.split('.')[:-1])+'.Mappable.bed'
                                     stat_file_name(bamF_Name,genome_name)
@@ -1035,17 +1010,17 @@ else:
                                         ILCIs={}
                                         pAllS1=fAllS.readline().strip().split()
                                         pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):                                            ILCIs[pAllS1[i]]=pAllS2[i]
+                                        for i in range(len(pAllS1)): ILCIs[pAllS1[i]]=pAllS2[i]
                                         pAllS=fAllS.readline().rstrip()
                                         RDCIs={}
                                         pAllS1=fAllS.readline().strip().split()
                                         pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):                                            RDCIs[pAllS1[i]]=pAllS2[i]
+                                        for i in range(len(pAllS1)):  RDCIs[pAllS1[i]]=pAllS2[i]
                                         pAllS=fAllS.readline().rstrip()
                                         TBCIs={}
                                         pAllS1=fAllS.readline().strip().split()
                                         pAllS2=fAllS.readline().strip().split()
-                                        for i in range(len(pAllS1)):                                            TBCIs[pAllS1[i]]=pAllS2[i]
+                                        for i in range(len(pAllS1)):  TBCIs[pAllS1[i]]=pAllS2[i]
                                         pAllS=fAllS.readline().rstrip()
                                         InsertLen={}
                                         pAllS1=fAllS.readline().strip().split()
@@ -1077,9 +1052,9 @@ else:
                                             if float(pAllS2[i])>DRCutoff:
                                                 DRMin=int(pAllS1[i])-1
                                                 break
-                                        if DRMin<5:                                      RMin=5
+                                        if DRMin<5:                                      DRMin=5
                                         fbam=os.popen('''samtools view -H %s'''%(BamInput))
-                                        if '--BPSPCff' in list(dict_opts.keys()):              PSPCff=int(float(dict_opts['--BPSPCff']))
+                                        if '--BPSPCff' in list(dict_opts.keys()):              BPSPCff=int(float(dict_opts['--BPSPCff']))
                                         else:                                            BPSPCff=int(round(2*float(RDStats['Median'])/float(10)))
                                         if BPSPCff<3:                                    BPSPCff=3
                                         if '--BPLNCff' in list(dict_opts.keys()):              BPLNCff=int(float(dict_opts['--BPLNCff']))
@@ -1088,7 +1063,8 @@ else:
                                         SPCluMin=BPSPCff
                                         LnCluMin=BPLNCff
                                         if '--SPCluLen' in list(dict_opts.keys()):             SPCluLen=int(dict_opts['--SPCluLen'])
-                                        else:                                            SPCluLen=5
+                                        else:                                                  SPCluLen=int(round(2*float(RDStats['Median'])/float(10)))
+                                        if SPCluLen<5:                                         SPCluLen=5
                                         SubLnCluMin=max([LnCluMin,SPCluMin])
                                         LinkCluMin=min([LnCluMin,SPCluMin])
                                         ClusterLen=ClusterLen_Calculation(ILStats,model_comp,ReadLength)
@@ -1110,8 +1086,7 @@ else:
                                         loc_rec={}
                                         for line in floc:
                                             ploc=line.strip().split()
-                                            if not ploc[0] in list(loc_rec.keys()):
-                                                loc_rec[ploc[0]]=[]
+                                            if not ploc[0] in list(loc_rec.keys()):    loc_rec[ploc[0]]=[]
                                             loc_rec[ploc[0]].append([int(ploc2) for ploc2 in ploc[1:]])
                                         floc.close()
                                         if not loc_rec=={} and chrF in list(loc_rec.keys()):
@@ -1135,7 +1110,7 @@ else:
                                                         fmini=open(mini_fout_Name,'a')
                                                         fRDind=open(RD_index_File,'a')
                                                         print(chrom+':'+str(real_region[0])+'-'+str(real_region[1]), file=fRDind)                
-                                                        RD_RealRegion=[0 for i in range((real_region[1]-real_region[0])/Window_Size+1)]
+                                                        RD_RealRegion=[0 for i in range(int((real_region[1]-real_region[0])/Window_Size)+1)]
                                                         fbam=os.popen('''samtools view -F 256 %s %s:%d-%d'''%(BamInput,chrom,real_region[0],real_region[1]))
                                                         while True:
                                                             pbam1=fbam.readline().strip()
@@ -1152,7 +1127,7 @@ else:
                                                                     pos1=real_region[0]
                                                                 if pos1<real_region[1] and pos2>real_region[1]:
                                                                     pos2=real_region[1]
-                                                                block1=(pos1-real_region[0])/Window_Size
+                                                                block1=int((pos1-real_region[0])/Window_Size)
                                                                 RD_RealRegion[block1]+=ReadLen
                                                             if int(pbam[4])>int(QCAlign):             #fail quality control, skip
                                                                 absIL=abs(int(pbam[8]))
@@ -1187,6 +1162,7 @@ else:
                                                 os.system(r'''rm %s'''%(mini_fout_N2))
                                                 os.system(r'''rm %s'''%(mini_fout_Name))
                                             for loc in loc_rec[chrom]: 
+                                                print(loc)
                                                 loc2=split_loc_to_loc2(loc,ClusterLen)
                                                 for real_region in loc2:
                                                         fbam=os.popen('''samtools view -F 256 %s %s:%d-%d'''%(mini_fout_N4,chrom,real_region[0],real_region[1]))
@@ -1308,18 +1284,15 @@ else:
                                                                                             if not pos1 in list(abInfR.keys()):                               abInfR[pos1]=[0,0,1,0]
                                                                                             else:                               abInfR[pos1][2]+=1
                                                         for k1 in list(LinkSPTemp.keys()):
-                                                            if not 'S' in LinkSPTemp[k1]:
-                                                                del LinkSPTemp[k1]
+                                                            if not 'S' in LinkSPTemp[k1]:     del LinkSPTemp[k1]
                                                             else:
-                                                                if len(LinkSPTemp[k1])==2:
-                                                                    del LinkSPTemp[k1]
+                                                                if len(LinkSPTemp[k1])==2:    del LinkSPTemp[k1]
                                                         for k1 in list(LinkSPTemp.keys()):
                                                             tempk1=[]
                                                             for k2 in LinkSPTemp[k1]:
-                                                                if not k2=='S':
-                                                                    tempk1+=[k2]
-                                                            for k2 in range(len(tempk1[0])/2):
-                                                                for k3 in range(len(tempk1[1])/2):
+                                                                if not k2=='S':     tempk1+=[k2]
+                                                            for k2 in range(int(len(tempk1[0])/2)):
+                                                                for k3 in range(int(len(tempk1[1])/2)):
                                                                     if tempk1[0][2*k2]<tempk1[1][2*k3]:
                                                                         tempk2=[tempk1[0][2*k2],tempk1[0][2*k2+1],tempk1[1][2*k3],tempk1[1][2*k3+1]]
                                                                         if [tempk2[1],tempk2[3]]==['+','-']:
@@ -1348,9 +1321,7 @@ else:
                                                                 for k2 in LinkFR[k1]:
                                                                         if not k2 in list(LinkRF.keys()):           LinkRF[k2]=[]
                                                                         LinkRF[k2].append(k1)
-                                                        out_pair_bp=[]
-                                                        out_single_bp=[]
-                                                        SP4S=[]
+                                                        [out_pair_bp,out_single_bp,SP4S]=[[],[],[]]
                                                         if not LinkSP=={}:
                                                             SP2S=[]
                                                             linkSP_First=clusterNums(sorted(LinkSP.keys()), SPCluLen, 'f')
@@ -1425,7 +1396,7 @@ else:
                                                                                             if k3x in list(abInfR.keys()):                           new_core_ele+=numpy.sum(abInfR[k3x])
                                                                                         if new_core_ele>BPLNCff:
                                                                                             #new_core.append(min(k2x))
-                                                                                            if not min(k2x) in list(LinkSPR2.keys()):                LinkSPR2[min(k2x)]=k2x
+                                                                                            if not min(k2x) in list(LinkSPR2.keys()):          LinkSPR2[min(k2x)]=k2x
                                                                                             else:                                              LinkSPR2[min(k2x)]+=k2x
                                                                                             if not min(k2x) in SP4S:                           SP4S.append(min(k2x))
                                                                             for k1x in list(LinkSPF2.keys()):
@@ -1447,8 +1418,7 @@ else:
                                                                                     LinkSP_To_Link[k1x][0]+=LinkSPF2[k1x][0]
                                                                                     LinkSP_To_Link[k1x][1]+=LinkSPF2[k1x][1]
                                                                                 if k1x in list(LinkSPR2.keys()):
-                                                                                    if not k1x in list(LinkSP_To_Link.keys()):
-                                                                                        LinkSP_To_Link[k1x]=[[],[]]
+                                                                                    if not k1x in list(LinkSP_To_Link.keys()):    LinkSP_To_Link[k1x]=[[],[]]
                                                                                     LinkSP_To_Link[k1x][0]+=LinkSPR2[k1x][0]
                                                                                     LinkSP_To_Link[k1x][1]+=LinkSPR2[k1x][1]
                                                                                 if k1x in list(LinkSP_To_Link.keys()):
@@ -1495,12 +1465,9 @@ else:
                                                                                         record=0
                                                                                         record2=0
                                                                                         for key3 in clu_c_F[key2]:
-                                                                                                if not key3 >key2b:
-                                                                                                        record+=sum(abInfF[key3][:3])
-                                                                                                if abs(key2b-key3)<SPCluLen:
-                                                                                                        record2+=abInfF[key3][3]
-                                                                                        if not record+record2<LinkCluMin:
-                                                                                                tempIL[key2b]=[[record,record2,'f'],clu_c_F[key2]]
+                                                                                                if not key3 >key2b:          record+=sum(abInfF[key3][:3])
+                                                                                                if abs(key2b-key3)<SPCluLen: record2+=abInfF[key3][3]
+                                                                                        if not record+record2<LinkCluMin:    tempIL[key2b]=[[record,record2,'f'],clu_c_F[key2]]
                                                                                         del clu_c_F[key2]
                                                         if not abInfR=={}:
                                                                 clu_a_R=clusterNums(list(abInfR.keys()), ClusterLen, 'r')[0]
@@ -1513,12 +1480,9 @@ else:
                                                                                         record=0
                                                                                         record2=0
                                                                                         for key3 in clu_c_R[key2]:
-                                                                                                if not key3<key2b:
-                                                                                                        record+= sum(abInfR[key3][:3])   
-                                                                                                if abs(key3-key2b)<SPCluLen:
-                                                                                                        record2+=abInfR[key3][3]
-                                                                                        if not record+record2<LinkCluMin:
-                                                                                                tempIL[key2b]=[[record,record2,'r'],clu_c_R[key2]]
+                                                                                                if not key3<key2b:   record+= sum(abInfR[key3][:3])   
+                                                                                                if abs(key3-key2b)<SPCluLen: record2+=abInfR[key3][3]
+                                                                                        if not record+record2<LinkCluMin:    tempIL[key2b]=[[record,record2,'r'],clu_c_R[key2]]
                                                                                         del clu_c_R[key2]
                                                         if not tempIL=={}:
                                                             for aqb in list(tempIL.keys()):
@@ -1528,8 +1492,7 @@ else:
                                                                 if align_QCflag==1:
                                                                     LNSPFR_aqb=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,aqb-BPAlignQCFlank,aqb+BPAlignQCFlank))
                                                                     tPairF_b=float(LNSPFR_aqb.read().strip()) 
-                                                                    if tPairF_b<float(BPAlignQC):
-                                                                        del tempIL[aqb]
+                                                                    if tPairF_b<float(BPAlignQC):    del tempIL[aqb]
                                                         LinkIL={}
                                                         for k1 in list(tempIL.keys()):
                                                             temp_mate_F={}
@@ -1539,36 +1502,24 @@ else:
                                                                 for k2 in tempIL[k1][1]:
                                                                     if k2 in list(LinkFF.keys()):
                                                                         for k3 in LinkFF[k2]:
-                                                                            if k3 in list(abInfF.keys()):
-                                                                                temp_mate_F[k3]=sum(abInfF[k3])
-                                                                                #info_mate+=sum(abInfF[k3])
+                                                                            if k3 in list(abInfF.keys()):temp_mate_F[k3]=sum(abInfF[k3])
                                                                     if k2 in list(LinkFR.keys()):
                                                                         for k3 in LinkFR[k2]:
-                                                                            if k3 in list(abInfR.keys()):
-                                                                                temp_mate_R[k3]=sum(abInfR[k3])
-                                                                                #info_mate+=sum(abInfR[k3])
+                                                                            if k3 in list(abInfR.keys()):temp_mate_R[k3]=sum(abInfR[k3])
                                                             elif tempIL[k1][0][2]=='r':
                                                                 for k2 in tempIL[k1][1]:
                                                                     if k2 in list(LinkRF.keys()):
                                                                         for k3 in LinkRF[k2]:
-                                                                            if k3 in list(abInfF.keys()):
-                                                                                temp_mate_F[k3]=sum(abInfF[k3])
-                                                                                #info_mate+=sum(abInfF[k3])
+                                                                            if k3 in list(abInfF.keys()):temp_mate_F[k3]=sum(abInfF[k3])
                                                                     if k2 in list(LinkRR.keys()):
                                                                         for k3 in LinkRR[k2]:
-                                                                            if k3 in list(abInfR.keys()):
-                                                                                temp_mate_R[k3]=sum(abInfR[k3])
-                                                                                #info_mate+=sum(abInfR[k3])
-                                                            for k1x in list(temp_mate_F.keys()):
-                                                                info_mate+=temp_mate_F[k1x]
-                                                            for k1x in list(temp_mate_R.keys()):
-                                                                info_mate+=temp_mate_R[k1x]
+                                                                            if k3 in list(abInfR.keys()):temp_mate_R[k3]=sum(abInfR[k3])
+                                                            for k1x in list(temp_mate_F.keys()):         info_mate+=temp_mate_F[k1x]
+                                                            for k1x in list(temp_mate_R.keys()):         info_mate+=temp_mate_R[k1x]
                                                             if not info_mate<LinkCluMin:
                                                                 LinkIL[k1]=[[],[]]
-                                                                if not temp_mate_F=={}:
-                                                                    LinkIL[k1][0]=clusterQC(clusterNums4(temp_mate_F, ClusterLen, 'f'),LinkCluMin)
-                                                                if not temp_mate_R=={}:
-                                                                    LinkIL[k1][1]=clusterQC(clusterNums4(temp_mate_R, ClusterLen, 'r'),LinkCluMin)
+                                                                if not temp_mate_F=={}:    LinkIL[k1][0]=clusterQC(clusterNums4(temp_mate_F, ClusterLen, 'f'),LinkCluMin)
+                                                                if not temp_mate_R=={}:    LinkIL[k1][1]=clusterQC(clusterNums4(temp_mate_R, ClusterLen, 'r'),LinkCluMin)
                                                                 else:continue
                                                         for k1 in list(LinkIL.keys()):
                                                                 for k2 in LinkIL[k1]:
@@ -1579,51 +1530,40 @@ else:
                                                                                     tPairF_a=os.popen(r'''%s %s %s %d %d 1'''%(ToolMappingQ,FileMappingQ,chrom,k3-BPAlignQCFlank,k3+BPAlignQCFlank))
                                                                                     tPairF_b=float(tPairF_a.read().strip())  
                                                                                     if not tPairF_b<float(BPAlignQC):
-                                                                                            if not [min([k3,k1]),max([k3,k1])] in out_pair_bp and not k1==k3:
-                                                                                                out_pair_bp.append([min([k3,k1]),max([k3,k1])])
-                                                                                            elif k1==k3:
-                                                                                                out_single_bp.append(k1)
+                                                                                            if not [min([k3,k1]),max([k3,k1])] in out_pair_bp and not k1==k3:    out_pair_bp.append([min([k3,k1]),max([k3,k1])])
+                                                                                            elif k1==k3:    out_single_bp.append(k1)
                                                                                 else:
-                                                                                            if not [min([k3,k1]),max([k3,k1])] in out_pair_bp and not k1==k3:
-                                                                                                    out_pair_bp.append([min([k3,k1]),max([k3,k1])])        
-                                                                                            elif  k1==k3:     
-                                                                                                out_single_bp.append(k1)                                  
+                                                                                            if not [min([k3,k1]),max([k3,k1])] in out_pair_bp and not k1==k3:       out_pair_bp.append([min([k3,k1]),max([k3,k1])])        
+                                                                                            elif  k1==k3:         out_single_bp.append(k1)                                  
                                                         if not out_pair_bp==[]:
                                                             out_pair_bp_temp=out_pair_bp_check(out_pair_bp,3)
                                                             out_pair_bp=out_pair_bp_temp
                                                             temp_out_pair_bp=[]
                                                             out_BPmodify={}
                                                             for k1 in out_pair_bp:
-                                                                for k2 in k1:
-                                                                    out_BPmodify[k2]=[]
+                                                                for k2 in k1:     out_BPmodify[k2]=[]
                                                             if not SP4S==[]:
                                                                 LBSP_tempIL=clusterSupVis3(sorted(SP4S),sorted(out_BPmodify.keys()))
                                                                 for k1 in out_pair_bp:
                                                                     temp_k1=[]
                                                                     for k2 in k1:
                                                                         k3=LBSP_tempIL[k2]
-                                                                        if abs(k2-k3)<ClusterLen:
-                                                                            temp_k1.append(k3)
-                                                                        else:
-                                                                            temp_k1.append(k2)
+                                                                        if abs(k2-k3)<ClusterLen:     temp_k1.append(k3)
+                                                                        else:                         temp_k1.append(k2)
                                                                     temp_out_pair_bp.append(temp_k1)
                                                             out_pair_bp=temp_out_pair_bp
                                                             for k1 in out_pair_bp:
                                                                 for k2 in k1:
-                                                                    if k2 in SP4S:
-                                                                        del SP4S[SP4S.index(k2)]
+                                                                    if k2 in SP4S:     del SP4S[SP4S.index(k2)]
                                                             out_pair_modify={}
                                                             for i in out_pair_bp:
-                                                                if not i[0] in list(out_pair_modify.keys()):
-                                                                    out_pair_modify[i[0]]=[]
-                                                                if not i[1] in out_pair_modify[i[0]]:
-                                                                    out_pair_modify[i[0]].append(i[1])
+                                                                if not i[0] in list(out_pair_modify.keys()):    out_pair_modify[i[0]]=[]
+                                                                if not i[1] in out_pair_modify[i[0]]:    out_pair_modify[i[0]].append(i[1])
                                                             if len(out_pair_modify)>1:
                                                                 while True: 
                                                                     if len(out_pair_modify)==1: break
                                                                     out_pair_qc=[]
-                                                                    for i in range(len(sorted(out_pair_modify.keys()))-1):
-                                                                        out_pair_qc.append(sorted(out_pair_modify.keys())[i+1]-sorted(out_pair_modify.keys())[i])
+                                                                    for i in range(len(sorted(out_pair_modify.keys()))-1):    out_pair_qc.append(sorted(out_pair_modify.keys())[i+1]-sorted(out_pair_modify.keys())[i])
                                                                     if min(out_pair_qc)>50:break
                                                                     else:
                                                                         out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))+1]]+=out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
@@ -1633,15 +1573,12 @@ else:
                                                                     if len(out_pair_modify[k1])==1: break
                                                                     out_pair_modify[k1].sort()
                                                                     out_pair_qc=[]
-                                                                    for i in range(len(out_pair_modify[k1])-1):
-                                                                        out_pair_qc.append(out_pair_modify[k1][i+1]-out_pair_modify[k1][i])
+                                                                    for i in range(len(out_pair_modify[k1])-1):     out_pair_qc.append(out_pair_modify[k1][i+1]-out_pair_modify[k1][i])
                                                                     if min(out_pair_qc)>50:break
-                                                                    else:
-                                                                        out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))+1]=out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))]
+                                                                    else:     out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))+1]=out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))]
                                                                     for i in out_pair_modify[k1]:
                                                                         if out_pair_modify[k1].count(i)>1:
-                                                                            for j in range(out_pair_modify[k1].count(i)-1):
-                                                                                del out_pair_modify[k1][out_pair_modify[k1].index(i)]
+                                                                            for j in range(out_pair_modify[k1].count(i)-1):    del out_pair_modify[k1][out_pair_modify[k1].index(i)]
                                                             out_pair_numrec={}
                                                             for k1 in list(out_pair_modify.keys()):
                                                                 out_pair_numrec[k1]=[]
@@ -1653,9 +1590,8 @@ else:
                                                             fout=open(BPOutputb,'a')
                                                             out_pair_modify=out_pair_modify_check(out_pair_modify,3)
                                                             for i in sorted(out_pair_modify.keys()):
-                                                                for j in out_pair_modify[i]:                            
-                                                                    print(' '.join([chrom,str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])]), file=fout)
-                                                                    #print ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
+                                                                for j in out_pair_modify[i]:        
+                                                                    if out_pair_numrec[i][0] + out_pair_numrec[i][out_pair_modify[i].index(j)+1] > BPLNCff: print(' '.join([chrom,str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])]), file=fout)
                                                                     if i in list(tempIL.keys()):            del tempIL[i]        
                                                                     if j in list(tempIL.keys()):            del tempIL[j]
                                                             fout.close()
@@ -1664,28 +1600,25 @@ else:
                                                                 num=0
                                                                 if i in list(abInfF.keys()):        num+=sum(abInfF[i])
                                                                 if i in list(abInfR.keys()):        num+=sum(abInfR[i])
-                                                                print(' '.join([str(j) for j in [chrom,i,num]]), file=fout)
-                                                                #print ' '.join([str(j) for j in [i,num]])
+                                                                if num>SPCluLen:   print(' '.join([str(j) for j in [chrom,i,num]]), file=fout)
                                                             fout.close()
                                                         for i in list(tempIL.keys()):
                                                             temp_IL_Rec[i]=tempIL[i]
                                                             temp_mate_F=[]
                                                             temp_mate_R=[]
                                                             for k2 in tempIL[i][1]:
-                                                                if k2 in list(LinkFF.keys()):
-                                                                        temp_mate_F+=LinkFF[k2]
-                                                                if k2 in list(LinkFR.keys()):
-                                                                        temp_mate_R+=LinkFR[k2]
+                                                                if k2 in list(LinkFF.keys()):   temp_mate_F+=LinkFF[k2]
+                                                                if k2 in list(LinkFR.keys()):   temp_mate_R+=LinkFR[k2]
                                                             temp_IL_Rec[i].append(temp_mate_F) 
                                                             temp_IL_Rec[i].append(temp_mate_R) 
                                                         tempLNF=[]
                                                         tempLNR=[]
                                                         for key in list(abLink.keys()):
-                                                                for key2 in range(len(abLink[key])/3):
+                                                                for key2 in range(int(len(abLink[key])/3)):
                                                                         if abLink[key][3*key2]=='f':            tempLNF.append(key)
                                                                         else:                                   tempLNR.append(key)
                                                         for key in list(abLinkSP.keys()):
-                                                                for key2 in range(len(abLinkSP[key])/3):
+                                                                for key2 in range(int(len(abLinkSP[key])/3)):
                                                                         if abLinkSP[key][3*key2]=='f':          tempLNF.append(key)
                                                                         else:                                   tempLNR.append(key)
                                                         FtLNFR=clusterNums(tempLNF+tempLNR,ClusterLen,'f')[0]
@@ -1696,21 +1629,17 @@ else:
                                                                 for key2 in FRtLNFR[key1]:
                                                                         if key2 in list(abLink.keys()):         t_LNFR+=abLink[key2]
                                                                         else:
-                                                                                if abs(key2-key1)<SPCluLen or abs(key2-max(FRtLNFR[key1]))<SPCluLen:
-                                                                                        t_LNFR+=abLinkSP[key2]
+                                                                                if abs(key2-key1)<SPCluLen or abs(key2-max(FRtLNFR[key1]))<SPCluLen:    t_LNFR+=abLinkSP[key2]
                                                                 if len(t_LNFR)/3<LinkCluMin: del FRtLNFR[key1]
                                                                 else:
                                                                     if not t_LNFR in FRtLNFR[key1]: FRtLNFR[key1].append(t_LNFR)
                                                         FRtLNFRb=[]
                                                         for key1 in list(FRtLNFR.keys()):
-                                                            t1_LN=[]
-                                                            t2_LN=[] 
-                                                            t3_LN={}
-                                                            t4out=[]
+                                                            [t1_LN,t2_LN,t3_LN,t4out]=[[],[],{},[]]
                                                             for key2 in FRtLNFR[key1][:-1]:
                                                                     if key2 in list(abLink.keys()):
                                                                         if not key2 in t1_LN:
-                                                                            for key3 in range(len(abLink[key2])/3):
+                                                                            for key3 in range(int(len(abLink[key2])/3)):
                                                                                 if not abLink[key2][3*key3:3*(key3+1)] in t2_LN:
                                                                                     t2_LN.append(abLink[key2][3*key3:3*(key3+1)])
                                                                                     t1_LN.append(key2)
@@ -1726,8 +1655,7 @@ else:
                                                                     t3_LN[key2[-1].split('_')[0]]['c'].append(key2[-1].split('_')[1])
                                                                     t3_LN[key2[-1].split('_')[0]]['d'].append(key2)                    
                                                             for key2 in list(t3_LN.keys()):
-                                                                if clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'f'), LinkCluMin)==[]:
-                                                                        del t3_LN[key2]
+                                                                if clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'f'), LinkCluMin)==[]:   del t3_LN[key2]
                                                                 else:
                                                                         t4LN=clusterSupVis2(t3_LN[key2]['b'],clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'r'), LinkCluMin),clusterQC(clusterNums(t3_LN[key2]['b'], ClusterLen, 'f'), LinkCluMin), 'left')                               
                                                                         for key5 in list(t4LN.keys()):
@@ -1747,20 +1675,17 @@ else:
                                                                                 if not '+' in t4LNc or float(t4LNc.count('-'))/float(t4LNc.count('+'))>5:                 t4out+=[key2,'-',min(t4LNd)]
                                                                                 elif not '-' in t4LNc or float(t4LNc.count('+'))/float(t4LNc.count('-'))>5:               t4out+=[key2,'+',max(t4LNd)]
                                                                                 else:                                                                                     t4out+=[key2,min(t4LNd),max(t4LNd)]
-                                                            if not t4out==[] and not t4out in FRtLNFRb:
-                                                                    FRtLNFRb.append(t4out)             
+                                                            if not t4out==[] and not t4out in FRtLNFRb:                                                                   FRtLNFRb.append(t4out)             
                                                         if not FRtLNFRb==[]:
                                                                 fout=open(BPOutputd,'a')
-                                                                for keyfrt in FRtLNFRb:
-                                                                        print(' '.join([str(keyfr2) for keyfr2 in keyfrt]), file=fout)
+                                                                for keyfrt in FRtLNFRb:    print(' '.join([str(keyfr2) for keyfr2 in keyfrt]), file=fout)
                                                                 fout.close()
                                             Link_IL_Rec={}
                                             for k1 in list(temp_IL_Rec.keys()):
                                                 temp_mate_F=temp_IL_Rec[k1][2]
                                                 temp_mate_R=temp_IL_Rec[k1][3]
                                                 if not len(temp_IL_Rec[k1][1])+len(temp_IL_Rec[k1][2])+len(temp_IL_Rec[k1][3])<LnCluMin:
-                                                    Link_IL_Rec[k1]=[clusterQC(clusterNums(temp_mate_F, ClusterLen, 'f'),LinkCluMin),
-                                                                    clusterQC(clusterNums(temp_mate_R, ClusterLen, 'r'),LinkCluMin)]
+                                                    Link_IL_Rec[k1]=[clusterQC(clusterNums(temp_mate_F, ClusterLen, 'f'),LinkCluMin),clusterQC(clusterNums(temp_mate_R, ClusterLen, 'r'),LinkCluMin)]
                                                     del temp_IL_Rec[k1]
                                                 else:continue
                                             for k1 in list(Link_IL_Rec.keys()):
@@ -1779,36 +1704,29 @@ else:
                                                 temp_out_pair_bp=[]
                                                 out_BPmodify={}
                                                 for k1 in out_pair_bp:
-                                                    for k2 in k1:
-                                                        out_BPmodify[k2]=[]
+                                                    for k2 in k1:   out_BPmodify[k2]=[]
                                                 if not SP4S==[]:
                                                     LBSP_tempIL=clusterSupVis3(sorted(SP4S),sorted(out_BPmodify.keys()))
                                                     for k1 in out_pair_bp:
                                                         temp_k1=[]
                                                         for k2 in k1:
                                                             k3=LBSP_tempIL[k2]
-                                                            if abs(k2-k3)<ClusterLen:
-                                                                temp_k1.append(k3)
-                                                            else:
-                                                                temp_k1.append(k2)
+                                                            if abs(k2-k3)<ClusterLen:    temp_k1.append(k3)
+                                                            else:                        temp_k1.append(k2)
                                                         temp_out_pair_bp.append(temp_k1)
                                                 out_pair_bp=temp_out_pair_bp
                                                 for k1 in out_pair_bp:
                                                     for k2 in k1:
-                                                        if k2 in SP4S:
-                                                            del SP4S[SP4S.index(k2)]
+                                                        if k2 in SP4S:  del SP4S[SP4S.index(k2)]
                                                 out_pair_modify={}
                                                 for i in out_pair_bp:
-                                                    if not i[0] in list(out_pair_modify.keys()):
-                                                        out_pair_modify[i[0]]=[]
-                                                    if not i[1] in out_pair_modify[i[0]]:
-                                                        out_pair_modify[i[0]].append(i[1])
+                                                    if not i[0] in list(out_pair_modify.keys()):    out_pair_modify[i[0]]=[]
+                                                    if not i[1] in out_pair_modify[i[0]]:           out_pair_modify[i[0]].append(i[1])
                                                 if len(out_pair_modify)>1:
                                                     while True: 
                                                         if len(out_pair_modify)==1: break
                                                         out_pair_qc=[]
-                                                        for i in range(len(sorted(out_pair_modify.keys()))-1):
-                                                            out_pair_qc.append(sorted(out_pair_modify.keys())[i+1]-sorted(out_pair_modify.keys())[i])
+                                                        for i in range(len(sorted(out_pair_modify.keys()))-1):  out_pair_qc.append(sorted(out_pair_modify.keys())[i+1]-sorted(out_pair_modify.keys())[i])
                                                         if min(out_pair_qc)>50:break
                                                         else:
                                                             out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))+1]]+=out_pair_modify[sorted(out_pair_modify.keys())[out_pair_qc.index(min(out_pair_qc))]]
@@ -1818,40 +1736,30 @@ else:
                                                         if len(out_pair_modify[k1])==1: break
                                                         out_pair_modify[k1].sort()
                                                         out_pair_qc=[]
-                                                        for i in range(len(out_pair_modify[k1])-1):
-                                                            out_pair_qc.append(out_pair_modify[k1][i+1]-out_pair_modify[k1][i])
+                                                        for i in range(len(out_pair_modify[k1])-1): out_pair_qc.append(out_pair_modify[k1][i+1]-out_pair_modify[k1][i])
                                                         if min(out_pair_qc)>50:break
-                                                        else:
-                                                            out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))+1]=out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))]
+                                                        else:           out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))+1]=out_pair_modify[k1][out_pair_qc.index(min(out_pair_qc))]
                                                         for i in out_pair_modify[k1]:
                                                             if out_pair_modify[k1].count(i)>1:
-                                                                for j in range(out_pair_modify[k1].count(i)-1):
-                                                                    del out_pair_modify[k1][out_pair_modify[k1].index(i)]
+                                                                for j in range(out_pair_modify[k1].count(i)-1): del out_pair_modify[k1][out_pair_modify[k1].index(i)]
                                                 out_pair_numrec={}
                                                 for k1 in list(out_pair_modify.keys()):
                                                     out_pair_numrec[k1]=[]
                                                     for k2 in [k1]+out_pair_modify[k1]:
-                                                        if k2 in list(tempIL.keys()) and not k2 in list(LinkSP.keys()):
-                                                            out_pair_numrec[k1].append(len(tempIL[k2][1]))
-                                                        elif k2 in list(LinkSP.keys()) and not k2 in list(tempIL.keys()):
-                                                            out_pair_numrec[k1].append(LinkSP[k2])
-                                                        elif k2 in list(LinkSP.keys()) and k2 in list(tempIL.keys()):
-                                                            out_pair_numrec[k1].append(LinkSP[k2]+len(tempIL[k2][1]))
-                                                        else:
-                                                            out_pair_numrec[k1].append(0)
+                                                        if k2 in list(tempIL.keys()) and not k2 in list(LinkSP.keys()):             out_pair_numrec[k1].append(len(tempIL[k2][1]))
+                                                        elif k2 in list(LinkSP.keys()) and not k2 in list(tempIL.keys()):           out_pair_numrec[k1].append(LinkSP[k2])
+                                                        elif k2 in list(LinkSP.keys()) and k2 in list(tempIL.keys()):               out_pair_numrec[k1].append(LinkSP[k2]+len(tempIL[k2][1]))
+                                                        else:                                                                       out_pair_numrec[k1].append(0)
                                                 fout=open(BPOutputb,'a')
                                                 for i in sorted(out_pair_modify.keys()):
                                                     for j in out_pair_modify[i]:                            
-                                                        print(' '.join([chrom,str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])]), file=fout)
-                                                        #print ' '.join([str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])])
-                                                        if i in list(tempIL.keys()):
-                                                            del tempIL[i]
-                                                        if j in list(tempIL.keys()):
-                                                            del tempIL[j]
+                                                        if out_pair_numrec[i][0] + out_pair_numrec[i][out_pair_modify[i].index(j)+1]> BPLNCff:      print(' '.join([chrom,str(i),str(out_pair_numrec[i][0]),str(j),str(out_pair_numrec[i][out_pair_modify[i].index(j)+1])]), file=fout)
+                                                        if i in list(tempIL.keys()):   del tempIL[i]
+                                                        if j in list(tempIL.keys()):   del tempIL[j]
                                                 fout.close()
                                             fout=open(BPOutputa,'a')
                                             for i in sorted(temp_IL_Rec.keys()):
-                                                print(' '.join([chrom,str(i),str(sum(temp_IL_Rec[i][0][:2]))]), file=fout)    
+                                                if sum(temp_IL_Rec[i][0][:2])>SPCluLen: print(' '.join([chrom,str(i),str(sum(temp_IL_Rec[i][0][:2]))]), file=fout)    
                                             fout.close()
                                             time2=time.time()
                                             LN_Filter(BPOutputb,BPOutputa,workdir)
@@ -2173,7 +2081,8 @@ else:
                     bam_path='/'.join(dict_opts['--sample'].split('/')[:-1])+'/'
                     bam_files=[dict_opts['--sample']]
                     bam_files_appdix=dict_opts['--sample'].split('.')[-1]
-                    bam_names=[dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'')]
+                    #bam_names=[dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'')]
+                    bam_names=['.'.join(dict_opts['--sample'].split('/')[-1].split('.')[:-1])]
                     ref_path=workdir+'reference_SVelter/'
                     ref_file=ref_path+'genome.fa'
                     ref_index=ref_file+'.fai'
@@ -2620,7 +2529,7 @@ else:
                 relative_bp_list=[i-numpy.min(bp_list_new) for i in bp_list_new]
                 bp_length=[(bp_list_new[i+1]-bp_list_new[i]) for i in range(len(bp_list_new)-1)]
                 letter_list_new=['left']+letter_list+['right']
-                bp_blocks=[[letter_list_new[j]]+list(range(relative_bp_list[j]/Window_Size,relative_bp_list[j+1]/Window_Size+1)) for j in range(len(relative_bp_list)-1)]
+                bp_blocks=[[letter_list_new[j]]+list(range(int(relative_bp_list[j]/Window_Size),int(relative_bp_list[j+1]/Window_Size+1))) for j in range(len(relative_bp_list)-1)]
                 blocks_bp={}
                 for i in range(number_of_blocks):
                     blocks_bp[i+1]=[bp_list_new[0]+i*Window_Size,bp_list_new[0]+i*Window_Size+Window_Size-1]
@@ -2859,14 +2768,14 @@ else:
                     if not block[0]==block[0]/Window_Size*Window_Size:
                         blf=float((block[0]/Window_Size+1)*Window_Size-block[0])/Window_Size*Initial_GCRD_Adj[block[0]/Window_Size+1][3]
                         temp.append(blf)
-                        for m in range(block[0]/Window_Size+2,block[1]/Window_Size+1):
+                        for m in range(int(block[0]/Window_Size+2),int(block[1]/Window_Size+1)):
                             temp.append(Initial_GCRD_Adj[m][3])
                         if not block[1]==block[1]/Window_Size*Window_Size:
                             brf=float(block[1]-block[1]/Window_Size*Window_Size)/Window_Size*Initial_GCRD_Adj[block[1]/Window_Size+1][3]
                             temp.append(brf)
                         allele_RD.append(numpy.sum(temp)/length*Window_Size)        
                     elif block[0]==block[0]/Window_Size*Window_Size:
-                        for m in range(block[0]/Window_Size+1,block[1]/Window_Size+1):
+                        for m in range(int(block[0]/Window_Size+1),int(block[1]/Window_Size+1)):
                             temp.append(Initial_GCRD_Adj[m][3])
                         if not block[1]==block[1]/Window_Size*Window_Size:
                             brf=float(block[1]-block[1]/Window_Size*Window_Size)/Window_Size*Initial_GCRD_Adj[block[1]/Window_Size+1][3]
@@ -4380,7 +4289,8 @@ else:
             def null_model_global_para_setup(dict_opts):
                 global bam_files_appdix,BamN,Input_File,bp_txt_Path,BPPath,NullPath
                 bam_files_appdix=dict_opts['--sample'].split('.')[-1]
-                BamN=dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'')
+                #BamN=dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'')
+                BamN='.'.join(dict_opts['--sample'].split('/')[-1].split('.')[:-1])
                 Input_File=dict_opts['--bp-file']
                 bp_txt_Path='/'.join(Input_File.split('/')[:-1])+'/'
                 BPPath=workdir +'.'.join(['BreakPoints']+[dict_opts['--sample'].split('/')[-1]])+'/'
@@ -5178,7 +5088,7 @@ else:
                     if len(x)==3:
                         out_new_2.append(x)
                     else:
-                        for y in range((len(x)-1)/2):
+                        for y in range(int((len(x)-1)/2)):
                             out_new_2.append([x[0],x[2*y+1],x[2*y+2]])
                 return out_new_2
             def bp_to_chr_hash(bps,chromos,flank_length=500):
@@ -5565,7 +5475,7 @@ else:
                                     insert_point.append(all_block_with_flank[all_block_with_flank.index(x)-1])
                                 return [letter_subgroup(''.join([i for i in k1_hap if not i in k2_hap])),dup_inv_block,insert_point]
                             else:
-                                if interval_dis_calcu_min(pos_check)>0:
+                                if not interval_dis_calcu_min(pos_check)=='NA' and interval_dis_calcu_min(pos_check)>0:
                                     dup_inv_block=[i for i in all_block if '^' in i]
                                     if dup_block==sorted([i for i in ''.join(dup_inv_block) if not i=='^']):
                                         insert_point=[]
@@ -6659,8 +6569,10 @@ else:
                             out_vcf=dict_opts['--prefix']+'.vcf'
                             out_svelter=dict_opts['--prefix']+'.svelter'
                         else:
-                            out_vcf=workdir+dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'.vcf')
-                            out_svelter=workdir+dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'.svelter')
+                            #out_vcf=workdir+dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'.vcf')
+                            #out_svelter=workdir+dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'.svelter')
+                            out_vcf=workdir+'.'.join(dict_opts['--sample'].split('/')[-1].split('.')[:-1])+'.vcf'
+                            out_svelter=workdir+'.'.join(dict_opts['--sample'].split('/')[-1].split('.')[:-1])+'.svelter'
                             print('Warning: output file is not specified')
                             print('output file: '+out_vcf)
                             print('output file: '+out_svelter)
@@ -6681,7 +6593,7 @@ else:
                             bp_files_out_folder=workdir+'bp_files.'+'.'.join(sin_bam_file.split('/')[-1].split('.')[:-1])+'.predefinedBP.'+'.'.join(dict_opts['--input-bed'].split('/')[-1].split('.')[:-1])+'/'
                             running_time=[]
                             print(' ')
-                            print('Step1: Running null parameters for '+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,'')+' ...')
+                            print('Step1: Running null parameters for '+sin_bam_file+' ...')
                             time1=time.time()
                             if len(chromos)>1:
                                 run_SVelter1_chrom_predefine(sin_bam_file)
@@ -6689,10 +6601,10 @@ else:
                                 run_SVelter1_Single_chrom_predefine(sin_bam_file,chromos[0])
                             time2=time.time()
                             running_time.append(time2-time1)
-                            print('Null model built for '+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,''))
+                            print('Null model built for '+'.'.join(sin_bam_file.split('/')[-1].split('.')[:-1]))
                             print('Time Consuming: '+str(datetime.timedelta(seconds=(time2-time1))))
                             print(' ')
-                            print('Step2: Integrate predefined breakpoitns of sample '+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,'')+' ...')
+                            print('Step2: Integrate predefined breakpoitns of sample '+sin_bam_file+' ...')
                             time1=time.time()
                             for x in chromos:
                                 print(x)
@@ -6705,7 +6617,7 @@ else:
                                 print('Error: predefined breakpoints file not exist !')
                             time2=time.time()
                             running_time.append(time2-time1)
-                            print('Breakpointse set for sample:'+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,''))
+                            print('Breakpointse set for sample:'+sin_bam_file)
                             print('Time Consuming: '+str(datetime.timedelta(seconds=(time2-time1))))
                             print(' ')
                             print('Step3: Integrating breakpoints ... ')
@@ -6715,7 +6627,7 @@ else:
                             run_SVelter3_chrom_predefine(sin_bam_file,BPPredict_out_folder)
                             time2=time.time()
                             running_time.append(time2-time1)
-                            print('Break points cluster done for sample:'+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,''))
+                            print('Break points cluster done for sample:'+sin_bam_file)
                             print('Time Consuming: '+str(datetime.timedelta(seconds=(time2-time1))))
                             print(' ')
                             print('Step4: Resolving structure ... ')
@@ -8499,7 +8411,8 @@ else:
             geno_likelihood_list[individual_name]={}
             sv_rec_list[individual_name]={}
             bam_files_appdix=bam_file_name.split('.')[-1]
-            BamN=bam_file_name.split('/')[-1].replace('.'+bam_files_appdix,'')
+            #BamN=bam_file_name.split('/')[-1].replace('.'+bam_files_appdix,'')
+            BamN='.'.join(bam_file_name.split('/')[-1].split('.')[:-1])
             #############
             BPPath=workdir+'.'.join(['BreakPoints']+[bam_file_name.split('/')[-1]])+'/'
             NullPath=workdir+'.'.join(['NullModel']+[bam_file_name.split('/')[-1]])+'/'
@@ -11210,8 +11123,10 @@ else:
                             out_vcf=dict_opts['--prefix']+'.vcf'
                             out_svelter=dict_opts['--prefix']+'.svelter'
                         else:
-                            out_vcf=workdir+dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'.vcf')
-                            out_svelter=workdir+dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'.svelter')
+                            #out_vcf=workdir+dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'.vcf')
+                            #out_svelter=workdir+dict_opts['--sample'].split('/')[-1].replace('.'+bam_files_appdix,'.svelter')
+                            out_vcf=workdir+'.'.join(dict_opts['--sample'].split('/')[-1].split('.')[:-1])+'.vcf'
+                            out_svelter=workdir+'.'.join(dict_opts['--sample'].split('/')[-1].split('.')[:-1])+'.svelter'
                             print('Warning: output file is not specified')
                             print('output file: '+out_vcf)
                             print('output file: '+out_svelter)
@@ -11226,7 +11141,7 @@ else:
                         for sin_bam_file in bam_files:
                             running_time=[]
                             print(' ')
-                            print('Step1: Running null parameters for '+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,'')+' ...')
+                            print('Step1: Running null parameters for '+sin_bam_file+' ...')
                             time1=time.time()
                             if len(chromos)>1:
                                 run_SVelter1_chrom(sin_bam_file)
@@ -11234,17 +11149,17 @@ else:
                                 run_SVelter1_Single_chrom(sin_bam_file,chromos[0])
                             time2=time.time()
                             running_time.append(time2-time1)
-                            print('Null model built for '+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,''))
+                            print('Null model built for '+sin_bam_file)
                             print('Time Consuming: '+str(datetime.timedelta(seconds=(time2-time1))))
                             print(' ')
-                            print('Step2: Searching for BreakPoints of sample '+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,'')+' ...')
+                            print('Step2: Searching for BreakPoints of sample '+sin_bam_file+' ...')
                             time1=time.time()
                             for x in chromos:
                                 print(x)
                                 run_SVelter2_chrom(x,sin_bam_file,ILCff_STD_Time)
                             time2=time.time()
                             running_time.append(time2-time1)
-                            print('Break points searching done for sample:'+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,''))
+                            print('Break points searching done for sample:'+sin_bam_file)
                             print('Time Consuming: '+str(datetime.timedelta(seconds=(time2-time1))))
                             print(' ')
                             print('Step3: Integrating breakpoints ... ')
@@ -11254,7 +11169,7 @@ else:
                             run_SVelter3_chrom(sin_bam_file)
                             time2=time.time()
                             running_time.append(time2-time1)
-                            print('Break points cluster done for sample:'+sin_bam_file.split('/')[-1].replace('.'+bam_files_appdix,''))
+                            print('Break points cluster done for sample:'+sin_bam_file)
                             print('Time Consuming: '+str(datetime.timedelta(seconds=(time2-time1))))
                             print(' ')
                             print('Step4: Resolving structure ... ')
