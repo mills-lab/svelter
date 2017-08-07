@@ -110,8 +110,7 @@ def block_Read_From_Bam(chr_letter_bp):
         k_block=[]
         blocks_out[k1]=[]
         for k2 in list(chr_letter_bp[k1].keys()):
-            if not k2 in ['left','right']:
-                k_block.append(k2)
+            if not k2 in ['left','right']:    k_block.append(k2)
         blocks_out[k1].append(chr_letter_bp[k1]['left'][:]+['left'])
         k_block.sort()
         for k2 in k_block+['right']:
@@ -120,9 +119,8 @@ def block_Read_From_Bam(chr_letter_bp):
             elif len(chr_letter_bp[k1][k2])==4:
                 blocks_out[k1][-1]+=chr_letter_bp[k1][k2][:2]+[k2]
                 blocks_out[k1].append(chr_letter_bp[k1][k2][2:]+[k2])
-    for k1 in list(blocks_out.keys()):
-        for k2 in blocks_out[k1]:
-            k2.sort()
+    #for k1 in list(blocks_out.keys()):
+    #    for k2 in blocks_out[k1]:    k2.sort()
     return blocks_out
 def bimodal_cdf_solver(cdf,alpha,mean1,mean2,std1,std2):
     if cdf>0.5:
@@ -2531,7 +2529,7 @@ def NullPath_SetUp(out_path,dict_opts):
         os.system(r'''mkdir %s'''%(NullPath))
     return NullPath
 def Null_Stats_Readin_One(NullPath,bamF,NullSplitLen_perc,genome_name,bam_files_appdix):
-    fin=open(NullPath+bamF.split('/')[-1].replace('.'+bam_files_appdix,'.')+genome_name+'.Stats')
+    fin=open(NullPath+ '.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.Stats')
     pin=fin.readline().strip().split()
     pin=fin.readline().strip().split()
     pin=fin.readline().strip().split()
@@ -2545,7 +2543,7 @@ def Null_Stats_Readin_One(NullPath,bamF,NullSplitLen_perc,genome_name,bam_files_
     fin.close()
     return [Window_Size,ReadLength,sub_loc_size]
 def many_RD_Process(copy_num_a,run_flag):
-    Best_Letter_Rec=[[['a' for i in range(copy_num_a/2)],['a' for i in range(copy_num_a/2)]]]
+    Best_Letter_Rec=[[['a' for i in range(int(copy_num_a/2))],['a' for i in range(int(copy_num_a/2))]]]
     Best_Score_Rec=-100
     run_flag+=1     
     return([Best_Letter_Rec,Best_Score_Rec,run_flag])
@@ -3047,7 +3045,7 @@ def split_loc_to_subloc(loc,sub_loc_size,ClusterLen2):
     if not loc[1]-loc[0]>2*sub_loc_size:
         loc2=[loc]
     else: 
-        sublocNum=(loc[1]-loc[0])/sub_loc_size
+        sublocNum=int((loc[1]-loc[0])/sub_loc_size)
         loc2=[[loc[0],loc[0]+sub_loc_size+int(ClusterLen2)]]
         for slNum in range(sublocNum)[1:]:
             loc2.append([loc[0]+slNum*sub_loc_size-int(ClusterLen2),loc[0]+(slNum+1)*sub_loc_size+int(ClusterLen2)])
@@ -3349,7 +3347,7 @@ def Reads_Direction_Detect_flag(flag):
 def Region_Coverage_Calculate(sam_file,Number_Of_Windows,Region_Info,Window_Size):
     fsam=open(sam_file)
     coverage={}
-    num_of_wind=(int(Region_Info[2])-int(Region_Info[1]))/Window_Size
+    num_of_wind=int((int(Region_Info[2])-int(Region_Info[1]))/Window_Size)
     for i in range(num_of_wind):
         coverage[i]=[int(Region_Info[1])+i*Window_Size,int(Region_Info[1])+i*Window_Size+Window_Size-1,0]
     coverage[-1]=[0,0,0]
@@ -3357,12 +3355,12 @@ def Region_Coverage_Calculate(sam_file,Number_Of_Windows,Region_Info,Window_Size
         psam=fsam.readline().strip().split()
         if not psam: break
         Read_Region=[int(psam[3]),int(psam[3])+len(psam[9])]
-        left_block=(Read_Region[0]-int(Region_Info[1]))/Window_Size
+        left_block=int((Read_Region[0]-int(Region_Info[1]))/Window_Size)
         if left_block in list(coverage.keys()):
             left_length=coverage[left_block][1]-Read_Region[0]+1
         else:
             left_length=0
-        right_block=(Read_Region[1]-int(Region_Info[1]))/Window_Size
+        right_block=int((Read_Region[1]-int(Region_Info[1]))/Window_Size)
         if right_block in list(coverage.keys()):
             right_length=Read_Region[1]-coverage[right_block][0]
         else:
@@ -3397,7 +3395,7 @@ def SamplingPercentage_readin(dict_opts):
 def SplitLenPNum_Calculate(SplitLength,NullPath,bamF,bam_file_appdix,genome_name,NullSplitLen_perc):
     SplitLengthPath=NullPath
     path_mkdir(SplitLengthPath)
-    SplitLengthOutput=SplitLengthPath+'/'+bamF.split('/')[-1].replace('.'+bam_file_appdix,'')+'.'+genome_name+'.SplitLength'
+    SplitLengthOutput=SplitLengthPath+'/'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.SplitLength'
     fslo=open(SplitLengthOutput,'w')
     print(' '.join(['Length_of_Split_Region', 'Time_of_Observation']), file=fslo)
     Total_Split_Reads=0
@@ -3975,17 +3973,15 @@ def inv_flag_SA(k1,k2):
             out+=1
     return out
 def struc_propose_single_block(num):
-    if num<1:
-        return 'error'
+    if num<1:    return 'error'
     else:
         struc_rec=[]
-        for i in range(num/2+1):
+        for i in range(int(num/2)+1):
             rec_a=changeLet(i)
             rec_b=changeLet(num-i)
             for k1 in rec_a:
                 for k2 in rec_b:
-                    if not sorted([k1,k2]) in struc_rec:
-                        struc_rec.append(sorted([k1,k2]))
+                    if not sorted([k1,k2]) in struc_rec:    struc_rec.append(sorted([k1,k2]))
         return struc_rec
 def tra_flag(k1,k2):
     test=0
@@ -4156,7 +4152,8 @@ def samtools_sort_process(mini_fout_N2,mini_fout_N3,mini_fout_N4):
     import subprocess
     try: subprocess.check_output("samtools", stderr=subprocess.STDOUT)
     except Exception as e: x= e.output
-    samtools_type_decide=x.split('\n')
+    x_new=x.decode()
+    samtools_type_decide=x_new.split('\n')
     version=samtools_type_decide[2].split(' ')[1].split('.')[0]
     if version=='0':
         os.system(r'''samtools sort %s %s'''%(mini_fout_N2,mini_fout_N3))

@@ -36,8 +36,7 @@ else:
         import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','ref-index=','help=','batch=','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','segdup=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
-        if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
-            readme.print_default_parameters_clean()
+        if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:   readme.print_default_parameters_clean()
         else:
             workdir=path_modify(dict_opts['--workdir'])
             clean_svelter_set(workdir+'reference_SVelter/')
@@ -48,8 +47,7 @@ else:
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['support=','deterministic-flag=','ref-index=','help=','batch=','prefix=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','segdup=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
         Code_path='/'.join(sys.argv[0].split('/')[:-1])+'/'
-        if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
-            readme.print_default_parameters_setup()
+        if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:   readme.print_default_parameters_setup()
         else:
             import numpy
             import scipy
@@ -67,33 +65,26 @@ else:
                 GapHash+=GapHash2
                 temp_hash={}
                 for k1 in GapHash:
-                    if not k1[0] in list(temp_hash.keys()):
-                        temp_hash[k1[0]]={}
-                    if not k1[1] in list(temp_hash[k1[0]].keys()):
-                        temp_hash[k1[0]][k1[1]]=[]
+                    if not k1[0] in list(temp_hash.keys()):         temp_hash[k1[0]]={}
+                    if not k1[1] in list(temp_hash[k1[0]].keys()):  temp_hash[k1[0]][k1[1]]=[]
                 temp_list=[]
                 for k1 in sorted(temp_hash.keys()):
-                    for k2 in sorted(temp_hash[k1].keys()):
-                        temp_list.append([k1,k2])
+                    for k2 in sorted(temp_hash[k1].keys()):         temp_list.append([k1,k2])
                 temp2_list=[]
                 temp2_list.append(temp_list[0])
                 for k1 in temp_list[1:]:
                     if k1[0]-temp2_list[-1][1]<1000:
-                        if k1[1]>temp2_list[-1][1]:
-                            temp2_list[-1][1]=k1[1]
-                    else:
-                        temp2_list.append(k1)
+                        if k1[1]>temp2_list[-1][1]:                 temp2_list[-1][1]=k1[1]
+                    else:                                           temp2_list.append(k1)
                 temp3_list=[]
                 for k1 in temp2_list:
-                    if not k1 in temp3_list:
-                        temp3_list.append(k1)
+                    if not k1 in temp3_list:                        temp3_list.append(k1)
                 return calculate_interval_region(temp3_list,Chromo_Length,chrom)
             def Gap_Hash_Ref_filter(Gap_Hash_Ref1,Chromo_Length):
                 for x in list(Gap_Hash_Ref1.keys()):
                     if len(Gap_Hash_Ref1[x])==1:
                         if Gap_Hash_Ref1[x][0][0]==0:
-                            if Gap_Hash_Ref1[x][0][1]==Chromo_Length[x]:
-                                del Gap_Hash_Ref1[x]
+                            if Gap_Hash_Ref1[x][0][1]==Chromo_Length[x]:    del Gap_Hash_Ref1[x]
             def Gap_Hash_Ref1_read_in(Gap_Refs):
                 Gap_Hash_Ref1={}
                 for Gap_Ref1 in Gap_Refs:
@@ -101,14 +92,12 @@ else:
                     for line in fgap:
                         pgap=line.strip().split()
                         if pgap[0] in chromos:
-                            if not pgap[0] in list(Gap_Hash_Ref1.keys()):
-                                Gap_Hash_Ref1[pgap[0]]=[]
+                            if not pgap[0] in list(Gap_Hash_Ref1.keys()):   Gap_Hash_Ref1[pgap[0]]=[]
                             Gap_Hash_Ref1[pgap[0]].append(pgap[1:4])
                     fgap.close()
                 Gap_Hash_Ref2=bed_hash_short(Gap_Hash_Ref1,Chromo_Length)
                 for x in chromos:
-                    if not x in list(Gap_Hash_Ref2.keys()):
-                        Gap_Hash_Ref2[x]=[[0,0]]
+                    if not x in list(Gap_Hash_Ref2.keys()): Gap_Hash_Ref2[x]=[[0,0]]
                 return Gap_Hash_Ref2
             def Global_para_declear_setup():
                 global chromos
@@ -117,8 +106,7 @@ else:
             def write_ExcludeBed(ExcludeBed):
                 if not os.path.isfile(ExcludeBed):
                     fo=open(ExcludeBed,'w')
-                    for chr_ex in chromos:
-                        print(' '.join([chr_ex,'0','0']), file=fo)
+                    for chr_ex in chromos:          print(' '.join([chr_ex,'0','0']), file=fo)
                     fo.close()
             if not '--workdir' in list(dict_opts.keys()):
                 print('working directory not specified')
@@ -148,8 +136,7 @@ else:
                         if not ref_path=='/'.join(ref_file.split('/')[:-1])+'/':
                             ref_path=workdir+'reference_SVelter/'
                             path_mkdir(ref_path)
-                            if not ref_file[0]=='/':
-                                print('Error: refrence should be specified using absolute path ! ')
+                            if not ref_file[0]=='/':            print('Error: refrence should be specified using absolute path ! ')
                             os.symlink(ref_file,ref_path+'genome.fa')
                             os.symlink(ref_index,ref_path+'genome.fa.fai')
                             if '--ref-index' in list(dict_opts.keys()):
@@ -157,53 +144,38 @@ else:
                                     ref_index_path=path_modify(dict_opts['--ref-index'])
                                     for ref_index_file in os.listdir(ref_index_path):
                                         if ref_index_file.split('.')[-1]=='GC_Content':
-                                            if ref_index_path[0]=='/':
-                                                os.symlink(ref_index_path+ref_index_file,ref_path+'genome.GC_Content')
-                                            else:
-                                                os.system(r'''cp %s %s'''%(ref_index_path+ref_index_file,ref_path+'genome.GC_Content'))
+                                            if ref_index_path[0]=='/':      os.symlink(ref_index_path+ref_index_file,ref_path+'genome.GC_Content')
+                                            else:                           os.system(r'''cp %s %s'''%(ref_index_path+ref_index_file,ref_path+'genome.GC_Content'))
                                         if ref_index_file.split('.')[-1]=='bed' and ref_index_file.split('.')[-2]=='Mappable':
-                                            if ref_index_path[0]=='/':
-                                                os.symlink(ref_index_path+ref_index_file,ref_path+'genome.Mappable.bed')
-                                            else:
-                                                os.system(r'''cp %s %s'''%(ref_index_path+ref_index_file,ref_path+'genome.Mappable.bed'))
+                                            if ref_index_path[0]=='/':      os.symlink(ref_index_path+ref_index_file,ref_path+'genome.Mappable.bed')
+                                            else:                           os.system(r'''cp %s %s'''%(ref_index_path+ref_index_file,ref_path+'genome.Mappable.bed'))
                             if '--support' in list(dict_opts.keys()):
                                 support_path=path_modify(dict_opts['--support'])
                                 for k1 in os.listdir(support_path):
                                     if 'SVelter' in k1 and k1.split('.')[-1]=='r':
-                                        if support_path[0]=='/':
-                                            os.symlink(support_path+k1,ref_path+k1)
-                                        else:
-                                            os.system(r'''cp %s %s'''%(support_path+k1,ref_path))                                        
+                                        if support_path[0]=='/':            os.symlink(support_path+k1,ref_path+k1)
+                                        else:                               os.system(r'''cp %s %s'''%(support_path+k1,ref_path))                                        
                                     if 'CN2' in k1:
-                                        if not '--copyneutral' in list(dict_opts.keys()):
-                                            dict_opts['--copyneutral']=support_path+k1
+                                        if not '--copyneutral' in list(dict_opts.keys()):   dict_opts['--copyneutral']=support_path+k1
                                     if 'Exclude' in k1:
-                                        if not '--exclude' in list(dict_opts.keys()):
-                                            dict_opts['--exclude']=support_path+k1
+                                        if not '--exclude' in list(dict_opts.keys()):       dict_opts['--exclude']=support_path+k1
                                     if 'Segdup' in k1:
-                                        if not '--segdup' in list(dict_opts.keys()):
-                                            dict_opts['--segdup']=support_path+k1
+                                        if not '--segdup' in list(dict_opts.keys()):        dict_opts['--segdup']=support_path+k1
                             if '--copyneutral' in list(dict_opts.keys()):
-                                if dict_opts['--copyneutral'][0]=='/':
-                                    os.symlink(dict_opts['--copyneutral'],ref_path+'CN2.bed')
-                                else:
-                                    os.system(r'''cp %s %s'''%(dict_opts['--copyneutral'],ref_path+'CN2.bed'))
+                                if dict_opts['--copyneutral'][0]=='/':                      os.symlink(dict_opts['--copyneutral'],ref_path+'CN2.bed')
+                                else:                                                       os.system(r'''cp %s %s'''%(dict_opts['--copyneutral'],ref_path+'CN2.bed'))
                             else:
                                 [whole_genome,len_genome]=calculate_len_genome(ref_file)
                                 random_produce_cn2_region(ref_path+'CN2.bed',whole_genome,len_genome,dict_opts)
                             if '--exclude' in list(dict_opts.keys()):
-                                if dict_opts['--exclude'][0]=='/':
-                                    os.symlink(dict_opts['--exclude'],ref_path+'Exclude.bed')
-                                else:
-                                    os.system(r'''cp %s %s'''%(dict_opts['--exclude'],ref_path+'Exclude.bed'))
+                                if dict_opts['--exclude'][0]=='/':                          os.symlink(dict_opts['--exclude'],ref_path+'Exclude.bed')
+                                else:                                                       os.system(r'''cp %s %s'''%(dict_opts['--exclude'],ref_path+'Exclude.bed'))
                             else:
                                 chromos=chromos_readin_list(ref_file)
                                 random_produce_exclude_region(ref_path+'Exclude.bed',chromos)
                             if '--segdup' in list(dict_opts.keys()):
-                                if dict_opts['--segdup'][0]=='/':
-                                    os.symlink(dict_opts['--segdup'],ref_path+'Segdup.bed')
-                                else:
-                                    os.system(r'''cp %s %s'''%(dict_opts['--segdup'],ref_path+'Segdup.bed'))
+                                if dict_opts['--segdup'][0]=='/':                           os.symlink(dict_opts['--segdup'],ref_path+'Segdup.bed')
+                                else:                                                       os.system(r'''cp %s %s'''%(dict_opts['--segdup'],ref_path+'Segdup.bed'))
                         ref_file=ref_path+'genome.fa'
                         ref_index=ref_file+'.fai'
                         ExcludeBed=ref_path+'Exclude.bed'
@@ -232,20 +204,16 @@ else:
                                 if not Gap_Hash[hash_key]==[]:
                                     hash_Cor=[]
                                     hash_cal=0
-                                    if not ''.join(set(Gap_Hash[hash_key][0])) in ['N','n','Nn','nN']:
-                                        hash_Cor.append([0])
+                                    if not ''.join(set(Gap_Hash[hash_key][0])) in ['N','n','Nn','nN']:   hash_Cor.append([0])
                                     for hts in Gap_Hash[hash_key][1:]:
                                         hash_cal+=len(hts)
                                         if ''.join(set(hts)) in ['N','n','Nn','nN']:
                                             if len(hash_Cor)==0: continue
                                             else:   
-                                                if len(hash_Cor[-1])==1:
-                                                    hash_Cor[-1].append(hash_cal)
+                                                if len(hash_Cor[-1])==1:                        hash_Cor[-1].append(hash_cal)
                                         else:
-                                            if len(hash_Cor)==0:
-                                                hash_Cor.append([hash_cal])
-                                            elif len(hash_Cor[-1])==2:
-                                                hash_Cor.append([hash_cal])
+                                            if len(hash_Cor)==0:                                hash_Cor.append([hash_cal])
+                                            elif len(hash_Cor[-1])==2:                          hash_Cor.append([hash_cal])
                                     hash_Cor=hash_Cor_modify(hash_Cor,Chromo_Length,hash_key,chrom)
                                     hash_to_Seq=''.join(Gap_Hash[hash_key])
                                     hakey2=hash_key
@@ -260,8 +228,7 @@ else:
                                                     GC_region=hash_to_Seq[(key1[0]+key2*100):(key1[0]+(key2+1)*100)]
                                                     GC_out.append(str(float(GC_region.count('g')+GC_region.count('G')+GC_region.count('c')+GC_region.count('C'))/100.0))
                                                 GC_region=hash_to_Seq[(key1[0]+(key2+1)*100):key1[1]]
-                                                if len(GC_region)>0:
-                                                    GC_out.append(str(float(GC_region.count('g')+GC_region.count('G')+GC_region.count('c')+GC_region.count('C'))/float(len(GC_region))))
+                                                if len(GC_region)>0:        GC_out.append(str(float(GC_region.count('g')+GC_region.count('G')+GC_region.count('c')+GC_region.count('C'))/float(len(GC_region))))
                                                 print(' '.join(GC_out), file=fout2)
                                 fout.close()
                                 fout2.close()
@@ -275,13 +242,10 @@ else:
         dict_opts=dict(opts)
         def dict_opts_modify(dict_opts):
             global model_comp
-            if not '--null-model' in list(dict_opts.keys()):
-                model_comp='C'
+            if not '--null-model' in list(dict_opts.keys()):    model_comp='C'
             else:
-                if dict_opts['--null-model'] in ['S','Simple']:
-                    model_comp='S'
-                else:
-                    model_comp='C'
+                if dict_opts['--null-model'] in ['S','Simple']: model_comp='S'
+                else:                                           model_comp='C'
             global ReadLength
             global ReadLength_Flag
             if '--read-length' in list(dict_opts.keys()):
@@ -291,60 +255,38 @@ else:
                 ReadLength=0
                 ReadLength_Flag=0
             global QCAlign
-            if '--qc-align' in list(dict_opts.keys()):
-                QCAlign=int(dict_opts['--qc-align'])
-            else:
-                QCAlign=20
+            if '--qc-align' in list(dict_opts.keys()):          QCAlign=int(dict_opts['--qc-align'])
+            else:                                               QCAlign=20
             global QCSplit
-            if '--qc-split' in list(dict_opts.keys()):
-                QCSplit=int(dict_opts['--qc-split'])
-            else:
-                QCSplit=20
+            if '--qc-split' in list(dict_opts.keys()):          QCSplit=int(dict_opts['--qc-split'])
+            else:                                               QCSplit=20
             global NullSplitLen_perc
-            if '--split-min-len' in list(dict_opts.keys()):
-                NullSplitLen_perc=int(dict_opts['--split-min-len'])
-            else:
-                NullSplitLen_perc=0.9
+            if '--split-min-len' in list(dict_opts.keys()):     NullSplitLen_perc=int(dict_opts['--split-min-len'])
+            else:                                               NullSplitLen_perc=0.9
             global NullILCIs
-            if '--NullILCI' in list(dict_opts.keys()):
-                NullILCIs=dict_opts['--NullILCI']
-            else:
-                NullILCIs=[0.025,0.05,0.95,0.975]
+            if '--NullILCI' in list(dict_opts.keys()):          NullILCIs=dict_opts['--NullILCI']
+            else:                                               NullILCIs=[0.025,0.05,0.95,0.975]
             global NullRDCIs
-            if '--NullRDCI' in list(dict_opts.keys()):
-                NullRDCIs=dict_opts['--NullRDCI']
-            else:
-                NullRDCIs=[0.025,0.05,0.95,0.975]
+            if '--NullRDCI' in list(dict_opts.keys()):          NullRDCIs=dict_opts['--NullRDCI']
+            else:                                               NullRDCIs=[0.025,0.05,0.95,0.975]
             global NullTBCIs
-            if '--NullTBCI' in list(dict_opts.keys()):
-                NullTBCIs=dict_opts['--NullTBCI']
-            else:
-                NullTBCIs=[0.0001,0.0005,0.9999,0.9995]
+            if '--NullTBCI' in list(dict_opts.keys()):          NullTBCIs=dict_opts['--NullTBCI']
+            else:                                               NullTBCIs=[0.0001,0.0005,0.9999,0.9995]
             global NullILCff
-            if '--NullILCff'in list(dict_opts.keys()):
-                NullILCff=dict_opts['--NullILCff']
-            else:
-                NullILCff=0.999
+            if '--NullILCff'in list(dict_opts.keys()):          NullILCff=dict_opts['--NullILCff']
+            else:                                               NullILCff=0.999
             global NullSPCff
-            if '--NullSPCff' in list(dict_opts.keys()):
-                NullSPCff=dict_opts['--NullSPCff']
-            else:
-                NullSPCff=0.999
+            if '--NullSPCff' in list(dict_opts.keys()):         NullSPCff=dict_opts['--NullSPCff']
+            else:                                               NullSPCff=0.999
             global NullDRCff
-            if '--NullDRCff' in list(dict_opts.keys()):
-                NullDRCff=dict_opts['--NullDRCff']
-            else:
-                NullDRCff=0.999
+            if '--NullDRCff' in list(dict_opts.keys()):         NullDRCff=dict_opts['--NullDRCff']
+            else:                                               NullDRCff=0.999
             global KeepFile
-            if '--keep-temp-files' in list(dict_opts.keys()):
-                KeepFile=dict_opts['--keep-temp-files']
-            else:
-                KeepFile='No'
+            if '--keep-temp-files' in list(dict_opts.keys()):   KeepFile=dict_opts['--keep-temp-files']
+            else:                                               KeepFile='No'
             global KeepFigure
-            if '--keep-temp-figs' in list(dict_opts.keys()):
-                KeepFigure=dict_opts['--keep-temp-figs']
-            else:
-                KeepFigure='Yes'
+            if '--keep-temp-figs' in list(dict_opts.keys()):    KeepFigure=dict_opts['--keep-temp-figs']
+            else:                                               KeepFigure='Yes'
         dict_opts_modify(dict_opts)
         if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
             readme.print_default_parameters_nullmodel()
@@ -390,32 +332,25 @@ else:
                 print('working directory not specified')
                 print('all temporal files would be writen under current directory')
                 workdir='./'
-            else:
-                workdir=path_modify(dict_opts['--workdir'])
-            if not '--sample' in list(dict_opts.keys()):
-                print('Error: please specify either input file using --sample')
+            else:    workdir=path_modify(dict_opts['--workdir'])
+            if not '--sample' in list(dict_opts.keys()):    print('Error: please specify either input file using --sample')
             else:
                 global_para_declaration_nullmodel()
-                if not os.path.isfile(ref_index):
-                    print('Error: reference genome not indexed')
+                if not os.path.isfile(ref_index):       print('Error: reference genome not indexed')
                 else:
                     SamplingPercentage=SamplingPercentage_readin(dict_opts)
                     [whole_genome,len_genome]=calculate_len_genome(ref_file)
                     chromos=chromos_readin_list(ref_file)
-                    if os.path.isfile(cn2_file):
-                        cn2_length=cn2_length_readin(dict_opts)
-                    else:
-                        [cn2_length,SamplingPercentage,whole_genome,len_genome]=cn2_region_write(cn2_file,ref)
-                    if not '--chromosome' in list(dict_opts.keys()):
-                        chr_flag=0
+                    if os.path.isfile(cn2_file):cn2_length=cn2_length_readin(dict_opts)
+                    else:                       [cn2_length,SamplingPercentage,whole_genome,len_genome]=cn2_region_write(cn2_file,ref)
+                    if not '--chromosome' in list(dict_opts.keys()):    chr_flag=0
                     elif '--chromosome' in list(dict_opts.keys()):
                         chr_flag=1
                         chrom_single=dict_opts['--chromosome']
                         if not chrom_single in chromos:
                             print('Error: please make sure the chromosome defined by --chromosome is correct based on the reference genome')
                             chromos=[]
-                        else:
-                            chromos=[chrom_single]
+                        else:           chromos=[chrom_single]
                     if not chromos==[]:
                         genome_name=genome_name_readin(dict_opts)
                         NullPath=NullPath_SetUp(workdir,dict_opts)
@@ -424,8 +359,7 @@ else:
                         Script_Path=workdir+'reference_SVelter/'
                         for bamF in bam_files:
                             time1=time.time()
-                            if ReadLength_Flag==0:
-                                ReadLengthHash={}
+                            if ReadLength_Flag==0:    ReadLengthHash={}
                             #outputfile=NullPath+bamF.split('/')[-1].replace('.'+bam_file_appdix,'')+'.'+genome_name+'.null'
                             outputfile=NullPath+'.'.join(bamF.split('/')[-1].split('.')[:-1]) +'.'+genome_name+'.null'
                             fo=open(outputfile,'w')
@@ -441,11 +375,9 @@ else:
                                 if not pcn2: break
                                 if not len(pcn2)==3: break
                                 if pcn2[0] in chromos:
-                                    if not pcn2[0] in chr_cn2:
-                                        chr_cn2.append(pcn2[0])
+                                    if not pcn2[0] in chr_cn2:   chr_cn2.append(pcn2[0])
                                     if (int(pcn2[2])-int(pcn2[1]))>cn2_length and (int(pcn2[2])-int(pcn2[1]))<10**6:
-                                        if not random.choice(list(range(100)))>SamplingPercentage*100:
-                                            cn2_regions.append(pcn2)
+                                        if not random.choice(list(range(100)))>SamplingPercentage*100:    cn2_regions.append(pcn2)
                             fcn2.close()
                             if chr_cn2==[]:
                                 whole_genome=chromos_read_in(ref_file)
@@ -458,17 +390,13 @@ else:
                                     if not preadpair: break
                                     if not int(preadpair[4])>QCAlign: continue
                                     if preadpair[8]=='0': continue
-                                    if not abs(int(preadpair[8])) in list(InsertLength.keys()):
-                                        InsertLength[abs(int(preadpair[8]))]=1
-                                    else: 
-                                        InsertLength[abs(int(preadpair[8]))]+=1
+                                    if not abs(int(preadpair[8])) in list(InsertLength.keys()):InsertLength[abs(int(preadpair[8]))]=1
+                                    else: InsertLength[abs(int(preadpair[8]))]+=1
                                     if 'S' in preadpair[5]:
                                         SplitLen=cigar2splitlength(preadpair[5])
                                         for s in SplitLen:
-                                            if not s in list(SplitLength.keys()):
-                                                SplitLength[s]=1
-                                            else:
-                                                SplitLength[s]+=1
+                                            if not s in list(SplitLength.keys()):   SplitLength[s]=1
+                                            else:                                   SplitLength[s]+=1
                                 freadpairs.close()
                             if not chr_cn2==[]:
                                 SplitLenPNum=SplitLenPNum_Calculate(SplitLength,NullPath,bamF,bam_file_appdix,genome_name,NullSplitLen_perc)
@@ -477,12 +405,7 @@ else:
                                 Window_Size=int(float(NullILCI[0])/3)
                                 cn2_length=max([cn2_length,NullILCI[2]])
                                 cn2_max_len=max(cn2_length*100,10**6)
-                                ILNullDensity={}
-                                RDNullDensity={}
-                                DRNullDensity={}
-                                TBNullDensity={}
-                                SplitNullDensity={}
-                                GC_Content={}
+                                [ILNullDensity,RDNullDensity,DRNullDensity,TBNullDensity,SplitNullDensity,GC_Content]=[{} for i in range(6)]
                                 for pcn2 in cn2_regions:
                                     if not len(pcn2)==3: break
                                     if pcn2[0] in chromos:
@@ -504,10 +427,8 @@ else:
                                                         if not block_num<len(pos): continue
                                                         if ReadLength_Flag==0:
                                                             if not preadpair[9]=='*':
-                                                                if not len(preadpair[9]) in list(ReadLengthHash.keys()):
-                                                                    ReadLengthHash[len(preadpair[9])]=1
-                                                                else:
-                                                                    ReadLengthHash[len(preadpair[9])]+=1
+                                                                if not len(preadpair[9]) in list(ReadLengthHash.keys()):    ReadLengthHash[len(preadpair[9])]=1
+                                                                else:                                                       ReadLengthHash[len(preadpair[9])]+=1
                                                         RDNull[block_num]+=cigar2reaadlength(preadpair[5])
                                                         if not int(preadpair[8])<NullILCI[0] and not int(preadpair[8])>NullILCI[-1]:
                                                                 ILNull[block_num]+=1
@@ -515,16 +436,13 @@ else:
                                                                 splitpos=[i+int(preadpair[3]) for i in cigar2split(preadpair[5])]
                                                                 splitlent=cigar2splitlength(preadpair[5])
                                                                 for j in range(len(splitpos)):
-                                                                        if not splitlent[j]<SplitLenPNum and splitpos[j] in pos:
-                                                                                SplitNull[block_num]+=1
+                                                                        if not splitlent[j]<SplitLenPNum and splitpos[j] in pos:    SplitNull[block_num]+=1
                                                         if preadpair[6]=='=':
                                                                 if not Reads_Direction_Detect(preadpair)==['+', '-']:
                                                                         abdrpos=min([int(preadpair[3]),int(preadpair[7])])-int(pcn2[1])-100
-                                                                        if abdrpos>-1 and abdrpos<(int(pcn2[2])-int(pcn2[1])-200):
-                                                                                DRNull[int(abdrpos/Window_Size)]+=1
+                                                                        if abdrpos>-1 and abdrpos<(int(pcn2[2])-int(pcn2[1])-200):  DRNull[int(abdrpos/Window_Size)]+=1
                                                                 if not preadpair[0] in readInf:
-                                                                        for j in range(int(max((int(preadpair[3])-pos[0])/Window_Size,0)), int(min((int(preadpair[3])+int(preadpair[8])-pos[0])/Window_Size,len(pos)))):
-                                                                                TBNull[int(j)]+=1
+                                                                        for j in range(int(max((int(preadpair[3])-pos[0])/Window_Size,0)), int(min((int(preadpair[3])+int(preadpair[8])-pos[0])/Window_Size,len(pos)))):    TBNull[int(j)]+=1
                                                                         readInf.append(preadpair[0])
                                                 freadpairs.close()
                                                 if not sum(RDNull)==0:
@@ -539,42 +457,28 @@ else:
                                                     GCNull=[int(float(REFSEQUENCE[0][(Window_Size*i):(Window_Size*i+Window_Size)].count('G')+REFSEQUENCE[0][(Window_Size*i):(Window_Size*i+Window_Size)].count('C')+REFSEQUENCE[0][(Window_Size*i):(Window_Size*i+Window_Size)].count('g')+REFSEQUENCE[0][(Window_Size*i):(Window_Size*i+Window_Size)].count('c'))/float(Window_Size)*100) for i in range(int(len(REFSEQUENCE[0])/Window_Size))]
                                                     fo=open(outputfile,'a')
                                                     for k in range(len(pos)):
-                                                            if not RDNull[k]==0:
-                                                                    print(' '.join([str(pos0[k]),str(GCNull[k]),str(RDNull[k]),str(SplitNull[k]),str(DRNull[k]),str(TBNull[k])]), file=fo)
+                                                            if not RDNull[k]==0:                print(' '.join([str(pos0[k]),str(GCNull[k]),str(RDNull[k]),str(SplitNull[k]),str(DRNull[k]),str(TBNull[k])]), file=fo)
                                                     for i in range(len(RDNull)):
-                                                            if not GCNull[i] in list(GC_Content.keys()):
-                                                                    GC_Content[GCNull[i]]=[RDNull[i]]
-                                                            if GCNull[i] in list(GC_Content.keys()):
-                                                                    GC_Content[GCNull[i]].append(RDNull[i])
+                                                            if not GCNull[i] in list(GC_Content.keys()):            GC_Content[GCNull[i]]=[RDNull[i]]
+                                                            if GCNull[i] in list(GC_Content.keys()):                GC_Content[GCNull[i]].append(RDNull[i])
                                                     fo.close()
                                                     for k in range(len(pos)):
-                                                            if not ILNull[k] in list(ILNullDensity.keys()):
-                                                                    ILNullDensity[ILNull[k]]=1
-                                                            elif ILNull[k] in list(ILNullDensity.keys()):
-                                                                    ILNullDensity[ILNull[k]]+=1
-                                                            if not RDNull[k] in list(RDNullDensity.keys()):
-                                                                    RDNullDensity[RDNull[k]]=1
-                                                            elif RDNull[k] in list(RDNullDensity.keys()):
-                                                                    RDNullDensity[RDNull[k]]+=1
-                                                            if not SplitNull[k] in list(SplitNullDensity.keys()):
-                                                                    SplitNullDensity[SplitNull[k]]=1
-                                                            elif SplitNull[k] in list(SplitNullDensity.keys()):
-                                                                    SplitNullDensity[SplitNull[k]]+=1
-                                                            if not DRNull[k] in list(DRNullDensity.keys()):
-                                                                    DRNullDensity[DRNull[k]]=1
-                                                            elif DRNull[k] in list(DRNullDensity.keys()):
-                                                                    DRNullDensity[DRNull[k]]+=1
+                                                            if not ILNull[k] in list(ILNullDensity.keys()):         ILNullDensity[ILNull[k]]=1
+                                                            elif ILNull[k] in list(ILNullDensity.keys()):           ILNullDensity[ILNull[k]]+=1
+                                                            if not RDNull[k] in list(RDNullDensity.keys()):         RDNullDensity[RDNull[k]]=1
+                                                            elif RDNull[k] in list(RDNullDensity.keys()):           RDNullDensity[RDNull[k]]+=1
+                                                            if not SplitNull[k] in list(SplitNullDensity.keys()):   SplitNullDensity[SplitNull[k]]=1
+                                                            elif SplitNull[k] in list(SplitNullDensity.keys()):     SplitNullDensity[SplitNull[k]]+=1
+                                                            if not DRNull[k] in list(DRNullDensity.keys()):         DRNullDensity[DRNull[k]]=1
+                                                            elif DRNull[k] in list(DRNullDensity.keys()):           DRNullDensity[DRNull[k]]+=1
                                                     for k in range(len(pos))[1:]:
-                                                            if not TBNull[k] in list(TBNullDensity.keys()):
-                                                                    TBNullDensity[TBNull[k]]=1
-                                                            elif TBNull[k] in list(TBNullDensity.keys()):
-                                                                    TBNullDensity[TBNull[k]]+=1
+                                                            if not TBNull[k] in list(TBNullDensity.keys()):         TBNullDensity[TBNull[k]]=1
+                                                            elif TBNull[k] in list(TBNullDensity.keys()):           TBNullDensity[TBNull[k]]+=1
                                 if 0 in list(RDNullDensity.keys()):
                                         del RDNullDensity[0]
                                 if 0 in list(TBNullDensity.keys()):
                                         del TBNullDensity[0]
-                                OverallRDDenominator=0
-                                OverallRDNumeritor=0
+                                [OverallRDDenominator,OverallRDNumeritor]=[0,0]
                                 if not RDNullDensity=={}:
                                     for key in list(RDNullDensity.keys()):
                                         if not key==0:
@@ -599,17 +503,10 @@ else:
                                     fbRD.close()
                                     RDMedian=numpy.median(list(RD_Af_Adj.keys()))
                                     for key in list(RD_Af_Adj.keys()):
-                                            if key > RDMedian*10 or key==0:
-                                                    del RD_Af_Adj[key]
+                                            if key > RDMedian*10 or key==0:del RD_Af_Adj[key]
                                     TotalRDNum=0
-                                    for key in list(RD_Af_Adj.keys()):
-                                            TotalRDNum+=RD_Af_Adj[key]
-                                    NullRDCILeft=[]
-                                    NullRDCIRight=[]
-                                    SubRDNumleft=0
-                                    SubRDNumright=0
-                                    NciLeft=0
-                                    NciRight=0
+                                    for key in list(RD_Af_Adj.keys()):TotalRDNum+=RD_Af_Adj[key]
+                                    [NullRDCILeft,NullRDCIRight,SubRDNumleft,SubRDNumright,NciLeft,NciRight]=[[],[],0,0,0,0]
                                     for keyn in range(len(sorted(RD_Af_Adj.keys()))):
                                             SubRDNumleft+=RD_Af_Adj[sorted(RD_Af_Adj.keys())[keyn]]
                                             SubRDNumright+=RD_Af_Adj[sorted(RD_Af_Adj.keys())[-(keyn+1)]]
@@ -628,12 +525,7 @@ else:
                                             if NciLeft==len(NullRDCIs)/2 and NciRight==len(NullRDCIs)/2: break
                                     NullRDCI=NullRDCILeft+sorted(NullRDCIRight)
                                     [TotalTBNum,TBNullDensity]=TBNullDensity_CleanUP(TBNullDensity)
-                                    NullTBCILeft=[]
-                                    NullTBCIRight=[]
-                                    SubTBNumleft=0
-                                    SubTBNumright=0
-                                    NciLeft=0
-                                    NciRight=0
+                                    [NullTBCILeft,NullTBCIRight,SubTBNumleft,SubTBNumright,NciLeft,NciRight]=[[],[],0,0,0,0]
                                     for keyn in range(len(sorted(TBNullDensity.keys()))):
                                             SubTBNumleft+=TBNullDensity[sorted(TBNullDensity.keys())[keyn]]
                                             SubTBNumright+=TBNullDensity[sorted(TBNullDensity.keys())[-(keyn+1)]]
@@ -652,8 +544,7 @@ else:
                                             if NciLeft==len(NullTBCIs)/2 and NciRight==len(NullTBCIs)/2: break
                                     NullTBCI=NullTBCILeft+sorted(NullTBCIRight)
                                     TotalILNum=0
-                                    for key in list(ILNullDensity.keys()):
-                                            TotalILNum+=ILNullDensity[key]
+                                    for key in list(ILNullDensity.keys()):      TotalILNum+=ILNullDensity[key]
                                     ILITotal=0
                                     for key in sorted(ILNullDensity.keys()):
                                             ILITotal+=ILNullDensity[key]
@@ -662,17 +553,14 @@ else:
                                         ILIPoint=sorted(ILNullDensity.keys())[:sorted(ILNullDensity.keys()).index(key)+1]
                                         ILIPoint2=[float(ILNullDensity[i])/float(TotalILNum) for i in ILIPoint]
                                         ILIPoint3=[]
-                                        for k in range(len(ILIPoint)):
-                                            ILIPoint3.append(sum(ILIPoint2[:(k+1)]))
+                                        for k in range(len(ILIPoint)):      ILIPoint3.append(sum(ILIPoint2[:(k+1)]))
                                     else:
                                         ILIPoint=sorted(ILNullDensity.keys())[:4]
                                         ILIPoint2=[float(ILNullDensity[i])/float(TotalILNum) for i in ILIPoint]
                                         ILIPoint3=[]
-                                        for k in range(len(ILIPoint)):
-                                            ILIPoint3.append(sum(ILIPoint2[:(k+1)]))
+                                        for k in range(len(ILIPoint)):      ILIPoint3.append(sum(ILIPoint2[:(k+1)]))
                                     TotalSplitNum=0
-                                    for key in list(SplitNullDensity.keys()):
-                                            TotalSplitNum+=SplitNullDensity[key]
+                                    for key in list(SplitNullDensity.keys()):   TotalSplitNum+=SplitNullDensity[key]
                                     SplitITotal=0
                                     for key in sorted(SplitNullDensity.keys()):
                                             SplitITotal+=SplitNullDensity[key]
@@ -681,17 +569,14 @@ else:
                                         SplitIPoint=sorted(SplitNullDensity.keys())[:sorted(SplitNullDensity.keys()).index(key)+1]
                                         SplitIPoint2=[float(SplitNullDensity[i])/float(TotalSplitNum) for i in SplitIPoint]
                                         SplitIPoint3=[]
-                                        for k in range(len(SplitIPoint)):
-                                            SplitIPoint3.append(sum(SplitIPoint2[:(k+1)]))
+                                        for k in range(len(SplitIPoint)):       SplitIPoint3.append(sum(SplitIPoint2[:(k+1)]))
                                     else:
                                         SplitIPoint=sorted(SplitNullDensity.keys())[:4]
                                         SplitIPoint2=[float(SplitNullDensity[i])/float(TotalSplitNum) for i in SplitIPoint]
                                         SplitIPoint3=[]
-                                        for k in range(len(SplitIPoint)):
-                                            SplitIPoint3.append(sum(SplitIPoint2[:(k+1)]))
+                                        for k in range(len(SplitIPoint)):       SplitIPoint3.append(sum(SplitIPoint2[:(k+1)]))
                                     TotalDRNum=0
-                                    for key in list(DRNullDensity.keys()):
-                                            TotalDRNum+=DRNullDensity[key]
+                                    for key in list(DRNullDensity.keys()):      TotalDRNum+=DRNullDensity[key]
                                     DRITotal=0
                                     for key in sorted(DRNullDensity.keys()):
                                             DRITotal+=DRNullDensity[key]
@@ -700,14 +585,12 @@ else:
                                         DRIPoint=sorted(DRNullDensity.keys())[:(sorted(DRNullDensity.keys()).index(key)+1)]
                                         DRIPoint2=[float(DRNullDensity[i])/float(TotalDRNum) for i in DRIPoint]
                                         DRIPoint3=[]
-                                        for k in DRIPoint:
-                                            DRIPoint3.append(sum(DRIPoint2[:(k+1)]))
+                                        for k in DRIPoint:                  DRIPoint3.append(sum(DRIPoint2[:(k+1)]))
                                     else:
                                         DRIPoint=sorted(DRNullDensity.keys())[:4]
                                         DRIPoint2=[float(DRNullDensity[i])/float(TotalDRNum) for i in DRIPoint]
                                         DRIPoint3=[]
-                                        for k in DRIPoint:
-                                            DRIPoint3.append(sum(DRIPoint2[:(k+1)]))
+                                        for k in DRIPoint:                  DRIPoint3.append(sum(DRIPoint2[:(k+1)]))
                                     outputfileStat=NullPath+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.Stats'
                                     fos=open(outputfileStat,'w')
                                     print('Insert Lenth CIs', file=fos)
@@ -740,24 +623,19 @@ else:
                                     outputfileIL=NullPath+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.density.null'
                                     foIL=open(outputfileIL,'w')
                                     print(' '.join(['InsertLength','Frequency']), file=foIL)
-                                    for l in sorted(InsertLength.keys()):
-                                            print(' '.join([str(l),str(InsertLength[l])]), file=foIL)
+                                    for l in sorted(InsertLength.keys()):           print(' '.join([str(l),str(InsertLength[l])]), file=foIL)
                                     print(' '.join(['ReadDepth','Frequency']), file=foIL)
-                                    for r in list(RD_Af_Adj.keys()):
-                                            print(' '.join([str(r),str(RD_Af_Adj[r])]), file=foIL)
+                                    for r in list(RD_Af_Adj.keys()):                print(' '.join([str(r),str(RD_Af_Adj[r])]), file=foIL)
                                     print(' '.join(['ThroughBreakPoint','Frequency']), file=foIL)
-                                    for t in list(TBNullDensity.keys()):
-                                            print(' '.join([str(t),str(TBNullDensity[t])]), file=foIL)
+                                    for t in list(TBNullDensity.keys()):            print(' '.join([str(t),str(TBNullDensity[t])]), file=foIL)
                                     print(' '.join(['BinPosition','GC_Content']), file=foIL)
                                     for b in list(GC_Content.keys()):
-                                        if not b==0:
-                                            print(' '.join([str(b), str(GC_Content[b])]), file=foIL)
+                                        if not b==0:                                print(' '.join([str(b), str(GC_Content[b])]), file=foIL)
                                     foIL.close()
                                     RFigureDRSplit=Script_Path+'SVelter1.NullModel.Figure.a.r'  
                                     InsertLenNullTemp=NullPath+'InsertLenNull.'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.temp'
                                     fIL=open(InsertLenNullTemp,'w')
-                                    for dr in list(ILNullDensity.keys()):
-                                            print(' '.join([str(dr),str(ILNullDensity[dr])]), file=fIL)
+                                    for dr in list(ILNullDensity.keys()):            print(' '.join([str(dr),str(ILNullDensity[dr])]), file=fIL)
                                     fIL.close()
                                     InsertLenNullfigure1='.'.join(InsertLenNullTemp.split('.')[:-1]+['pdf'])
                                     BoxPlotColor='blue'
@@ -768,8 +646,7 @@ else:
                                     os.system('''Rscript %s %s %s %s %s'''%(RFigureDRSplit,InsertLenNullTemp,InsertLenNullfigure1,BoxPlotColor,InsertLenNullfigure2))
                                     DRNullTemp=NullPath+'DirectionNull.'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.temp'
                                     fDR=open(DRNullTemp,'w')
-                                    for dr in list(DRNullDensity.keys()):
-                                            print(' '.join([str(dr),str(DRNullDensity[dr])]), file=fDR)
+                                    for dr in list(DRNullDensity.keys()):               print(' '.join([str(dr),str(DRNullDensity[dr])]), file=fDR)
                                     fDR.close()
                                     DRNullfigure1='.'.join(DRNullTemp.split('.')[:-1]+['pdf'])
                                     BoxPlotColor='blue'
@@ -780,8 +657,7 @@ else:
                                     os.system('''Rscript %s %s %s %s %s'''%(RFigureDRSplit,DRNullTemp,DRNullfigure1,BoxPlotColor,DRNullfigure2))
                                     SplitNullTemp=NullPath+'SplitNull.'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.temp'
                                     fSP=open(SplitNullTemp,'w')
-                                    for sp in list(SplitNullDensity.keys()):
-                                            print(' '.join([str(sp),str(SplitNullDensity[sp])]), file=fSP)
+                                    for sp in list(SplitNullDensity.keys()):              print(' '.join([str(sp),str(SplitNullDensity[sp])]), file=fSP)
                                     fSP.close()
                                     SplitNullfigure1='.'.join(SplitNullTemp.split('.')[:-1]+['pdf'])
                                     BoxPlotColor='blue'
@@ -790,46 +666,38 @@ else:
                                         SplitNullfigure1=SplitNullfigure1.replace('.pdf','.na')
                                         SplitNullfigure2=SplitNullfigure2.replace('.pdf','.na')
                                     os.system('''Rscript %s %s %s %s %s'''%(RFigureDRSplit,SplitNullTemp,SplitNullfigure1,BoxPlotColor,SplitNullfigure2))
-                                    if model_comp=='C':
-                                        RFigureDRSplit2=Script_Path+'SVelter1.NullModel.Figure.b.r' 
-                                    else:
-                                        RFigureDRSplit2=Script_Path+'SVelter1.NullModel.Figure.c.r'    
+                                    if model_comp=='C':             RFigureDRSplit2=Script_Path+'SVelter1.NullModel.Figure.b.r' 
+                                    else:                              RFigureDRSplit2=Script_Path+'SVelter1.NullModel.Figure.c.r'    
                                     RDNullTemp=NullPath+'RDNull.'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.temp'
                                     fRD=open(RDNullTemp,'w')
-                                    for rd in list(RD_Af_Adj.keys()):
-                                            print(' '.join([str(rd),str(RD_Af_Adj[rd])]), file=fRD)
+                                    for rd in list(RD_Af_Adj.keys()):       print(' '.join([str(rd),str(RD_Af_Adj[rd])]), file=fRD)
                                     fRD.close()
                                     RDNullfigure1='.'.join(RDNullTemp.split('.')[:-1]+['pdf'])
                                     BoxPlotColor='blue'
                                     lineColor='red'
                                     RDNullfigure2='.'.join(RDNullTemp.split('.')[:-1])+'.NegativeBinomial'
-                                    if KeepFigure in ['no','N','No','n']:
-                                        RDNullfigure1=RDNullfigure1.replace('.pdf','.na')
+                                    if KeepFigure in ['no','N','No','n']:       RDNullfigure1=RDNullfigure1.replace('.pdf','.na')
                                     os.system('''Rscript %s %s %s %s %s %s %d'''%(RFigureDRSplit2,RDNullTemp,RDNullfigure1,BoxPlotColor,lineColor,RDNullfigure2,Window_Size))
                                     RDNullfigure2_Modify(RDNullfigure2,Window_Size)
                                     ILNullTemp=NullPath+'ILNull.'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.temp'
                                     fIL=open(ILNullTemp,'w')
-                                    for il in list(InsertLength.keys()):
-                                            print(' '.join([str(il),str(InsertLength[il])]), file=fIL)
+                                    for il in list(InsertLength.keys()):        print(' '.join([str(il),str(InsertLength[il])]), file=fIL)
                                     fIL.close()
                                     ILNullfigure1='.'.join(ILNullTemp.split('.')[:-1]+['pdf'])
                                     BoxPlotColor='blue'
                                     lineColor='red'
                                     ILNullfigure2='.'.join(ILNullTemp.split('.')[:-1])+'.Bimodal'
-                                    if KeepFigure in ['no','N','No','n']:
-                                        ILNullfigure1=ILNullfigure1.replace('.pdf','.na')
+                                    if KeepFigure in ['no','N','No','n']:       ILNullfigure1=ILNullfigure1.replace('.pdf','.na')
                                     os.system('''Rscript %s %s %s %s %s %s %d'''%(RFigureDRSplit2,ILNullTemp,ILNullfigure1,BoxPlotColor,lineColor,ILNullfigure2,Window_Size))
                                     TBNullTemp=NullPath+'TBNull.'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'.temp'
                                     fTB=open(TBNullTemp,'w')
-                                    for tb in list(TBNullDensity.keys()):
-                                        print(' '.join([str(tb),str(TBNullDensity[tb])]), file=fTB)
+                                    for tb in list(TBNullDensity.keys()):   print(' '.join([str(tb),str(TBNullDensity[tb])]), file=fTB)
                                     fTB.close()
                                     TBNullfigure1='.'.join(TBNullTemp.split('.')[:-1]+['pdf'])
                                     BoxPlotColor='blue'
                                     lineColor='red'
                                     TBNullfigure2='.'.join(TBNullTemp.split('.')[:-1])+'.Bimodal'
-                                    if KeepFigure in ['no','N','No','n']:
-                                        TBNullfigure1=TBNullfigure1.replace('.pdf','.na')
+                                    if KeepFigure in ['no','N','No','n']:       TBNullfigure1=TBNullfigure1.replace('.pdf','.na')
                                     os.system('''Rscript %s %s %s %s %s %s %d'''%(RFigureDRSplit2,TBNullTemp,TBNullfigure1,BoxPlotColor,lineColor,TBNullfigure2,Window_Size))
                                     clean_files()
                                     Ref_Seq_File=ref_file
@@ -838,8 +706,7 @@ else:
                                     CN2_Region={} #key of hash CN2_Region is the name of each chromosome
                                     for chrom in chromos:
                                             CN2_Region[chrom]={} #key of CN2_Region[chrom] is GC_content
-                                            for con in range(101):
-                                                    CN2_Region[chrom][con]=[]
+                                            for con in range(101):      CN2_Region[chrom][con]=[]
                                     #fcn2=open(cn2_file)
                                     temp_Name='temp.Null1.'+bamF.split('/')[-1]
                                     #while True:
@@ -864,24 +731,19 @@ else:
                                                                 GC_Content[i]=GC_Content_Calculate(Seq2)
                                                         coverage=Region_Coverage_Calculate(sam_file,Number_Of_Windows,pcn2,Window_Size)
                                                         for j in list(GC_Content.keys()):
-                                                            if j in list(coverage.keys()):
-                                                                CN2_Region[Chromosome][GC_Content[j][0]].append(coverage[j][-1])
+                                                            if j in list(coverage.keys()):  CN2_Region[Chromosome][GC_Content[j][0]].append(coverage[j][-1])
                                     #fcn2.close()
-                                    if os.path.isfile(NullPath+temp_Name+'.fa'):
-                                        os.system(r'''rm %s'''%(NullPath+temp_Name+'.fa'))
-                                    if os.path.isfile(NullPath+temp_Name+'.sam'):
-                                        os.system(r'''rm %s'''%(NullPath+temp_Name+'.sam'))
+                                    if os.path.isfile(NullPath+temp_Name+'.fa'):            os.system(r'''rm %s'''%(NullPath+temp_Name+'.fa'))
+                                    if os.path.isfile(NullPath+temp_Name+'.sam'):           os.system(r'''rm %s'''%(NullPath+temp_Name+'.sam'))
                                     #Output_File=NullPath+'RD_Stat/'+bamF.split('/')[-1].replace('.'+bam_file_appdix,'')+'.'+genome_name+'_MP'+str(QCAlign)+'_GC_Coverage_ReadLength'
                                     Output_File=NullPath+'RD_Stat/'+'.'.join(bamF.split('/')[-1].split('.')[:-1])+'.'+genome_name+'_MP'+str(QCAlign)+'_GC_Coverage_ReadLength'
                                     Output_Path=NullPath+'RD_Stat/'
-                                    if not os.path.isdir(Output_Path):
-                                        os.system(r'''mkdir %s'''%(Output_Path))
+                                    if not os.path.isdir(Output_Path):                      os.system(r'''mkdir %s'''%(Output_Path))
                                     fo=open(Output_File,'w')
                                     print(' '.join(chromos), file=fo)
                                     print(' '.join([str(i) for i in range(101)]), file=fo)
                                     for key_1 in chromos:
-                                            for key_2 in range(101):
-                                                    print(':'.join(['@',','.join(str(j) for j in CN2_Region[key_1][key_2])]), file=fo)
+                                            for key_2 in range(101):                print(':'.join(['@',','.join(str(j) for j in CN2_Region[key_1][key_2])]), file=fo)
                                     fo.close()
                             time2=time.time()
                             print('Null Model Built for '+bamF)
@@ -1099,8 +961,7 @@ else:
                                             if not os.path.isfile(mini_fout_N4):
                                                 os.system(r''' samtools view -H %s -o %s'''%(BamInput,mini_fout_Name)) 
                                                 RD_index_Path=NullPath+'RD_Stat/'
-                                                if not os.path.isdir(RD_index_Path):
-                                                    os.system(r'''mkdir %s'''%(RD_index_Path))
+                                                if not os.path.isdir(RD_index_Path):    os.system(r'''mkdir %s'''%(RD_index_Path))
                                                 RD_index_File=RD_index_Path+bamF_Name+'.'+chrF+'.RD.index'
                                                 fRDind=open(RD_index_File,'w')
                                                 fRDind.close()
@@ -1123,38 +984,26 @@ else:
                                                             pos1=int(pbam[3])
                                                             pos2=int(pbam[3])+ReadLen
                                                             if pos2>real_region[0] and pos1<real_region[1]:
-                                                                if pos1<real_region[0] and pos2>real_region[0]:
-                                                                    pos1=real_region[0]
-                                                                if pos1<real_region[1] and pos2>real_region[1]:
-                                                                    pos2=real_region[1]
+                                                                if pos1<real_region[0] and pos2>real_region[0]:     pos1=real_region[0]
+                                                                if pos1<real_region[1] and pos2>real_region[1]:     pos2=real_region[1]
                                                                 block1=int((pos1-real_region[0])/Window_Size)
                                                                 RD_RealRegion[block1]+=ReadLen
                                                             if int(pbam[4])>int(QCAlign):             #fail quality control, skip
                                                                 absIL=abs(int(pbam[8]))
                                                                 QCFlag=0
                                                                 link_flag=0
-                                                                if absIL<int(ILCffs[0]) or absIL>int(ILCffs[1]):
-                                                                    QCFlag+=1
-                                                                if DRtemp==['+','-'] and int(pbam[8])<0:
-                                                                    QCFlag+=1
-                                                                if DRtemp==['+','+'] or DRtemp==['-','-']:
-                                                                    QCFlag+=1
-                                                                if int(pbam[8])==0:
-                                                                   QCFlag+=1
-                                                                if not pbam[5].find('S')==-1:
-                                                                    QCFlag+=1
-                                                                if not pbam[5].find('H')==-1:
-                                                                    QCFlag+=1
-                                                                if not QCFlag==0:
-                                                                    print(pbam1, file=fmini)
+                                                                if absIL<int(ILCffs[0]) or absIL>int(ILCffs[1]):    QCFlag+=1
+                                                                if DRtemp==['+','-'] and int(pbam[8])<0:            QCFlag+=1
+                                                                if DRtemp==['+','+'] or DRtemp==['-','-']:          QCFlag+=1
+                                                                if int(pbam[8])==0:                                 QCFlag+=1
+                                                                if not pbam[5].find('S')==-1:                       QCFlag+=1
+                                                                if not pbam[5].find('H')==-1:                       QCFlag+=1
+                                                                if not QCFlag==0:                                   print(pbam1, file=fmini)
                                                         fbam.close()
                                                         fmini.close()
-                                                        for rfrr in range(len(RD_RealRegion[:-1])):
-                                                            RD_RealRegion[rfrr]=str(float(RD_RealRegion[rfrr])/Window_Size)
-                                                        if real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size ==0:
-                                                            del RD_RealRegion[-1]
-                                                        else:
-                                                            RD_RealRegion[-1]=str(float(RD_RealRegion[-1])/float(real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size))
+                                                        for rfrr in range(len(RD_RealRegion[:-1])):                 RD_RealRegion[rfrr]=str(float(RD_RealRegion[rfrr])/Window_Size)
+                                                        if real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size ==0:   del RD_RealRegion[-1]
+                                                        else:                                                       RD_RealRegion[-1]=str(float(RD_RealRegion[-1])/float(real_region[1]-real_region[0]-(real_region[1]-real_region[0])/Window_Size*Window_Size))
                                                         print(' '.join(RD_RealRegion), file=fRDind)
                                                         fRDind.close()
                                                 os.system(r'''samtools view -h -Sb -F 256 %s -o %s'''%(mini_fout_Name,mini_fout_N2))
