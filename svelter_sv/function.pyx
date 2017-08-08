@@ -3348,18 +3348,15 @@ def Region_Coverage_Calculate(sam_file,Number_Of_Windows,Region_Info,Window_Size
     fsam=open(sam_file)
     coverage={}
     num_of_wind=int((int(Region_Info[2])-int(Region_Info[1]))/Window_Size)
-    for i in range(num_of_wind):
-        coverage[i]=[int(Region_Info[1])+i*Window_Size,int(Region_Info[1])+i*Window_Size+Window_Size-1,0]
+    for i in range(int(num_of_wind)):    coverage[i]=[int(Region_Info[1])+i*Window_Size,int(Region_Info[1])+i*Window_Size+Window_Size-1,0]
     coverage[-1]=[0,0,0]
     while True:
         psam=fsam.readline().strip().split()
         if not psam: break
         Read_Region=[int(psam[3]),int(psam[3])+len(psam[9])]
         left_block=int((Read_Region[0]-int(Region_Info[1]))/Window_Size)
-        if left_block in list(coverage.keys()):
-            left_length=coverage[left_block][1]-Read_Region[0]+1
-        else:
-            left_length=0
+        if left_block in list(coverage.keys()): left_length=coverage[left_block][1]-Read_Region[0]+1
+        else:                                   left_length=0
         right_block=int((Read_Region[1]-int(Region_Info[1]))/Window_Size)
         if right_block in list(coverage.keys()):
             right_length=Read_Region[1]-coverage[right_block][0]
