@@ -3417,56 +3417,42 @@ else:
                 GC_hash_temp={}
                 test_flag=0
                 for i in list(chr_letter_bp.keys()):
-                    if not os.path.isfile(filein):
-                        test_flag+=1
+                    if not os.path.isfile(filein):      test_flag+=1
                 if test_flag==0:
                     for i in list(chr_letter_bp.keys()):
                         GC_hash_temp[i]={}
                         block_range[i]=[]
-                        for j in list(chr_letter_bp[i].keys()):
-                            block_range[i]+=chr_letter_bp[i][j]
+                        for j in list(chr_letter_bp[i].keys()): block_range[i]+=chr_letter_bp[i][j]
                         block_range[i]=[min(block_range[i]),max(block_range[i])]
                         for xa in list(GC_hash[i].keys()):
                             for xb in list(GC_hash[i][xa].keys()):
-                                if not xb<block_range[i][0] and not xa>block_range[i][1]:
-                                    GC_hash_temp[i][str(xa)+'-'+str(xb)]=GC_hash[i][xa][xb]
+                                if not xb<block_range[i][0] and not xa>block_range[i][1]:   GC_hash_temp[i][str(xa)+'-'+str(xb)]=GC_hash[i][xa][xb]
                     for k1 in list(chr_letter_bp.keys()):
                         block_GC_temp[k1]={}
                         for k2 in list(GC_hash_temp[k1].keys()):
                             bl2=[int(k2.split('-')[0]),int(k2.split('-')[1])]
                             for k3 in list(chr_letter_bp[k1].keys()):
-                                if min(chr_letter_bp[k1][k3])>bl2[0]-1 and max(chr_letter_bp[k1][k3])<bl2[1]+1:
-                                    block_GC_temp[k1][k3]=GC_hash_temp[k1][k2][(min(chr_letter_bp[k1][k3])-bl2[0])/100:(max(chr_letter_bp[k1][k3])-bl2[0])/100+1]
+                                if min(chr_letter_bp[k1][k3])>bl2[0]-1 and max(chr_letter_bp[k1][k3])<bl2[1]+1: block_GC_temp[k1][k3]=GC_hash_temp[k1][k2][int((min(chr_letter_bp[k1][k3])-bl2[0])/100):int((max(chr_letter_bp[k1][k3])-bl2[0])/100)+1]
                                 elif min(chr_letter_bp[k1][k3])>bl2[0]-1 and max(chr_letter_bp[k1][k3])>bl2[1]:
-                                    if not k3 in list(block_GC_temp[k1].keys()):
-                                        block_GC_temp[k1][k3]=GC_hash_temp[k1][k2][(min(chr_letter_bp[k1][k3])-bl2[0])/100:]
-                                    else:
-                                        block_GC_temp[k1][k3]+=GC_hash_temp[k1][k2][(min(chr_letter_bp[k1][k3])-bl2[0])/100:]                        
+                                    if not k3 in list(block_GC_temp[k1].keys()):                                block_GC_temp[k1][k3]=GC_hash_temp[k1][k2][int((min(chr_letter_bp[k1][k3])-bl2[0])/100):]
+                                    else:                                                                       block_GC_temp[k1][k3]+=GC_hash_temp[k1][k2][int((min(chr_letter_bp[k1][k3])-bl2[0])/100):]                        
                                 elif min(chr_letter_bp[k1][k3])<bl2[0] and max(chr_letter_bp[k1][k3])>bl2[0]-1:
-                                    if not k3 in list(block_GC_temp[k1].keys()):
-                                        block_GC_temp[k1][k3]=GC_hash_temp[k1][k2][:(max(chr_letter_bp[k1][k3])-bl2[0])/100+1]
-                                    else:
-                                        block_GC_temp[k1][k3]+=GC_hash_temp[k1][k2][:(max(chr_letter_bp[k1][k3])-bl2[0])/100+1]                      
+                                    if not k3 in list(block_GC_temp[k1].keys()):                                block_GC_temp[k1][k3]=GC_hash_temp[k1][k2][:int((max(chr_letter_bp[k1][k3])-bl2[0])/100+1)]
+                                    else:                                                                       block_GC_temp[k1][k3]+=GC_hash_temp[k1][k2][:int((max(chr_letter_bp[k1][k3])-bl2[0])/100+1)]                      
                                 elif min(chr_letter_bp[k1][k3])<bl2[0]+1 and max(chr_letter_bp[k1][k3])>bl2[1]-1:
-                                    if not k3 in list(block_GC_temp[k1].keys()):
-                                        block_GC_temp[k1][k3]=GC_hash_temp[k1][k2]
-                                    else:
-                                        block_GC_temp[k1][k3]+=GC_hash_temp[k1][k2]                     
+                                    if not k3 in list(block_GC_temp[k1].keys()):                                block_GC_temp[k1][k3]=GC_hash_temp[k1][k2]
+                                    else:                                                                       block_GC_temp[k1][k3]+=GC_hash_temp[k1][k2]                     
                     for k1 in list(block_GC_temp.keys()):
                         for k2 in list(block_GC_temp[k1].keys()):
-                            if not block_GC_temp[k1][k2]==[]:
-                                block_GC_temp[k1][k2]=numpy.mean([float(k3) for k3 in block_GC_temp[k1][k2]])
-                            else:
-                                return 'error'
+                            if not block_GC_temp[k1][k2]==[]:                                                   block_GC_temp[k1][k2]=numpy.mean([float(k3) for k3 in block_GC_temp[k1][k2]])
+                            else:                                                                               return 'error'
                     return block_GC_temp
-                else:
-                    return 'error'
+                else:                    return 'error'
             def letter_RD_ReadIn(chr_letter_bp):
                 test_flag=0
                 for k1 in list(chr_letter_bp.keys()):
                     filein=NullPath+'RD_Stat/'+BamN+'.'+k1+'.RD.index'
-                    if not os.path.isfile(filein):
-                        test_flag+=1
+                    if not os.path.isfile(filein):  test_flag+=1
                 if test_flag==0:
                     out={}
                     RD_hash={}
@@ -3475,8 +3461,7 @@ else:
                         RD_hash[i]={}
                         out[i]={}
                         block_range[i]=[]
-                        for j in list(chr_letter_bp[i].keys()):
-                            block_range[i]+=chr_letter_bp[i][j]
+                        for j in list(chr_letter_bp[i].keys()): block_range[i]+=chr_letter_bp[i][j]
                         block_range[i]=[min(block_range[i]),max(block_range[i])]
                     for k1 in list(chr_letter_bp.keys()):
                         filein=NullPath+'RD_Stat/'+BamN+'.'+k1+'.RD.index'
@@ -3486,34 +3471,25 @@ else:
                             if not pin: break
                             pin2=fin.readline().strip().split()
                             bl2=[int(pin[0].split(':')[1].split('-')[0]),int(pin[0].split(':')[1].split('-')[1])]
-                            if not bl2[1]<block_range[k1][0]+1 and not bl2[0]>block_range[k1][1]-1:
-                                RD_hash[k1][str(bl2[0])+'-'+str(bl2[1])]=pin2
+                            if not bl2[1]<block_range[k1][0]+1 and not bl2[0]>block_range[k1][1]-1: RD_hash[k1][str(bl2[0])+'-'+str(bl2[1])]=pin2
                         fin.close()
                     for k1 in list(chr_letter_bp.keys()):
                         for k2 in list(RD_hash[k1].keys()):
                             bl2=[int(k2.split('-')[0]),int(k2.split('-')[1])]
                             for j in sorted(chr_letter_bp[k1].keys()):
-                                if not j in list(out[k1].keys()):
-                                    out[k1][j]=[]
+                                if not j in list(out[k1].keys()):       out[k1][j]=[]
                                 if len(chr_letter_bp[k1][j])==4:
                                     bl1=chr_letter_bp[k1][j][1:-1]
-                                    if bl1[0]>bl2[0]-1 and bl1[1]<bl2[1]+1:
-                                        out[k1][j]+=RD_hash[k1][k2][(bl1[0]-bl2[0])/Window_Size:(bl1[1]-bl2[0])/Window_Size+1]
-                                    elif bl1[0]>bl2[0]-1 and bl1[1]>bl2[1]:
-                                        out[k1][j]+=RD_hash[k1][k2][(bl1[0]-bl2[0])/Window_Size:]
-                                    elif bl1[0]<bl2[0] and bl1[1]<bl2[1]+1:
-                                        out[k1][j]+=RD_hash[k1][k2][:(bl1[1]-bl2[0])/Window_Size+1]
-                                    elif bl1[0]<bl2[0] and bl1[1]>bl2[1]:
-                                        out[k1][j]+=RD_hash[k1][k2]
+                                    if bl1[0]>bl2[0]-1 and bl1[1]<bl2[1]+1: out[k1][j]+=RD_hash[k1][k2][int((bl1[0]-bl2[0])/Window_Size):int((bl1[1]-bl2[0])/Window_Size)+1]
+                                    elif bl1[0]>bl2[0]-1 and bl1[1]>bl2[1]: out[k1][j]+=RD_hash[k1][k2][int((bl1[0]-bl2[0])/Window_Size):]
+                                    elif bl1[0]<bl2[0] and bl1[1]<bl2[1]+1: out[k1][j]+=RD_hash[k1][k2][:int((bl1[1]-bl2[0])/Window_Size)+1]
+                                    elif bl1[0]<bl2[0] and bl1[1]>bl2[1]:   out[k1][j]+=RD_hash[k1][k2]
                     for k1 in list(out.keys()):
                         for k2 in list(out[k1].keys()):
-                            if out[k1][k2]==[]:
-                                out[k1][k2]=0
-                            else:
-                                out[k1][k2]=numpy.mean([float(k3) for k3 in out[k1][k2]])
+                            if out[k1][k2]==[]: out[k1][k2]=0
+                            else:               out[k1][k2]=numpy.mean([float(k3) for k3 in out[k1][k2]])
                     return out
-                else:
-                    return 'error'
+                else:       return 'error'
             def letters_bps_produce(letters,bps,flank):
                 letters_bps={}
                 letters_relative_bps={}
@@ -4240,44 +4216,34 @@ else:
                     out[2]+=1
                 return out
             Define_Default_SVPredict()
-            if not '--workdir' in list(dict_opts.keys()):
-                print('Error: please specify working directory using: --workdir')
+            if not '--workdir' in list(dict_opts.keys()):    print('Error: please specify working directory using: --workdir')
             else:
                 global_para_declaration()
-                if not '--bp-file' in list(dict_opts.keys()):
-                    print('Error: please specify input txt file using : --bp-file')
+                if not '--bp-file' in list(dict_opts.keys()):print('Error: please specify input txt file using : --bp-file')
                 else:
-                    if not '--out-path' in list(dict_opts.keys()):
-                        dict_opts['--out-path']='/'.join(dict_opts['--bp-file'].split('/')[:-1])
-                    if not dict_opts['--out-path'][-1]=='/':
-                        dict_opts['--out-path']+='/'
-                    if not os.path.isfile(ref_file):
-                        print('Error: wrong reference genome provided')
+                    if not '--out-path' in list(dict_opts.keys()):  dict_opts['--out-path']='/'.join(dict_opts['--bp-file'].split('/')[:-1])
+                    if not dict_opts['--out-path'][-1]=='/':        dict_opts['--out-path']+='/'
+                    if not os.path.isfile(ref_file):                print('Error: wrong reference genome provided')
                     else:
-                        if not os.path.isfile(ref_index):
-                            print('Error: reference genome not indexed')
+                        if not os.path.isfile(ref_index):           print('Error: reference genome not indexed')
                         else:
                             global chromos_all
                             chromos_all=chromos_readin_list(ref_file)
-                            if not '--sample' in list(dict_opts.keys()):
-                                print('Error: please specify either input file using --sample')
+                            if not '--sample' in list(dict_opts.keys()):    print('Error: please specify either input file using --sample')
                             else:
                                 time1=time.time()
                                 null_model_global_para_setup(dict_opts)
-                                if not os.path.isfile(Insert_Len_Stat):
-                                    print('Error: cannot access file: '+Insert_Len_Stat)
+                                if not os.path.isfile(Insert_Len_Stat):     print('Error: cannot access file: '+Insert_Len_Stat)
                                 else:
                                     ReadLenFin=NullPath+BamN+'.'+genome_name+'.Stats'
-                                    if not os.path.isfile(ReadLenFin):
-                                        print('Error: cannot access file: '+ReadLenFin)
+                                    if not os.path.isfile(ReadLenFin):      print('Error: cannot access file: '+ReadLenFin)
                                     else:
                                         fin=open(ReadLenFin)
                                         pin=fin.readline().strip().split()
                                         pin=fin.readline().strip().split()
                                         pin=fin.readline().strip().split()
                                         Window_Size=int(pin[0])/3     
-                                        for line in fin:
-                                            pin=line.strip().split()
+                                        for line in fin:        pin=line.strip().split()
                                         fin.close()
                                         ReadLength=int(pin[-1].split(':')[-1])
                                     Initial_Bam_Name=BamN+'.'+bam_files_appdix
@@ -4297,14 +4263,11 @@ else:
                                         for line in fi:
                                             pi=line.strip().split()
                                             if pi==[] or len(pi)<3:
-                                                if bps_temp==[]:
-                                                    continue
+                                                if bps_temp==[]:    continue
                                                 else:
                                                     bp_key=0
-                                                    for l1 in bps_temp:
-                                                        bp_key+=len(l1)
-                                                    if not bp_key in list(bps_hash.keys()):
-                                                        bps_hash[bp_key]=[]
+                                                    for l1 in bps_temp: bp_key+=len(l1)
+                                                    if not bp_key in list(bps_hash.keys()): bps_hash[bp_key]=[]
                                                     bps_hash[bp_key].append(bps_temp)
                                                     bps_temp=[]
                                             else:       bps_temp.append(pi)
@@ -4330,8 +4293,7 @@ else:
                                                 GC_Overall_temp=[]
                                                 for b in Coverage:
                                                     if not b in list(GC_Content_Coverage[a].keys()): continue
-                                                    if not b in list(GC_Median_Num.keys()):
-                                                        GC_Median_Num[b]=[]
+                                                    if not b in list(GC_Median_Num.keys()): GC_Median_Num[b]=[]
                                                     if len(GC_Content_Coverage[a][b][0])==2: continue
                                                     elif len(GC_Content_Coverage[a][b][0])>2:
                                                             num_list=[float(c) for c in GC_Content_Coverage[a][b][0][2:].split(',')]
@@ -4340,8 +4302,7 @@ else:
                                                                 GC_Overall_Median_Num+=num_list
                                                                 GC_Overall_temp=GC_Overall_temp+num_list
                                                                 if not Median_Pick(num_list)==0.0:
-                                                                    if not a in list(GC_Median_Coverage.keys()):
-                                                                        GC_Median_Coverage[a]={}
+                                                                    if not a in list(GC_Median_Coverage.keys()):    GC_Median_Coverage[a]={}
                                                                     GC_Median_Coverage[a][b]=Median_Pick(num_list)
                                                 if len(GC_Overall_temp)==0: continue
                                                 if sum(GC_Overall_temp)==0.0: continue
@@ -4383,16 +4344,12 @@ else:
                                                         k=[i[0]]+sorted(temp2)
                                                         k2=k[:2]
                                                         for k3 in temp2:
-                                                            if not k3 in k2 and k3-k2[-1]>10:
-                                                                k2.append(k3)
-                                                        if len(k2)>2:
-                                                            bps2[bps2.index(i)]=k2
-                                                        else:
-                                                            del bps2[bps2.index(i)]
+                                                            if not k3 in k2 and k3-k2[-1]>10:   k2.append(k3)
+                                                        if len(k2)>2:   bps2[bps2.index(i)]=k2
+                                                        else:           del bps2[bps2.index(i)]
                                                     if len(bps2)<1: continue
                                                     original_bps_all=[]
-                                                    for obas in bps2:
-                                                        original_bps_all+=obas
+                                                    for obas in bps2:   original_bps_all+=obas
                                                     original_structure=bp_to_let(original_bps_all,chromos_all)
                                                     chr_letter_tbp=letter_rearrange(flank,bps2)
                                                     letter_tGC=letter_GC_ReadIn(chr_letter_tbp)
@@ -4411,14 +4368,12 @@ else:
                                                                 letter_RD[k1][k2]=letter_tRD[k1][k2]
                                                     left_keys=[]
                                                     for k1 in list(chr_letter_bp.keys()):
-                                                        for k2 in list(chr_letter_bp[k1].keys()):
-                                                            left_keys.append(k2)
+                                                        for k2 in list(chr_letter_bp[k1].keys()):   left_keys.append(k2)
                                                     if not left_keys==[]:
                                                         bps3={}
                                                         for k1 in list(chr_letter_bp.keys()):
                                                             bps3[k1]={}
-                                                            for k2 in list(chr_letter_bp[k1].keys()):
-                                                                bps3[k1][chr_letter_bp[k1][k2][0]]=[chr_letter_bp[k1][k2][0],chr_letter_bp[k1][k2][-1]]
+                                                            for k2 in list(chr_letter_bp[k1].keys()):   bps3[k1][chr_letter_bp[k1][k2][0]]=[chr_letter_bp[k1][k2][0],chr_letter_bp[k1][k2][-1]]
                                                         bps4={}
                                                         for k1 in list(bps3.keys()):
                                                             if not bps3[k1]=={}:
@@ -4851,7 +4806,7 @@ else:
                                                                     for blk2 in sorted(chr_letter_bp[blk1].keys()):
                                                                         if blk2==bl:
                                                                             bps2_temp=[blk1]+[chr_letter_bp[blk1][blk2][0],chr_letter_bp[blk1][blk2][-1]]
-                                                                            copy_num_a=int(Copy_num_estimate[bl])/2
+                                                                            copy_num_a=int(Copy_num_estimate[bl]/2)
                                                                             copy_num_b=Copy_num_estimate[bl]-copy_num_a
                                                                             Best_Letter_Rec=[[['a' for i in range(copy_num_a)],['a' for i in range(copy_num_a)]]]
                                                                             Best_Score_Rec=100
@@ -4859,18 +4814,14 @@ else:
                                                             for blk1 in list(chr_letter_bp.keys()):
                                                                 bps_new[blk1]=[]
                                                                 for blk2 in sorted(chr_letter_bp[blk1].keys()):
-                                                                    if not blk2 in Copy_num_Check:
-                                                                        bps_new[blk1].append([chr_letter_bp[blk1][blk2][0],chr_letter_bp[blk1][blk2][-1]])
+                                                                    if not blk2 in Copy_num_Check:  bps_new[blk1].append([chr_letter_bp[blk1][blk2][0],chr_letter_bp[blk1][blk2][-1]])
                                                             bps_new_2=[]
                                                             for k1 in list(bps_new.keys()):
                                                                 for k2 in bps_new[k1]:
-                                                                    if bps_new_2==[]:
-                                                                        bps_new_2.append([k1]+k2)
+                                                                    if bps_new_2==[]:   bps_new_2.append([k1]+k2)
                                                                     else:
-                                                                        if k1==bps_new_2[-1][0] and k2[0]==bps_new_2[-1][-1]:
-                                                                            bps_new_2[-1]+=k2[1:]
-                                                                        else:
-                                                                            bps_new_2.append([k1]+k2)
+                                                                        if k1==bps_new_2[-1][0] and k2[0]==bps_new_2[-1][-1]:   bps_new_2[-1]+=k2[1:]
+                                                                        else:   bps_new_2.append([k1]+k2)
                                                             for k1 in bps_new_2:
                                                                 bps_hash[max(bps_hash.keys())].append([k1])
     if function_name=='SVIntegrate':
