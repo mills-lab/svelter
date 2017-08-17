@@ -1995,8 +1995,7 @@ else:
         import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','help=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','input-bed=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
-        if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
-            readme.print_default_parameters_svpredict()
+        if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:   readme.print_default_parameters_svpredict()
         else:
             import os
             import sys
@@ -2637,8 +2636,7 @@ else:
                 global Initial_GCRD_Adj
                 Initial_GCRD_Adj={}
                 for k1 in list(Initial_GCRD_Adj_pre.keys()):
-                    for k2 in list(Initial_GCRD_Adj_pre[k1].keys()):
-                        Initial_GCRD_Adj[k2]=Initial_GCRD_Adj_pre[k1][k2]
+                    for k2 in list(Initial_GCRD_Adj_pre[k1].keys()):    Initial_GCRD_Adj[k2]=Initial_GCRD_Adj_pre[k1][k2]
                 Initial_GCRD_Adj['left']=numpy.mean([GC_para_dict['GC_Mean_Coverage'][key_chr[0]] for key_chr in bps2])
                 Initial_GCRD_Adj['right']=numpy.mean([GC_para_dict['GC_Mean_Coverage'][key_chr[0]] for key_chr in bps2])
                 Copy_num_estimate={}
@@ -3471,7 +3469,8 @@ else:
                             if not pin: break
                             pin2=fin.readline().strip().split()
                             bl2=[int(pin[0].split(':')[1].split('-')[0]),int(pin[0].split(':')[1].split('-')[1])]
-                            if not bl2[1]<block_range[k1][0]+1 and not bl2[0]>block_range[k1][1]-1: RD_hash[k1][str(bl2[0])+'-'+str(bl2[1])]=pin2
+                            if not bl2[1]<block_range[k1][0]+1 and not bl2[0]>block_range[k1][1]-1: 
+                                RD_hash[k1][str(bl2[0])+'-'+str(bl2[1])]=pin2
                         fin.close()
                     for k1 in list(chr_letter_bp.keys()):
                         for k2 in list(RD_hash[k1].keys()):
@@ -3487,9 +3486,23 @@ else:
                     for k1 in list(out.keys()):
                         for k2 in list(out[k1].keys()):
                             if out[k1][k2]==[]: out[k1][k2]=0
-                            else:               out[k1][k2]=numpy.mean([float(k3) for k3 in out[k1][k2]])
+                            else:               
+                                rd_test_tmp=reject_outliers([float(k3) for k3 in out[k1][k2]],10)
+                                if rd_test_tmp==[]: rd_test_tmp= [float(k3) for k3 in out[k1][k2]]
+                                out[k1][k2]=numpy.mean(rd_test_tmp)
                     return out
                 else:       return 'error'
+            def reject_outliers(data, m):
+                out=[]
+                mean_1=numpy.mean(data)
+                median_1=numpy.median(data)
+                if len(data)>100:out=[i for i in out if i/median_1<m and i/median_1>1/m]
+                else:
+                    for i in range(len(data)):
+                        tmp=[data[j] for j in range(len(data)) if not j==i]
+                        mean_2=numpy.mean(tmp)
+                        if mean_2/mean_1 <m and mean_2/mean_1 >1/m: out.append(data[i])
+                return out
             def letters_bps_produce(letters,bps,flank):
                 letters_bps={}
                 letters_relative_bps={}
@@ -4215,6 +4228,11 @@ else:
                     out[1].append(Af_BP)
                     out[2]+=1
                 return out
+            def size_check(bps2, cff=1000000):
+                flag=0
+                for i in bps2:
+                    if int(i[2])-int(i[1])>cff: flag+=1
+                return flag
             Define_Default_SVPredict()
             if not '--workdir' in list(dict_opts.keys()):    print('Error: please specify working directory using: --workdir')
             else:
@@ -4324,10 +4342,11 @@ else:
                                         [chrom_N,chrom_X,chrom_Y,GC_Median_Coverage,GC_Overall_Median_Coverage,GC_Var_Coverage,GC_Mean_Coverage,GC_Std_Coverage]=GC_RD_Info_Complete(ref_file,GC_Median_Coverage,ChrN_Median_Coverage,GC_Overall_Median_Coverage,GC_Var_Coverage,GC_Mean_Coverage,GC_Std_Coverage,Chromosome)
                                         GC_para_dict={'IL_Statistics':IL_Statistics,'GC_Overall_Median_Coverage':GC_Overall_Median_Coverage,'GC_Overall_Median_Num':GC_Overall_Median_Num,'GC_Median_Coverage':GC_Median_Coverage,'GC_Median_Num':GC_Median_Num,'GC_Mean_Coverage':GC_Mean_Coverage,'GC_Std_Coverage':GC_Std_Coverage,'GC_Var_Coverage':GC_Var_Coverage,'Coverage':Coverage}
                                         for bpsk1 in sorted(bps_hash.keys()):
-                                            if bpsk1>50: continue
+                                            if bpsk1>8: continue
                                             for bps2_new in bps_hash[bpsk1]:
                                                 bps2_new_2=modify_bps2_new(bps2_new)
                                                 bps2=LN_bps2_Modify(bps2_new_2,chromos_all)
+                                                if size_check(bps2)>0: continue
                                                 print(bps2)
                                                 if len(bps2)>0 and qual_check_bps2(bps2)=='right':
                                                     Chromo=bps2[0][0]
@@ -4419,8 +4438,7 @@ else:
                                                             for let_key in original_letters:
                                                                 Be_BP_Letter[let_key]=original_bp_list[original_letters.index(let_key)+1]-original_bp_list[original_letters.index(let_key)]
                                                             ori_let2=[]
-                                                            for i in original_letters:
-                                                                ori_let2.append(i)
+                                                            for i in original_letters:  ori_let2.append(i)
                                                             for i in original_letters:
                                                                 if Copy_num_estimate[i]<0:    ori_let2.remove(i)
                                                                 elif Copy_num_estimate[i]>3:
@@ -4434,12 +4452,10 @@ else:
                                                             letter_MP=[original_letters,original_letters]
                                                             Be_BP_Letter['left']=flank
                                                             Be_BP_Letter['right']=flank
-                                                            for let_key in list(Be_BP_Letter.keys()):
-                                                                Be_BP_Letter[let_key+'^']=Be_BP_Letter[let_key]
+                                                            for let_key in list(Be_BP_Letter.keys()):   Be_BP_Letter[let_key+'^']=Be_BP_Letter[let_key]
                                                             num_of_read_pairs=1
                                                             for k1 in list(Be_BP_Letter.keys()):
-                                                                if not k1[-1]=='^' and not k1 in ['left','right']:
-                                                                    num_of_read_pairs+=Be_BP_Letter[k1]*RD_within_B[k1]/2/ReadLength
+                                                                if not k1[-1]=='^' and not k1 in ['left','right']:  num_of_read_pairs+=Be_BP_Letter[k1]*RD_within_B[k1]/2/ReadLength
                                                             num_of_read_pairs+=len(Full_Info[4])+len(Full_Info[5])+len(Full_Info[6])
                                                             Be_Info=[Pair_Through,Read_Through,SingleR_Through]
                                                             Be_Letter=[ori_let_Modi(Be_Info,ori_let2,Copy_num_estimate),ori_let2]
@@ -4492,7 +4508,6 @@ else:
                                                                 speed_test=10
                                                                 t1_sptest=time.time()
                                                                 while True:
-                                                                    print(Be_Letter)
                                                                     if Move_Step>speed_test: break
                                                                     Move_Step+=1
                                                                     if inv_flag_overall<0.1:         Move_Sample_Pool=['delete','insert']
@@ -4553,8 +4568,7 @@ else:
                                                                                         Best_Letter+=[Be_Letter]
                                                                                         Best_BPs+=[Be_BP]
                                                                                 best_iterations+=1
-                                                                        else:
-                                                                                best_iterations+=1
+                                                                        else:   best_iterations+=1
                                                                         score_record.append(S_DECISION)
                                                                     if not P_Move_Choices=='ERROR!' and not P_Move_Choices==[]:
                                                                         [P_IL,P_RD,P_DR,P_TB,Letter_Rec,BP_Rec]=[[],[],[],[],[],[]]
@@ -4593,8 +4607,7 @@ else:
                                                                         S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
                                                                         Be_Letter=Letter_Rec[DECISION]
                                                                         Be_BP=BP_Rec[DECISION]
-                                                                        if not S_DECISION in list(Score_rec_hash.keys()):
-                                                                            Score_rec_hash[S_DECISION]=[]
+                                                                        if not S_DECISION in list(Score_rec_hash.keys()):   Score_rec_hash[S_DECISION]=[]
                                                                         Score_rec_hash[S_DECISION].append(Be_Letter)
                                                                         if S_DECISION>Best_Score:
                                                                                 Best_Letter=[Be_Letter]
@@ -4606,14 +4619,12 @@ else:
                                                                                         Best_Letter+=[Be_Letter]
                                                                                         Best_BPs+=[Be_BP]
                                                                                 best_iterations+=1
-                                                                        else:
-                                                                                best_iterations+=1
+                                                                        else:   best_iterations+=1
                                                                         score_record.append(S_DECISION)
                                                                         #best_score_rec.append(Best_Score)
                                                                 t2_sptest=time.time()
                                                                 if t2_sptest-t1_sptest<10 or bpsk1<4:
                                                                     while True:
-                                                                        print(Be_Letter)
                                                                         if Move_Step>Trail_Number: break
                                                                         if best_iterations>Local_Minumum_Number: 
                                                                             if Best_Score_Rec==0:
@@ -4626,13 +4637,11 @@ else:
                                                                                     Be_BP=Best_BPs[0]
                                                                                     Best_Score-=100
                                                                             else:
-                                                                                    if Best_Score<Best_Score_Rec:
-                                                                                            break_Iteration_Flag=1
+                                                                                    if Best_Score<Best_Score_Rec:   break_Iteration_Flag=1
                                                                                     elif Best_Score==Best_Score_Rec:
                                                                                             break_Iteration_Flag=1
                                                                                             for i in Best_Letter:
-                                                                                                    if not i in Best_Letter_Rec:
-                                                                                                            Best_Letter_Rec.append(i)
+                                                                                                    if not i in Best_Letter_Rec:    Best_Letter_Rec.append(i)
                                                                                     else:
                                                                                             best_iterations=0
                                                                                             Best_Score_Rec=Best_Score
@@ -4689,11 +4698,9 @@ else:
                                                                                 S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
                                                                                 Be_Letter=Letter_Rec[DECISION]
                                                                                 Be_BP=BP_Rec[DECISION]
-                                                                                if not S_DECISION in list(Score_rec_hash.keys()):
-                                                                                    Score_rec_hash[S_DECISION]=[Be_Letter]
+                                                                                if not S_DECISION in list(Score_rec_hash.keys()):   Score_rec_hash[S_DECISION]=[Be_Letter]
                                                                                 else: 
-                                                                                    if not Be_Letter in Score_rec_hash[S_DECISION]:
-                                                                                        Score_rec_hash[S_DECISION].append(Be_Letter)
+                                                                                    if not Be_Letter in Score_rec_hash[S_DECISION]: Score_rec_hash[S_DECISION].append(Be_Letter)
                                                                                 if S_DECISION>Best_Score:
                                                                                         Best_Letter=[Be_Letter]
                                                                                         Best_BPs=[Be_BP]
@@ -4704,8 +4711,7 @@ else:
                                                                                                 Best_Letter+=[Be_Letter]
                                                                                                 Best_BPs+=[Be_BP]
                                                                                         best_iterations+=1
-                                                                                else:
-                                                                                        best_iterations+=1
+                                                                                else:   best_iterations+=1
                                                                                 score_record.append(S_DECISION)
                                                                                 #best_score_rec.append(Best_Score)
                                                                         if not P_Move_Choices=='ERROR!' and not P_Move_Choices==[]:
@@ -4748,8 +4754,7 @@ else:
                                                                                 if not S_DECISION in list(Score_rec_hash.keys()):
                                                                                     Score_rec_hash[S_DECISION]=[Be_Letter]
                                                                                 else: 
-                                                                                    if not Be_Letter in Score_rec_hash[S_DECISION]:
-                                                                                        Score_rec_hash[S_DECISION].append(Be_Letter)
+                                                                                    if not Be_Letter in Score_rec_hash[S_DECISION]: Score_rec_hash[S_DECISION].append(Be_Letter)
                                                                                 if S_DECISION>Best_Score:
                                                                                         Best_Letter=[Be_Letter]
                                                                                         Best_BPs=[Be_BP]
@@ -4760,8 +4765,7 @@ else:
                                                                                                 Best_Letter+=[Be_Letter]
                                                                                                 Best_BPs+=[Be_BP]
                                                                                         best_iterations+=1
-                                                                                else:
-                                                                                        best_iterations+=1
+                                                                                else:   best_iterations+=1
                                                                                 score_record.append(S_DECISION)
                                                                                 #best_score_rec.append(Best_Score)
                                                                 else:
@@ -4769,8 +4773,7 @@ else:
                                                                     bps2_new=[]
                                                                     for k1 in bps2:
                                                                         gaps.append([])
-                                                                        for k2 in range(len(k1)-2):
-                                                                            gaps[-1].append(int(k1[k2+2])-int(k1[k2+1]))
+                                                                        for k2 in range(len(k1)-2): gaps[-1].append(int(k1[k2+2])-int(k1[k2+1]))
                                                                     for k1 in range(len(gaps)):
                                                                         bps2_new.append([])
                                                                         chr_rec=bps2[k1][0]
@@ -4782,19 +4785,15 @@ else:
                                                                                 rec1=k2+2
                                                                         bps2_new[-1].append([chr_rec]+bps2[k1][rec1:])
                                                                     for k1 in bps2_new:
-                                                                        for k2 in k1:
-                                                                            bps_hash[max(bps_hash.keys())].append([k2])
+                                                                        for k2 in k1:   bps_hash[max(bps_hash.keys())].append([k2])
                                                                     Best_Letter_Rec=[]
                                                                     Best_Score_Rec=100
                                                             struc_to_remove=[]
                                                             for bestletter in Best_Letter_Rec:
-                                                                if '/'.join([''.join(bestletter[0]),''.join(bestletter[1])])==original_structure:
-                                                                    struc_to_remove.append(bestletter)
+                                                                if '/'.join([''.join(bestletter[0]),''.join(bestletter[1])])==original_structure:   struc_to_remove.append(bestletter)
                                                             Best_Letter_Rec=[i for i in Best_Letter_Rec if not i in struc_to_remove]
-                                                            if Best_Letter_Rec==[] and Best_Score_Rec==100:
-                                                                continue
-                                                            else:
-                                                                write_best_letter(bps2,Best_Letter_Rec,Best_Score_Rec,Score_rec_hash,original_letters)
+                                                            if Best_Letter_Rec==[] and Best_Score_Rec==100: continue
+                                                            else:                                           write_best_letter(bps2,Best_Letter_Rec,Best_Score_Rec,Score_rec_hash,original_letters)
                                                         else:
                                                             Score_rec_hash={}
                                                             bps_new={}
@@ -4829,8 +4828,7 @@ else:
         import getopt
         opts,args=getopt.getopt(sys.argv[2:],'o:h:S:',['deterministic-flag=','help=','long-insert=','prefix=','batch=','sample=','workdir=','reference=','chromosome=','exclude=','copyneutral=','ploidy=','svelter-path=','input-path=','null-model=','null-copyneutral-length=','null-copyneutral-perc=','null-random-length=','null-random-num=','null-random-length=','null-random-num=','qc-align=','qc-split=','qc-structure=','qc-map-tool=','qc-map-file=','split-min-len=','read-length=','keep-temp-files=','keep-temp-figs=','bp-file=','num-iteration='])
         dict_opts=dict(opts)
-        if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:
-            readme.print_default_parameters_svintegrate()
+        if dict_opts=={} or list(dict_opts.keys())==['-h'] or list(dict_opts.keys())==['--help']:   readme.print_default_parameters_svintegrate()
         else:
             def all_sv_single_haploid_decide(k1_hap,k2_hap):
                 out='NA'
