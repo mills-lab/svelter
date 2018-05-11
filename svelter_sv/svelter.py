@@ -2637,8 +2637,13 @@ else:
                 Initial_GCRD_Adj={}
                 for k1 in list(Initial_GCRD_Adj_pre.keys()):
                     for k2 in list(Initial_GCRD_Adj_pre[k1].keys()):    Initial_GCRD_Adj[k2]=Initial_GCRD_Adj_pre[k1][k2]
+                for key_chr in bps2:
+                    if not key_chr[0] in GC_para_dict['GC_Mean_Coverage'].keys():
+                        return ['error','error']
                 Initial_GCRD_Adj['left']=numpy.mean([GC_para_dict['GC_Mean_Coverage'][key_chr[0]] for key_chr in bps2])
-                Initial_GCRD_Adj['right']=numpy.mean([GC_para_dict['GC_Mean_Coverage'][key_chr[0]] for key_chr in bps2])
+                for key_chr in bps2:
+                    if not key_chr[0] in GC_para_dict['GC_Mean_Coverage'].keys(): return ['error','error']
+                Initial_GCRD_Adj['right']=numpy.mean([GC_para_dict['GC_Mean_Coverage'][key_chr[0]] for key_chr in bps2])  
                 Copy_num_estimate={}
                 for i in list(Initial_GCRD_Adj.keys()):
                     if not i in ['left','right']:
@@ -3999,8 +4004,7 @@ else:
                     if not sorted(bestletter) in Best_Letter_2:
                         Best_Letter_2.append(sorted(bestletter))
                 bps3=[]
-                for bps in bps_all:
-                    bps3+=bps
+                for bps in bps_all: bps3+=bps
                 for bestletter in Best_Letter_2:
                     if not '/'.join([''.join(original_letters),''.join(original_letters)])=='/'.join([''.join(bestletter[0]),''.join(bestletter[1])]):
                         if Uniparental_disomy_check(original_letters,bestletter)=='Pass':
@@ -4231,7 +4235,8 @@ else:
             def size_check(bps2, cff=1000000):
                 flag=0
                 for i in bps2:
-                    if int(i[2])-int(i[1])>cff: flag+=1
+                     if(len(i)<3): return 1
+                     if int(i[2])-int(i[1])>cff: flag+=1
                 return flag
             Define_Default_SVPredict()
             if not '--workdir' in list(dict_opts.keys()):    print('Error: please specify working directory using: --workdir')
@@ -4342,13 +4347,13 @@ else:
                                         [chrom_N,chrom_X,chrom_Y,GC_Median_Coverage,GC_Overall_Median_Coverage,GC_Var_Coverage,GC_Mean_Coverage,GC_Std_Coverage]=GC_RD_Info_Complete(ref_file,GC_Median_Coverage,ChrN_Median_Coverage,GC_Overall_Median_Coverage,GC_Var_Coverage,GC_Mean_Coverage,GC_Std_Coverage,Chromosome)
                                         GC_para_dict={'IL_Statistics':IL_Statistics,'GC_Overall_Median_Coverage':GC_Overall_Median_Coverage,'GC_Overall_Median_Num':GC_Overall_Median_Num,'GC_Median_Coverage':GC_Median_Coverage,'GC_Median_Num':GC_Median_Num,'GC_Mean_Coverage':GC_Mean_Coverage,'GC_Std_Coverage':GC_Std_Coverage,'GC_Var_Coverage':GC_Var_Coverage,'Coverage':Coverage}
                                         for bpsk1 in sorted(bps_hash.keys()):
-                                            if bpsk1>8: continue
+                                            if bpsk1>5: continue
                                             for bps2_new in bps_hash[bpsk1]:
                                                 bps2_new_2=modify_bps2_new(bps2_new)
                                                 bps2=LN_bps2_Modify(bps2_new_2,chromos_all)
                                                 if size_check(bps2)>0: continue
-                                                print(bps2)
                                                 if len(bps2)>0 and qual_check_bps2(bps2)=='right':
+                                                    print(bps2)
                                                     Chromo=bps2[0][0]
                                                     if not str(Chromo) in list(GC_Std_Coverage.keys()): continue
                                                     if not str(Chromo) in list(GC_Mean_Coverage.keys()): continue
@@ -4404,6 +4409,7 @@ else:
                                                         Chr=bps2[0][0]
                                                         Flank_para_dict={'flank':flank,'Cut_Lower':Cut_Lower,'Cut_Upper':Cut_Upper,'ReadLength':ReadLength}
                                                         [Copy_num_estimate,Copy_num_Check]=copy_num_estimate_calcu(GC_para_dict,Flank_para_dict,bps2)
+                                                        if Copy_num_estimate=='error': continue
                                                         if Copy_num_Check==[]:
                                                             Full_Info=Full_Info_of_Reads_Integrate(GC_para_dict,Flank_para_dict,bps2)
                                                             RD_within_B=RD_within_B_calcu(GC_Mean_Coverage,Full_Info,bps2)
@@ -4490,11 +4496,14 @@ else:
                                                                                 if Run_Result=='Error': continue
                                                                                 [Best_Letter_Rec,Best_Score_Rec,run_flag]=[Run_Result[0],Run_Result[1],Run_Result[2]]
                                                                                 Score_rec_hash=Run_Result[3]
-                                                                            else:
+                                                                            elif copy_num_b<50:
                                                                                 Run_Result=many_RD_Process(copy_num_a,run_flag)
                                                                                 if Run_Result=='Error': continue
                                                                                 [Best_Letter_Rec,Best_Score_Rec,run_flag]=[Run_Result[0],Run_Result[1],Run_Result[2]]
                                                                                 Score_rec_hash[Best_Score_Rec]=Best_Letter_Rec
+                                                                            else:   
+                                                                                print(bps2)
+                                                                                print(copy_num_b)
                                                             elif len(Full_Info[9])==2 and deterministic_flag==0:
                                                                 bl2_flag=0
                                                                 for keyCNE in list(Copy_num_estimate.keys()):
@@ -4555,8 +4564,7 @@ else:
                                                                         S_DECISION=Regu_IL[DECISION]+Regu_RD[DECISION]
                                                                         Be_Letter=Letter_Rec[DECISION]
                                                                         Be_BP=BP_Rec[DECISION]
-                                                                        if not S_DECISION in list(Score_rec_hash.keys()):
-                                                                            Score_rec_hash[S_DECISION]=[]
+                                                                        if not S_DECISION in list(Score_rec_hash.keys()):   Score_rec_hash[S_DECISION]=[]
                                                                         Score_rec_hash[S_DECISION].append(Be_Letter)
                                                                         if S_DECISION>Best_Score:
                                                                                 Best_Letter=[Be_Letter]
@@ -4793,7 +4801,7 @@ else:
                                                                 if '/'.join([''.join(bestletter[0]),''.join(bestletter[1])])==original_structure:   struc_to_remove.append(bestletter)
                                                             Best_Letter_Rec=[i for i in Best_Letter_Rec if not i in struc_to_remove]
                                                             if Best_Letter_Rec==[] and Best_Score_Rec==100: continue
-                                                            else:                                           write_best_letter(bps2,Best_Letter_Rec,Best_Score_Rec,Score_rec_hash,original_letters)
+                                                            else: write_best_letter(bps2,Best_Letter_Rec,Best_Score_Rec,Score_rec_hash,original_letters)
                                                         else:
                                                             Score_rec_hash={}
                                                             bps_new={}
@@ -4806,6 +4814,7 @@ else:
                                                                         if blk2==bl:
                                                                             bps2_temp=[blk1]+[chr_letter_bp[blk1][blk2][0],chr_letter_bp[blk1][blk2][-1]]
                                                                             copy_num_a=int(Copy_num_estimate[bl]/2)
+                                                                            if copy_num_a>50: continue
                                                                             copy_num_b=Copy_num_estimate[bl]-copy_num_a
                                                                             Best_Letter_Rec=[[['a' for i in range(copy_num_a)],['a' for i in range(copy_num_a)]]]
                                                                             Best_Score_Rec=100
@@ -6065,12 +6074,9 @@ else:
                         let1=bp_to_let([pin1],chromos)
                         if not let1==0:
                             let2='/'.join(sorted(pin2[0].split('/')))
-                            if not let1 in list(sv_info.keys()):
-                                sv_info[let1]={}
-                            if not let2 in list(sv_info[let1].keys()):
-                                sv_info[let1][let2]=[]
-                            if not pin1 in sv_info[let1][let2]:
-                                sv_info[let1][let2].append(pin1+[float(pin4[-1])-float(pin3[-1])])
+                            if not let1 in list(sv_info.keys()):        sv_info[let1]={}
+                            if not let2 in list(sv_info[let1].keys()):  sv_info[let1][let2]=[]
+                            if not pin1 in sv_info[let1][let2]:         sv_info[let1][let2].append(pin1+[float(pin4[-1])-float(pin3[-1])])
                 fin.close()
             def ref_base_readin(ref,chr,pos):
                 fin=os.popen(r'''samtools faidx %s %s:%s-%s'''%(ref,chr,pos,pos))
@@ -6108,24 +6114,20 @@ else:
                 #eg of svelter_file='/scratch/remills_flux/xuefzhao/SV_discovery_index/download/SVelter.version14/HG00512.alt_bwamem_GRCh38DH.20150715.CHS.high_coverage.svelter'
                 #eg of fileout_prefix='/scratch/remills_flux/xuefzhao/SV_discovery_index/download/SVelter.version14/HG00512.alt_bwamem_GRCh38DH.20150715.CHS.high_coverage.classified'
                 Define_Default_SVIntegrate()
-                if not '--workdir' in list(dict_opts.keys()):
-                    print('Error: please specify working directory using: --workdir')
+                if not '--workdir' in list(dict_opts.keys()):           print('Error: please specify working directory using: --workdir')
                 else:
                     workdir=path_modify(dict_opts['--workdir'])
-                    if not '--input-path' in list(dict_opts.keys()):
-                        print('Error: please specify path of input .coverge files using --input-path')
+                    if not '--input-path' in list(dict_opts.keys()):    print('Error: please specify path of input .coverge files using --input-path')
                     else:
                         if '--input-path' in list(dict_opts.keys()):
-                            if not dict_opts['--input-path'][-1]=='/':
-                                dict_opts['--input-path']+='/'
+                            if not dict_opts['--input-path'][-1]=='/':dict_opts['--input-path']+='/'
                             InputPath=[dict_opts['--input-path']]
                         else:
                             InputPath=[]
                             if os.path.isdir(workdir+'bp_files.'+dict_opts['--sample'].split('/')[-1]):
                                 InputPath.append(workdir+'bp_files.'+dict_opts['--sample'].split('/')[-1])
                                 print('Reading Result from default path: '+workdir+'bp_files.'+dict_opts['--sample'].split('/')[-1])
-                            else:
-                                print('Error: please specify input path using --input-path')
+                            else:   print('Error: please specify input path using --input-path')
                         ref_path=workdir+'reference_SVelter/'
                         ref_file=ref_path+'genome.fa'
                         ref_index=ref_file+'.fai'
@@ -6133,14 +6135,12 @@ else:
                             ref_file=dict_opts['--reference']
                             ref_path='/'.join(ref_file.split('/')[:-1])+'/'
                             ref_index=ref_file+'.fai'
-                        if not os.path.isfile(ref_index):
-                            print('Error: reference genome not indexed')
+                        if not os.path.isfile(ref_index):               print('Error: reference genome not indexed')
                         else:
                             if not '--prefix' in list(dict_opts.keys()):
                                 print('Warning: output file name not specified. output file: '+workdir+'Output.vcf')
                                 output_file=workdir+'Output.vcf'
-                            else:
-                                output_file=dict_opts['--prefix']+'.vcf'
+                            else:       output_file=dict_opts['--prefix']+'.vcf'
                             time1=time.time()
                             global ref,chromos
                             ref=ref_file
@@ -6150,8 +6150,8 @@ else:
                                 global sv_info
                                 sv_info={}
                                 for k3 in os.listdir(path2):
-                                    if k3.split('.')[-1]=='coverge':
-                                        read_in_structures(path2+k3)
+                                    print(k3)
+                                    if k3.split('.')[-1]=='coverge':        read_in_structures(path2+k3)
                                 [svelter_hash,qc_score_info]=sv_info_qc_score_extract(sv_info_score_modify(sv_info))
                                 vcf_list=svelter_to_vcf_new(svelter_hash)
                                 vcf_list_modi_1=vcf_info_out_modify_1(vcf_list)
