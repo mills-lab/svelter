@@ -1,17 +1,17 @@
-#Simulated Simple SVs
+# Simulated Simple SVs
 We used our own script to produce altered reference genome with pre-set simple and complex structural variants:
 
-##Usage:
+## Usage:
 Produce.Simulated.FussyJuncs.py [options] <parameters>
  
-####Options:
+#### Options:
 ```
 heterozygous:	simulate simple heterozygous SVs
 homozygous:	simulate simple homozygous SVs
 complex:		simulate complex SVs
  ```
  
-####Parameters:
+#### Parameters:
 ````
 --reference: reference genme
 --input-sim: input sim format,see example
@@ -19,7 +19,7 @@ complex:		simulate complex SVs
 --output-prefix: prefix of output files
 ````
 
-####Examples:
+#### Examples:
 ```
 Produce.Simulated.FussyJuncs.py heterozygous --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --input-sim /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/het.sim --output-prefix /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/simple_het
 Produce.Simulated.FussyJuncs.py homozygous --reference /mnt/EXT/Mills-scratch2/reference/GRCh37/human_g1k_v37.fasta --input-sim /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/homo.sim --output-prefix /mnt/EXT/Mills-scratch2/Xuefang/Simulate.FussyJunc/Simulate.rerun.test.20150901/simple_homo

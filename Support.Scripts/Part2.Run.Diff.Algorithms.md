@@ -1,7 +1,7 @@
-#Run different algorithms on simulated data:
+# Run different algorithms on simulated data:
 We compared SVelter to three other algorithms: Delly, Lumpy and Pindel  for evaluation with following settings:
 
-##SVelter:
+## SVelter:
 index reference genome first:
 ```
 SVelter.py Index --exclude Exclude.GRCh37.bed --reference human_g1k_v37.fasta --workdir workdir/directory --copyneutral CN2.GRCh37.bed --svelter-path ../svelter-master
@@ -12,7 +12,7 @@ SVelter.py --workdir workding/directory --sample input.bam
 ```
 
 
-##Delly: 
+## Delly: 
 ```
 delly -t DEL -s 10 -x human.hg19.excl.tsv -o output.vcf -g human_g1k_v37.fasta input.sorted.bam
 delly -t DUP -s 10 -x human.hg19.excl.tsv -o output.vcf -g human_g1k_v37.fasta input.sorted.bam
@@ -21,7 +21,7 @@ delly -t TRA -s 10 -x human.hg19.excl.tsv -o output.vcf -g human_g1k_v37.fasta i
 ```
 
 
-##Lumpy:
+## Lumpy:
 first we extract aberrant reads through lumpy module: split_unmapped_to_fasta.pl
 ```
 samtools view input.sorted.bam| ../lumpy-sv/scripts/split_unmapped_to_fasta.pl -b 20 > Lumpy.um.fq
@@ -42,7 +42,7 @@ then solve the SV:
 ```
 
 
-##Pindel:
+## Pindel:
 ```
 pindel -f human_g1k_v37.fasta -i input.config.txt -c ALL -o input.bam.pindel
 pindel2vcf -P input.bam.pindel -r human_g1k_v37.fasta -R human_g1k_v37 -d 20150901 -v Pindel.vcf
