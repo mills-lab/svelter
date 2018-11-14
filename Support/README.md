@@ -1,4 +1,4 @@
-#Support files for human genome hg19 and hg38
+# Support files for human genome hg19 and hg38
 
 Under this folder, we provide supportive files for running SVelter with human reference hg19 and hg38.
 
@@ -15,9 +15,9 @@ _SVelter.*.r_
 
 folder *ref-index* contains pre-indexed files for human reference hg19 and hg38. Feeding the path would accelerate svelter Setup.
 
-##Please be aware that files named 'genome.GC_Content' under *ref-index* are restored through large file resources on github, which require manually download.
+## Please be aware that files named 'genome.GC_Content' under *ref-index* are restored through large file resources on github, which require manually download.
 
-####example of setting up working directory with all supportive files feeded:
+#### example of setting up working directory with all supportive files feeded:
 ```
 svelter.py Setup --workdir ./workdir/ --reference ref.fa --support ../Support/hg19/ --ref-index ../Support/ref-index/hg19/
 ```
